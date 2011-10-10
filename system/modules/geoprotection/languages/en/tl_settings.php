@@ -37,7 +37,8 @@ $GLOBALS['TL_LANG']['tl_settings']['gp_protection_legend'] = 'Custom IP adresses
  */
 $GLOBALS['TL_LANG']['tl_settings']['customOverrideGp'] = array('Custom settings','Click here to configure custom settings.');
 
-$GLOBALS['TL_LANG']['tl_settings']['overrideIps'] = array('Custom IP adresses','Here you can enter a comma seperated list of custom IP adresses.');
+$GLOBALS['TL_LANG']['tl_settings']['overrideIps_headline'] = array('Custom IP adresses','Here you can enter a comma seperated list of custom IP adresses.');
+$GLOBALS['TL_LANG']['tl_settings']['overrideIps'] = array('IP adresses','');
 $GLOBALS['TL_LANG']['tl_settings']['countryFallback'] = array('Country fallback','Use this country, if the ip cannot be mapped to a country..');
 $GLOBALS['TL_LANG']['tl_settings']['customCountryFallback'] = array('Custom Country fallback','Select the fallback country to apply for the custom IP address.');
 $GLOBALS['TL_LANG']['tl_settings']['allCountries'] = 'All countries';

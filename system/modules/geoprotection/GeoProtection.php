@@ -1,4 +1,5 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
+if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -42,29 +43,37 @@ class GeoProtection extends Frontend
      * @var array
      */
     private static $arrIPCache = array();
-    
+
     public function checkPermission($objElement, $strBuffer)
-    {   
+    {
         //check if geoprotection is enabled
         if ($objElement->gp_protected && TL_MODE != 'BE')
         {
+            $arrIpAddress = array();
+            foreach (deserialize($GLOBALS['TL_CONFIG']['overrideIps']) as $ip)
+            {
+                $arrIpAddress[] = $ip['ipAddress'];
+            }
+
             //show if gp_override is on and IP is valid
             if ($objElement->gp_protected && (
-				($GLOBALS['TL_CONFIG']['customOverrideGp'])
-				&& (stripos($GLOBALS['TL_CONFIG']['overrideIps'], $this->Environment->ip) !== false)
-				&& ($GLOBALS['TL_CONFIG']['customCountryFallback'] == '')) ){
+                    ($GLOBALS['TL_CONFIG']['customOverrideGp'])
+                    && (in_array($this->Environment->ip, $arrIpAddress))
+                    && ($GLOBALS['TL_CONFIG']['customCountryFallback'] == '')))
+            {
                 return $strBuffer;
             }
-            
-			if (($GLOBALS['TL_CONFIG']['customOverrideGp'])
-				&& (stripos($GLOBALS['TL_CONFIG']['overrideIps'], $this->Environment->ip) !== false)){
-				
-				self::$arrIPCache[$ipNum] = ($GLOBALS['TL_CONFIG']['customCountryFallback']) ? strtolower($GLOBALS['TL_CONFIG']['customCountryFallback']) : $GLOBALS['TL_CONFIG']['countryFallback'];
-            }
+
             //calculate ipNum
             $arrIP = explode(".", $this->Environment->ip);
             //$arrIP = explode(".", '92.50.97.80');
-            $ipNum = 16777216*$arrIP[0] + 65536*$arrIP[1] + 256*$arrIP[2] + $arrIP[3];
+            $ipNum = 16777216 * $arrIP[0] + 65536 * $arrIP[1] + 256 * $arrIP[2] + $arrIP[3];
+
+            if (($GLOBALS['TL_CONFIG']['customOverrideGp'])
+                    && (in_array($this->Environment->ip, $arrIpAddress)))
+            {
+                self::$arrIPCache[$ipNum] = ($GLOBALS['TL_CONFIG']['customCountryFallback']) ? strtolower($GLOBALS['TL_CONFIG']['customCountryFallback']) : $GLOBALS['TL_CONFIG']['countryFallback'];
+            }
 
             // Load country from cache or do a db-lookup
             if (!isset(self::$arrIPCache[$ipNum]))
@@ -73,19 +82,18 @@ class GeoProtection extends Frontend
                 self::$arrIPCache[$ipNum] = '';
 
                 $country = $this->Database->prepare("SELECT country_short FROM tl_geodata WHERE ? >= ipnum_start AND ? <= ipnum_end")
-                            ->limit(1)
-                            ->execute($ipNum,$ipNum);
-                
+                        ->limit(1)
+                        ->execute($ipNum, $ipNum);
+
                 self::$arrIPCache[$ipNum] = ($country->country_short) ? strtolower($country->country_short) : $GLOBALS['TL_CONFIG']['countryFallback'];
             }
-            
+
             if ($objElement->gp_mode == "gp_hide")
             {
                 return (in_array(self::$arrIPCache[$ipNum], deserialize($objElement->gp_countries))) ? '' : $strBuffer;
             }
 
-            return (in_array(self::$arrIPCache[$ipNum], deserialize($objElement->gp_countries))) ? $strBuffer : '';    
-
+            return (in_array(self::$arrIPCache[$ipNum], deserialize($objElement->gp_countries))) ? $strBuffer : '';
         }
 
         return $strBuffer;

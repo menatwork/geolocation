@@ -42,10 +42,22 @@ $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{gp_protection_leg
  * Add field
  */
 $GLOBALS['TL_DCA']['tl_settings']['fields']['overrideIps'] = array(
-	'label'			=> &$GLOBALS['TL_LANG']['tl_settings']['overrideIps'],
-	'inputType'		=> 'text',
-	'exclude'		=> true,
-	'eval'			=> array('mandatory'=>false, 'nospace'=>true)
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['overrideIps_headline'],
+    'inputType' => 'multiColumnWizard',
+    'exclude' => true,
+    'eval' => array
+        (
+        'style' => 'width:100%;',
+        'columnFields' => array
+            (
+            'ipAddress' => array
+                (
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['overrideIps'],
+                'inputType' => 'text',
+                'eval' => array('style' => 'width:605px', 'nospace' => true),
+            )
+        )
+    )
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['customOverrideGp'] = array(
