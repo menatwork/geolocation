@@ -87,7 +87,7 @@ class GeoProtection extends Frontend
 
                 self::$arrIPCache[$ipNum] = ($country->country_short) ? strtolower($country->country_short) : $GLOBALS['TL_CONFIG']['countryFallback'];
             }
-
+            
             if ($objElement->gp_mode == "gp_hide")
             {
                 return (in_array(self::$arrIPCache[$ipNum], deserialize($objElement->gp_countries))) ? '' : $strBuffer;

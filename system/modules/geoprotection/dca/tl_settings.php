@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['overrideIps'] = array(
                 (
                 'label' => $GLOBALS['TL_LANG']['tl_settings']['overrideIps'],
                 'inputType' => 'text',
-                'eval' => array('style' => 'width:605px', 'nospace' => true),
+                'eval' => array('style' => 'width:600px', 'nospace' => true),
             )
         )
     )
