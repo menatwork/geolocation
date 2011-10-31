@@ -38,8 +38,4 @@ $GLOBALS['TL_LANG']['tl_content']['gp_protection_legend'] = 'Visibility';
 $GLOBALS['TL_LANG']['tl_content']['gp_protected'] = array('Enable GeoProtection','Show or hide the content element in selected countries.');
 $GLOBALS['TL_LANG']['tl_content']['gp_mode'] = array('Visibility','Please choose the visibility of the content element.');
 $GLOBALS['TL_LANG']['tl_content']['gp_countries'] = array('Countries','Please select one or more countries.');
-$GLOBALS['TL_LANG']['tl_content']['gp_override'] = array("Ignore custom IP adresses",'Ignore custom IP adresses.');
-
-
-$GLOBALS['TL_LANG']['tl_content']['gp_hide'] = 'Hide';
-$GLOBALS['TL_LANG']['tl_content']['gp_show'] = 'Show';
+$GLOBALS['TL_LANG']['tl_content']['gp_override'] = array('Ignore custom IP adresses','Ignore custom IP adresses.');

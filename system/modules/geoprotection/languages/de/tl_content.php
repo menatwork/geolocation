@@ -39,7 +39,3 @@ $GLOBALS['TL_LANG']['tl_content']['gp_protected'] = array('GeoProtection aktivie
 $GLOBALS['TL_LANG']['tl_content']['gp_mode'] = array('Sichtbarkeit','Bitte wählen Sie ob das Inhaltselement angezeigt oder versteckt werden soll.');
 $GLOBALS['TL_LANG']['tl_content']['gp_countries'] = array('Länder','Bitte wählen Sie ein oder mehrere Länder aus.');
 $GLOBALS['TL_LANG']['tl_content']['gp_override'] = array('Benutzerdefinierte IP-Adressen ignorieren','Benutzerdefinierte IP-Adressen bei der Sichtbarkeit nicht berücksichtigen.');
-
-
-$GLOBALS['TL_LANG']['tl_content']['gp_hide'] = 'Verstecken';
-$GLOBALS['TL_LANG']['tl_content']['gp_show'] = 'Anzeigen';
