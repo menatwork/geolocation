@@ -1,0 +1,24 @@
+<div <?php echo (strlen($this->cssID) != 0) ? $this->cssID : ""; ?>
+    class="<?php echo $this->class; ?>" 
+    style="width: 830px; background-color: black; color: white; z-index: 100; position: absolute; padding: 20px; <?php echo $this->style; ?>">
+
+    <?php if($this->isFaild == true): // Show if we have an error?>    
+        Error ID: <?php echo $this->intError; ?>
+        <br />
+        Error MSG: <?php echo $this->strError; ?>
+    <?php elseif($this->isGeolocatetd == true): // Show if we have successfuly get the location?>    
+        Country long: <?php echo $this->strCountry; ?>
+        <br />
+        Country short: <?php echo $this->strShortCountry; ?>
+    <?php else: // No error No geolocation?>    
+        We are trying to geolocate you.
+    <?php endif; ?>
+
+    <?php
+    //var_dump($this->showTemplateVars());
+    ?>  
+
+</div>
+
+
+
