@@ -104,7 +104,7 @@ var GeoProtection = new Class({
     },
     removeCookie: function()
     {
-         Cookie.dispose('GeoProtectionUser');
+        Cookie.dispose('GeoProtectionUser');
     },
     // Get information ---------------------------------------------------------
     runGeolocation: function()
@@ -126,22 +126,8 @@ var GeoProtection = new Class({
                 }.bind(this),                
                 function(error) {
                     if(this.options.debug == true)
-                    {
-                        switch(error.code) 
-                        {
-                            case error.TIMEOUT:
-                                alert ('Timeout');
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                alert ('Position unavailable');
-                                break;
-                            case error.PERMISSION_DENIED:
-                                alert ('Permission denied');
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                alert ('Unknown error');
-                                break;
-                        }
+                    {                        
+                        this.updateError(error.code);
                     }                    
                 }.bind(this)
                 );
@@ -149,12 +135,66 @@ var GeoProtection = new Class({
         else
         {
             if(this.options.debug == true) console.log("Geolocation is not supported by this browser");
-            alert("no geolocation");
+            this.updateError(10);
         }
     },    
+    updateError: function(errorID)
+    {        
+        if(this.options.debug == true)
+        {
+            console.log("Start error updating");
+            console.log(errorID);
+        }
+        
+        // Check if the request token is set
+        if( typeof(REQUEST_TOKEN) !== 'undefined' )
+        {
+            data = {
+                "action"        : "GeoProSetError",
+                "errID"         : errorID,
+                "REQUEST_TOKEN" : REQUEST_TOKEN
+            }
+        }
+        else
+        {
+            data = {
+                "action"        : "GeoProSetError",
+                "errID"         : errorID
+            }
+        }
+                 
+        // Send new request
+        new Request.JSON({
+            method:'post',
+            url: "ajax.php",
+            data: data,
+            evalScripts:false,
+            evalResponse:false,
+            onSuccess:function(json,responseElements){   
+                if(this.options.debug == true)
+                {
+                    console.log("Success");
+                    console.log(responseElements);
+                }
+                
+                this.onFailure();
+            }.bind(this),
+            onFailure:function(json,responseElements){                               
+                if(this.options.debug == true)
+                {
+                    console.log("Error by Json Request");
+                    console.log(responseElements);
+                }
+            }.bind(this)
+        }).send();
+    },
     updatePosition: function()
     {
-        if(this.options.debug == true) console.log("Start sending request"); 
+        if(this.options.debug == true)
+        {
+            console.log("Start location updating");
+            console.log(this.vars);
+        }
         
         // Check if the request token is set
         if( typeof(REQUEST_TOKEN) !== 'undefined' )
@@ -185,7 +225,8 @@ var GeoProtection = new Class({
             onSuccess:function(json,responseElements){                    
                 if(json.content.success == true)
                 {
-                    this.updateCookie(); 
+                    this.updateCookie();     
+                    this.onSuccess();
                 }
                 else if(json.success != true)
                 {
@@ -207,10 +248,18 @@ var GeoProtection = new Class({
                 }
             }.bind(this)
         }).send();
-    }    
+    }, 
+    onSuccess: function()
+    {
+        window.location.reload();
+    },    
+    onFailure: function()
+    {
+        
+    }
 });
 
 var RunGeoProtection = new GeoProtection();
-RunGeoProtection.setDebug(true);
+//RunGeoProtection.setDebug(true);
 RunGeoProtection.setCookie(true);
 RunGeoProtection.run();
