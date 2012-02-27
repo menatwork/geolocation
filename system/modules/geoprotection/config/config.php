@@ -31,5 +31,16 @@
  * Register hook 
  */
 $GLOBALS['TL_HOOKS']['getContentElement'][] = array('GeoProtection', 'checkPermission');
+$GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('GeoProtection', 'dispatchAjax');
+
+// Set JS for geolocation
+$objSession = Session::getInstance();
+$arrGeoProtection = $objSession->get("geoprotection");
+
+if (TL_MODE == 'FE' && (!is_array($arrGeoProtection) || $arrGeoProtection["geolocated"] == false))
+{
+    $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoCore.js";
+}
+
 
 ?>

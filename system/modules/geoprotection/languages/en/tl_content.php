@@ -36,6 +36,7 @@ $GLOBALS['TL_LANG']['tl_content']['gp_protection_legend'] = 'Visibility';
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_content']['gp_protected'] = array('Enable GeoProtection','Show or hide the content element in selected countries.');
+$GLOBALS['TL_LANG']['tl_content']['gp_protected_overwrite'] = array('Overwrite global settings','Use this for overwrite the global setting.');
 $GLOBALS['TL_LANG']['tl_content']['gp_mode'] = array('Visibility','Please choose the visibility of the content element.');
 $GLOBALS['TL_LANG']['tl_content']['gp_countries'] = array('Countries','Please select one or more countries.');
 $GLOBALS['TL_LANG']['tl_content']['gp_override'] = array('Ignore custom IP adresses','Ignore custom IP adresses.');

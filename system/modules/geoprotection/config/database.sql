@@ -13,6 +13,7 @@
 
 CREATE TABLE `tl_content` (
   `gp_protected` char(1) NOT NULL default '',
+  `gp_protected_overwrite` char(1) NOT NULL default '',
   `gp_mode` varchar(7) NOT NULL default '',
   `gp_countries` blob NULL,
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -33,4 +34,20 @@ CREATE TABLE `tl_geodata` (
   PRIMARY KEY  (`id`),
   KEY `ipnum_start` (`ipnum_start`),
   KEY `ipnum_end` (`ipnum_end`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- 
+-- Table `tl_geodatachache`
+-- 
+
+CREATE TABLE `tl_geodatacache` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `lat` varchar(8) NOT NULL default '0',
+  `lon` varchar(8) NOT NULL default '0',
+  `create_on` int(10) unsigned NOT NULL default '0',
+  `country_short` varchar(2) NOT NULL default '',
+  `country` varchar(100) NOT NULL default '',   
+  PRIMARY KEY  (`id`),
+  KEY `lat` (`lat`),
+  KEY `lon` (`lon`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

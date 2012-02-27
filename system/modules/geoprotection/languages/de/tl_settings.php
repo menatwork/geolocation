@@ -30,16 +30,18 @@
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_settings']['gp_protection_legend'] = 'Benutzerdefinierte IP-Adressen';
+$GLOBALS['TL_LANG']['tl_settings']['gp_protection_legend'] = 'Geo Protection Globale Einstellungen';
 
 /**
  * Fields
  */
  
-$GLOBALS['TL_LANG']['tl_settings']['customOverrideGp'] = array('Benutzerdefinierte Einstellungen','Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'] = array('Benutzerdefinierte IP-Adressen verwenden','Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
 
-$GLOBALS['TL_LANG']['tl_settings']['overrideIps_headline'] = array('Benutzerdefinierte IP-Adressen','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
-$GLOBALS['TL_LANG']['tl_settings']['overrideIps'] = array('IP-Adressen','');
-$GLOBALS['TL_LANG']['tl_settings']['countryFallback'] = array('Länder-Fallback','Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
-$GLOBALS['TL_LANG']['tl_settings']['customCountryFallback'] = array('Benutzerdefiniertes Länder-Fallback','Wählen Sie hier das Fallback-Land, das für die benutzerdefinierten IP-Adresse gelten soll.');
-$GLOBALS['TL_LANG']['tl_settings']['allCountries'] = 'Alle Länder';
+$GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps_headline'] = array('Benutzerdefinierte IP-Adressen','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps'] = array('IP-Adressen','');
+$GLOBALS['TL_LANG']['tl_settings']['gp_countryFallback'] = array('Länder-Fallback','Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_customCountryFallback'] = array('Benutzerdefiniertes Länder-Fallback','Wählen Sie hier das Fallback-Land, das für die benutzerdefinierten IP-Adresse gelten soll.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_allCountries'] = 'Alle Länder';
+$GLOBALS['TL_LANG']['tl_settings']['gp_mode'] = array('Sichtbarkeit','Bitte wählen Sie ob das Inhaltselement angezeigt oder versteckt werden soll.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_countries'] = array('Länder','Bitte wählen Sie ein oder mehrere Länder aus.');

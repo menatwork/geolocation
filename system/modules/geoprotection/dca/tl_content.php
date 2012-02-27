@@ -1,4 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
+
+if (!defined('TL_ROOT'))
+    die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -27,6 +30,7 @@
  * @filesource
  */
 $GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'gp_protected';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['__selector__'][] = 'gp_protected_overwrite';
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback'] = array('gp_tl_content', 'addGpType');
 
 /**
@@ -39,16 +43,26 @@ foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $palette => $v)
     {
         continue;
     }
+    
     $GLOBALS['TL_DCA']['tl_content']['palettes'][$palette] = str_replace('{expert_legend:hide}', '{gp_protection_legend:hide},gp_protected;{expert_legend:hide}', $GLOBALS['TL_DCA']['tl_content']['palettes'][$palette]);
 }
 
-$GLOBALS['TL_DCA']['tl_content']['subpalettes']['gp_protected'] = 'gp_mode,gp_countries';
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['gp_protected'] = 'gp_protected_overwrite ';
+$GLOBALS['TL_DCA']['tl_content']['subpalettes']['gp_protected_overwrite'] = 'gp_mode,gp_countries';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['gp_protected'] = array
     (
     'label' => &$GLOBALS['TL_LANG']['tl_content']['gp_protected'],
     'exclude' => true,
     'filter' => true,
+    'inputType' => 'checkbox',
+    'eval' => array('submitOnChange' => true)
+);
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['gp_protected_overwrite'] = array
+    (
+    'label' => &$GLOBALS['TL_LANG']['tl_content']['gp_protected_overwrite'],
+    'exclude' => true,    
     'inputType' => 'checkbox',
     'eval' => array('submitOnChange' => true)
 );
@@ -60,8 +74,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['gp_mode'] = array
     'exclude' => true,
     'inputType' => 'select',
     'options' => array(
-        'gp_show' => &$GLOBALS['TL_LANG']['MSC']['hiddenHide'],
-        'gp_hide' => &$GLOBALS['TL_LANG']['MSC']['hiddenShow']
+        'gp_show' => &$GLOBALS['TL_LANG']['MSC']['hiddenShow'],
+        'gp_hide' => &$GLOBALS['TL_LANG']['MSC']['hiddenHide']
     ),
     'reference' => &$GLOBALS['TL_LANG']['tl_content'],
     'eval' => array('mandatory' => true, 'includeBlankOption' => true)
@@ -72,7 +86,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['gp_countries'] = array
     'label' => &$GLOBALS['TL_LANG']['tl_content']['gp_countries'],
     'exclude' => true,
     'inputType' => 'checkbox',
-    'options_callback' => array('gp_tl_content', 'getCountriesByContinent'),
+    'options_callback' => array('GeoProtection', 'getCountriesByContinent'),
     'eval' => array('multiple' => true, 'size' => 8, 'mandatory' => true)
 );
 
@@ -94,6 +108,9 @@ class gp_tl_content extends Controller
      */
     public function addGpType($arrRow)
     {
+        //print_r($arrRow);
+        //exit();
+
         $key = $arrRow['invisible'] ? 'unpublished' : 'published';
         $strGP = '';
         if ($arrRow['gp_protected'])
@@ -101,10 +118,15 @@ class gp_tl_content extends Controller
             $strGP = ' (';
             $strGP .= ($arrRow['gp_mode'] == 'gp_show') ? ucfirst($GLOBALS['TL_LANG']['MSC']['hiddenShow']) : ucfirst($GLOBALS['TL_LANG']['MSC']['hiddenHide']);
             $strGP .= ':';
-            foreach (deserialize($arrRow['gp_countries']) as $c)
+
+            if ($arrRow['gp_countries'] != "")
             {
-                $strGP .= ' ' . $c;
+                foreach (deserialize($arrRow['gp_countries']) as $c)
+                {
+                    $strGP .= ' ' . $c;
+                }
             }
+
             $strGP .= ')';
         }
 
@@ -113,51 +135,6 @@ class gp_tl_content extends Controller
 <div class="limit_height' . (!$GLOBALS['TL_CONFIG']['doNotCollapse'] ? ' h64' : '') . ' block">
 ' . $this->getContentElement($arrRow['id']) . '
 </div>' . "\n";
-    }
-
-    /**
-     * get Country-List
-     */
-    public function getCountriesByContinent()
-    {
-        $return = array();
-        $countries = array();
-        $arrAux = array();
-        $arrTmp = array();
-
-        $this->loadLanguageFile('countries');
-        $this->loadLanguageFile('continents');
-        include(TL_ROOT . '/system/config/countries.php');
-        include(TL_ROOT . '/system/modules/geoprotection/countriesByContinent.php');
-        foreach ($countriesByContinent as $strConKey => $arrCountries)
-        {
-
-            $strConKeyTranslated = strlen($GLOBALS['TL_LANG']['CONTINENT'][$strConKey]) ? utf8_romanize($GLOBALS['TL_LANG']['CONTINENT'][$strConKey]) : $strConKey;
-            $arrAux[$strConKey] = $strConKeyTranslated;
-            foreach ($arrCountries as $strCount)
-            {
-
-
-                $arrTmp[$strConKeyTranslated][$strCount] = strlen($GLOBALS['TL_LANG']['CNT'][$strCount]) ? utf8_romanize($GLOBALS['TL_LANG']['CNT'][$strCount]) : $countries[$strName];
-            }
-        }
-
-        ksort($arrTmp);
-
-        foreach ($arrTmp as $strConKey => $arrCountries)
-        {
-            asort($arrCountries);
-            //get original continent key
-            $strOrgKey = array_search($strConKey, $arrAux);
-            $strConKeyTranslated = strlen($GLOBALS['TL_LANG']['CONTINENT'][$strOrgKey]) ? ($GLOBALS['TL_LANG']['CONTINENT'][$strOrgKey]) : $strConKey;
-            foreach ($arrCountries as $strKey => $strCountry)
-            {
-
-                $return[$strConKeyTranslated][$strKey] = strlen($GLOBALS['TL_LANG']['CNT'][$strKey]) ? $GLOBALS['TL_LANG']['CNT'][$strKey] : $countries[$strKey];
-            }
-        }
-
-        return $return;
     }
 
 }
