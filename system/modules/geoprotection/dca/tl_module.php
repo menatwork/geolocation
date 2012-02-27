@@ -27,25 +27,9 @@
  * @filesource
  */
 
-/**
- * Register hook 
- */
-$GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('GeoProtection', 'dispatchAjax');
 
-/**
- * Set JS for geolocation 
- */
-$objSession = Session::getInstance();
-$arrGeoProtection = $objSession->get("geoprotection");
+$GLOBALS['TL_DCA']['tl_module']['palettes']['geoProtectionInformation'] = '{title_legend},name,type;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
-if (TL_MODE == 'FE' && (!is_array($arrGeoProtection) || $arrGeoProtection["geolocated"] == false))
-{
-    $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoCore.js";
-}
 
-/**
- * Add fe mod
- */
-$GLOBALS['FE_MOD']['miscellaneous']['geoProtectionInformation'] = 'ModuleGeoProInformation';
 
 ?>
