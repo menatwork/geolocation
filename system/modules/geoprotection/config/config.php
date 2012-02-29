@@ -26,26 +26,30 @@
  * @license    GNU/LGPL
  * @filesource
  */
-
 /**
  * Register hook 
  */
 $GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('GeoProtection', 'dispatchAjax');
+$GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('GeoProtection', 'insertJSVars');
 
 /**
- * Set JS for geolocation 
+ * Set JS/Hook for geolocation 
  */
-$objSession = Session::getInstance();
-$arrGeoProtection = $objSession->get("geoprotection");
-
-if (TL_MODE == 'FE' && (!is_array($arrGeoProtection) || $arrGeoProtection["geolocated"] == false))
+if (TL_MODE == 'FE')
 {
-    $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoCore.js";
+    // Load GeoProtection for geolocation information
+    $objGeoLocation = GeoProtection::getInstance()->getUseGeoLocation();
+
+    // Include css for W3C Geolocation when no user chaneg, W3C geolocation, ip lookup or fallback was done. 
+    if ((!$objGeoLocation->isChangeByUser() && !$objGeoLocation->isGeolocated() && !$objGeoLocation->isIPLookup() && !$objGeoLocation->isFallback()))
+    {
+        // Insert JS
+        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoCore.js";
+    }
 }
 
 /**
  * Add fe mod
  */
-$GLOBALS['FE_MOD']['miscellaneous']['geoProtectionInformation'] = 'ModuleGeoProInformation';
-
+$GLOBALS['FE_MOD']['miscellaneous']['geoProtection'] = 'ModuleGeoProtection';
 ?>

@@ -29,18 +29,58 @@
 
 // extend selector
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_customOverrideGp';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_activateCookies';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_activateCountryFallback';
 
 // extend subpalettes
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_customOverrideGp'] = 'gp_overrideIps,gp_customCountryFallback';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_activateCookies'] = 'gp_cookieDuration';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_activateCountryFallback'] = 'gp_countryFallback';
 
 /**
  * Add to palette
  */
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{gp_protection_legend},gp_mode,gp_countries,gp_countryFallback,gp_customOverrideGp';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{gp_protection_legend},gp_activateCookies,gp_activateCountryFallback,gp_customOverrideGp';
 
 /**
  * Add field
  */
+// Cookies 
+$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_activateCookies'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_activateCookies'],
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_cookieDuration'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_cookieDuration'],
+    'exclude' => true,
+    'inputType' => 'text',
+    'eval' => array('rgxp' => 'digit', 'multiple' => true, 'size' => 2, 'mandatory' => true)
+);
+
+// CountryFallback
+$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_activateCountryFallback'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_activateCountryFallback'],
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customCountryFallback'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customCountryFallback'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options' => $this->getCountries(),
+    'eval' => array('multiple' => false, 'mandatory' => true)
+);
+
+// IP Override
+$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customOverrideGp'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'],
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
+);
+
 $GLOBALS['TL_DCA']['tl_settings']['fields']['gp_overrideIps'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps_headline'],
     'inputType' => 'multiColumnWizard',
@@ -58,49 +98,13 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['gp_overrideIps'] = array(
     )
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customOverrideGp'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'],
-    'inputType' => 'checkbox',
-    'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
-);
-
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customCountryFallback'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customCountryFallback'],
-    'exclude' => true,
-    'inputType' => 'select',
-    'options' => array_merge(array("" => &$GLOBALS['TL_LANG']['tl_settings']['gp_allCountries']), $this->getCountries()),
-    'eval' => array('multiple' => false)
-);
-
 $GLOBALS['TL_DCA']['tl_settings']['fields']['gp_countryFallback'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_countryFallback'],
     'exclude' => true,
     'inputType' => 'select',
-    'options' => $this->getCountries(),
+    'options' => array_merge(array("none" => &$GLOBALS['TL_LANG']['tl_settings']['gp_noneCountry']), $this->getCountries()),
     'default' => 'de',
     'eval' => array('multiple' => false, 'mandatory' => true)
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_mode'] = array
-    (
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_mode'],
-    'default' => 'show',
-    'exclude' => true,
-    'inputType' => 'select',
-    'options' => array(
-        'gp_show' => &$GLOBALS['TL_LANG']['MSC']['hiddenShow'],
-        'gp_hide' => &$GLOBALS['TL_LANG']['MSC']['hiddenHide']
-    ),
-    'reference' => &$GLOBALS['TL_LANG']['tl_content'],
-    'eval' => array('mandatory' => true, 'includeBlankOption' => true)
-);
-
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_countries'] = array
-    (
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_countries'],
-    'exclude' => true,
-    'inputType' => 'checkbox',
-    'options_callback' => array('GeoProtection', 'getCountriesByContinent'),
-    'eval' => array('multiple' => true, 'size' => 8, 'mandatory' => true)
-);
 ?>

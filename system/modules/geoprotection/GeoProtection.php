@@ -1,4 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
+
+if (!defined('TL_ROOT'))
+    die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -32,7 +35,7 @@
  *
  * Provide methods for GeoProtection.
  * @copyright  MEN AT WORK 2011-2012
- * @package    Controller
+ * @package    GeoProtection
  */
 class GeoProtection extends Frontend
 {
@@ -42,37 +45,144 @@ class GeoProtection extends Frontend
      * @var array
      */
     private static $arrIPCache = array();
-    protected $arrCountryInformation;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-       
-    }
 
     /**
-     * Get from the Session the current location information
-     * 
-     * @return array() Keys: country | country_short | geolocated | faild | error | error_ID
+     * Container for geo information
+     * @var GeoProtectionContainer 
      */
-    public static function getUseGeoLocation()
-    {
-        $Session          = Session::getInstance();
-        $arrGeoProtection = $Session->get("geoprotection");
+    protected $objCountryInformation;
 
-        if (is_array($arrGeoProtection))
+    /**
+     * Container for geo information
+     * @var GeoProtectionContainer 
+     */
+    protected static $instance = null;
+
+    /**
+     * Constructor 
+     */
+    protected function __construct()
+    {
+        // Call parent constructor
+        parent::__construct();
+
+        // Import classes
+        $this->import("Session");
+        $this->import("Environment");
+
+        // Get geolocation from session or create a new one        
+        $objGeoProtection = $this->Session->get("geoprotection");
+
+        if ($objGeoProtection != null && is_object($objGeoProtection))
         {
-            return $arrGeoProtection;
+            $this->objCountryInformation = $objGeoProtection;
         }
         else
         {
-            return $this->arrCountryInformation;
+            // Init functions
+            $this->objCountryInformation = new GeoProtectionContainer();
+
+            // Check ip override
+            if ($GLOBALS['TL_CONFIG']['gp_customOverrideGp'] == true)
+            {
+                // Get IP`s from config
+                $arrIP           = deserialize($GLOBALS['TL_CONFIG']['gp_overrideIps']);
+                $arrCountries    = $this->getCountries();
+                $strCountryShort = $GLOBALS['TL_CONFIG']['gp_customCountryFallback'];
+
+                // Check if we have a array
+                if ($arrIP != null && is_array($arrIP) && $strCountryShort != null && key_exists($strCountryShort, $arrCountries))
+                {
+                    // Search in array for current IP
+                    foreach ($arrIP as $value)
+                    {
+                        if ($value["ipAddress"] == $this->Environment->ip)
+                        {
+                            $this->objCountryInformation->setCountry($arrCountries[$strCountryShort]);
+                            $this->objCountryInformation->setCountryShort($strCountryShort);
+                            $this->objCountryInformation->setChangeByUser(false);
+                            $this->objCountryInformation->setFailed(false);
+                            $this->objCountryInformation->setGeolocated(false);
+                            $this->objCountryInformation->setIPLookup(false);
+                            $this->objCountryInformation->setFallback(true);
+                            $this->objCountryInformation->setIP("");
+                            $this->objCountryInformation->setError("");
+                            $this->objCountryInformation->setErrorID(0);
+
+                            $this->Session->set("geoprotection", $this->objCountryInformation);
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get current instance from GeoProtection
+     * 
+     * @return GeoProtection 
+     */
+    public static function getInstance()
+    {
+        if (self::$instance == null)
+        {
+            self::$instance = new GeoProtection();
+        }
+
+        return self::$instance;
+    }
+
+    // Functions ---------------------------------------------------------------
+
+    /**
+     * Get either the current geolocation from session.
+     * If no session was found, check ip override or return a new 
+     * empty geolocation.
+     * 
+     * @return GeoProtectionContainer 
+     */
+    public function getUseGeoLocation()
+    {
+        return $this->objCountryInformation;
+    }
+
+    /**
+     * Set the user location by country short tag
+     * 
+     * @param string $strCountryShort
+     * @throws Exception If short country is unknown 
+     */
+    public function setUserGeolocation($strCountryShort)
+    {
+        $arrCountries = $this->getCountries();
+
+        if (key_exists($strCountryShort, $arrCountries))
+        {
+            $this->objCountryInformation->setCountry($arrCountries[$strCountryShort]);
+            $this->objCountryInformation->setCountryShort($strCountryShort);
+            $this->objCountryInformation->setChangeByUser(true);
+            $this->objCountryInformation->setFailed(false);
+            $this->objCountryInformation->setGeolocated(false);
+            $this->objCountryInformation->setIPLookup(false);
+            $this->objCountryInformation->setFallback(false);
+            $this->objCountryInformation->setIP("");
+            $this->objCountryInformation->setError("");
+            $this->objCountryInformation->setErrorID(0);
+
+            // Save in Session
+            $this->Session->set("geoprotection", $this->objCountryInformation);
+        }
+        else
+        {
+            throw new Exception("Unknown country tag: $strCountryShort");
         }
     }
 
     /**
      * AJAX Call get for a lat/lon the country information
+     * 
      * @return type 
      */
     public function dispatchAjax()
@@ -99,9 +209,18 @@ class GeoProtection extends Frontend
                 try
                 {
                     // Check if lat/lon is set
-                    if (strlen($this->Input->post("lat")) == 0 || strlen($this->Input->post("lon")) == 0)
+                    if ((strlen($this->Input->post("lat")) == 0 || strlen($this->Input->post("lon")) == 0) && (strlen($this->Input->post("country")) == 0 || strlen($this->Input->post("countryShort")) == 0))
                     {
-                        throw new Exception("Missing longitude or latitude.");
+                        throw new Exception("Missing longitude/latitude or country/countryShort.");
+                    }
+
+                    // Check if user has set his location
+                    if (strlen($this->Input->post("countryShort")) != null)
+                    {
+                        $this->setUserGeolocation($this->Input->post("countryShort"));
+
+                        $arrReturn["value"] = "Set location by user cookies.";
+                        return $arrReturn;
                     }
 
                     // Split 
@@ -127,7 +246,7 @@ class GeoProtection extends Frontend
                     if ($objResult->numRows == 0)
                     {
                         $objRequest = new Request();
-                        $objRequest->send(vsprintf($strLink, array($this->Input->post("lat"), $this->Input->post("lon"))));
+                        $objRequest->send(vsprintf($strLink, array(implode(".", $arrLat), implode(".", $arrLon))));
                         if ($objRequest->code != 200)
                         {
                             throw new Exception(vsprintf("Request error code %s - %s ", array($objRequest->code, $objRequest->error)));
@@ -140,42 +259,65 @@ class GeoProtection extends Frontend
                                 ->set(array("lat" => implode(".", $arrLat), "lon" => implode(".", $arrLon), "create_on" => time(), "country" => $arrAddress["country"], "country_short" => $arrAddress["country_code"]))
                                 ->execute();
 
-                        $this->arrCountryInformation["country"] = $arrAddress["country"];
-                        $this->arrCountryInformation["country_short"] = $arrAddress["country_code"];
-                        $this->arrCountryInformation["geolocated"] = true;
+                        // Set information for geolocation
+                        $this->objCountryInformation->setCountry($arrAddress["country"]);
+                        $this->objCountryInformation->setCountryShort($arrAddress["country_code"]);
+                        $this->objCountryInformation->setIP("");
+                        $this->objCountryInformation->setIPLookup(false);
+                        $this->objCountryInformation->setFailed(false);
+                        $this->objCountryInformation->setGeolocated(true);
+                        $this->objCountryInformation->setFallback(false);
+                        $this->objCountryInformation->setError("");
+                        $this->objCountryInformation->setErrorID(0);
+
+                        // Save in Session
+                        $this->Session->set("geoprotection", $this->objCountryInformation);
 
                         $arrReturn["value"] = "Inset new location.";
                     }
                     // Found a entry in database
                     else
                     {
-                        $this->arrCountryInformation["country"] = $objResult->country;
-                        $this->arrCountryInformation["country_short"] = $objResult->country_short;
-                        $this->arrCountryInformation["geolocated"] = true;
+                        // Set information for geolocation
+                        $this->objCountryInformation->setCountry($objResult->country);
+                        $this->objCountryInformation->setCountryShort($objResult->country_short);
+                        $this->objCountryInformation->setIP("");
+                        $this->objCountryInformation->setIPLookup(false);
+                        $this->objCountryInformation->setFailed(false);
+                        $this->objCountryInformation->setGeolocated(true);
+                        $this->objCountryInformation->setFallback(false);
+                        $this->objCountryInformation->setError("");
+                        $this->objCountryInformation->setErrorID(0);
+
+                        // Save in Session
+                        $this->Session->set("geoprotection", $this->objCountryInformation);
 
                         $arrReturn["value"] = "Found location in database.";
                     }
-
-                    // Set Session
-                    $this->Session->set("geoprotection", $this->arrCountryInformation);
                 }
                 catch (Exception $exc)
                 {
-                    $this->arrCountryInformation[]
+                    // Set information for geolocation
+                    $this->objCountryInformation->setCountry("");
+                    $this->objCountryInformation->setCountryShort("");
+                    $this->objCountryInformation->setIP("");
+                    $this->objCountryInformation->setIPLookup(false);
+                    $this->objCountryInformation->setFailed(true);
+                    $this->objCountryInformation->setGeolocated(false);
+                    $this->objCountryInformation->setFallback(false);
+                    $this->objCountryInformation->setError($exc->getMessage());
+                    $this->objCountryInformation->setErrorID(-1);
 
+                    // Try to load the location by IP
+                    $this->objCountryInformation = $this->doIPLookUp($this->objCountryInformation);
 
-                    // Update Session with information
-                    $this->Session->set("geoprotection", array(
-                        "country" => "",
-                        "country_short" => "",
-                        "geolocated" => false,
-                        "faild" => true,
-                        "error" => $exc->getMessage()
-                    ));
+                    // Save in Session
+                    $this->Session->set("geoprotection", $this->objCountryInformation);
 
                     // Error handling
                     $arrReturn["success"] = false;
                     $arrReturn["error"]   = $exc->getMessage();
+
                     return $arrReturn;
                 }
 
@@ -209,19 +351,51 @@ class GeoProtection extends Frontend
                         break;
                 }
 
-                $arrIPLookUp = $this->doIPLookUp();
+                // Set information for geolocation
+                $this->objCountryInformation->setCountry("");
+                $this->objCountryInformation->setCountryShort("");
+                $this->objCountryInformation->setIP("");
+                $this->objCountryInformation->setIPLookup(true);
+                $this->objCountryInformation->setFailed(true);
+                $this->objCountryInformation->setGeolocated(false);
+                $this->objCountryInformation->setFallback(false);
+                $this->objCountryInformation->setError($strError);
+                $this->objCountryInformation->setErrorID($this->Input->post("errID"));
 
-                // Update Session with information
-                $this->Session->set("geoprotection", array(
-                    "country" => $arrIPLookUp["country"],
-                    "country_short" => $arrIPLookUp["country_short"],
-                    "ip" => $arrIPLookUp["ip"],
-                    "geolocated" => false,
-                    "ip_looup" => true,
-                    "faild" => true,
-                    "error" => $strError,
-                    "error_ID" => $this->Input->post("errID")
-                ));
+                // Get Geolocation from IP
+                $this->objCountryInformation = $this->doIPLookUp($this->objCountryInformation);
+
+                // Save in Session
+                $this->Session->set("geoprotection", $this->objCountryInformation);
+
+                return array(
+                    "success" => true,
+                    "value" => "Set location by ip",
+                    "error" => ""
+                );
+
+            case "GeoProChangeLocation":
+                if (strlen($this->Input->post("location")) == 0)
+                {
+                    return array(
+                        "success" => false,
+                        "value" => "",
+                        "error" => "Missing location."
+                    );
+                }
+
+                try
+                {
+                    $this->setUserGeolocation($this->Input->post("location"));
+                }
+                catch (Exception $exc)
+                {
+                    return array(
+                        "success" => false,
+                        "value" => "",
+                        "error" => $exc->getMessage()
+                    );
+                }
 
                 return array(
                     "success" => true,
@@ -235,12 +409,17 @@ class GeoProtection extends Frontend
     }
 
     /**
-     * Make a ip lookup
      * 
-     * @return array() Keys: IP | country | country_short
+     * @param GeoProtectionContainer $objGeoLocation
+     * @return GeoProtectionContainer
      */
-    public function doIPLookUp()
+    public function doIPLookUp($objGeoLocation = null)
     {
+        if ($objGeoLocation == null)
+        {
+            $objGeoLocation = new GeoProtectionContainer();
+        }
+
         //calculate ipNum
         $arrIP = explode(".", $this->Environment->ip);
         $ipNum = 16777216 * $arrIP[0] + 65536 * $arrIP[1] + 256 * $arrIP[2] + $arrIP[3];
@@ -258,11 +437,88 @@ class GeoProtection extends Frontend
             self::$arrIPCache[$ipNum] = ($country->country_short) ? strtolower($country->country_short) : $GLOBALS['TL_CONFIG']['countryFallback'];
         }
 
-        return array(
-            "IP" => $ipNum,
-            "country" => $country->country,
-            "country_short" => $country->country_short
-        );
+        // Check if we have for this ip a land
+        if (strlen($country->country) != 0 && strlen($country->country_short) != 0)
+        {
+            $objGeoLocation->setIPLookup(true);
+            $objGeoLocation->setIP($this->Environment->ip);
+            $objGeoLocation->setCountry($country->country);
+            $objGeoLocation->setCountryShort($country->country_short);
+        }
+        // If not try to load the fallback land or set a blank country
+        else
+        {
+            // Set the default values for ip lookup
+            $objGeoLocation->setIPLookup(false);
+            $objGeoLocation->setIP($this->Environment->ip);
+
+            // Check if a fallback is define
+            if ($GLOBALS['TL_CONFIG']['gp_countryFallback'] != null && $GLOBALS['TL_CONFIG']['gp_countryFallback'] != "none")
+            {
+                // Get contrys
+                $arrCountries       = $this->getCountries();
+                $strCountryFallback = $GLOBALS['TL_CONFIG']['gp_countryFallback'];
+
+                // Set in container file
+                $objGeoLocation->setCountry($arrCountries[$strCountryFallback]);
+                $objGeoLocation->setCountryShort($strCountryFallback);
+                $objGeoLocation->setFallback(true);
+            }
+            else
+            {
+                // Set empty country settings
+                $objGeoLocation->setCountry($country->country);
+                $objGeoLocation->setCountryShort($country->country_short);
+            }
+        }
+
+        return $objGeoLocation;
+    }
+
+    /**
+     * Set in Header settings for geoProtection 
+     * 
+     * @param string $strContent
+     * @param string $strTemplate
+     * @return Stirng 
+     */
+    public function insertJSVars($strContent, $strTemplate)
+    {
+        if ($strTemplate == "fe_page")
+        {
+            // Load language
+            $this->loadLanguageFile("geoProtection");
+
+            if(!is_array($GLOBALS['TL_LANG']['geoProtection']['js']))
+            {
+                $GLOBALS['TL_LANG']['geoProtection']['js'] = array();
+            }            
+
+            $arrDurations = deserialize($GLOBALS['TL_CONFIG']['gp_cookieDuration']);
+
+            $strJS = "";
+            $strJS .= "<script>";
+            $strJS .= "\n";
+            $strJS .= "var gp_cookieEnabeld = " . (($GLOBALS['TL_CONFIG']['gp_activateCookies'] == true) ? "true" : "false");
+            $strJS .= "\n";
+            $strJS .= "var gp_cookieDurationW3C = " . (($GLOBALS['TL_CONFIG']['gp_activateCookies'] == true && is_numeric($arrDurations[0])) ? $arrDurations[0] : "0");
+            $strJS .= "\n";
+            $strJS .= "var gp_cookieDurationUser = " . (($GLOBALS['TL_CONFIG']['gp_activateCookies'] == true && is_numeric($arrDurations[1])) ? $arrDurations[1] : "0");
+            $strJS .= "\n";
+            
+            foreach ($GLOBALS['TL_LANG']['geoProtection']['js'] as $key => $value)
+            {
+                $strJS .= "var $key = '$value'";
+                $strJS .= "\n";
+            }
+
+            $strJS .= "</script>";
+            $strJS .= "\n";
+
+            $strContent = preg_replace("^<script ^", "$strJS$0", $strContent, 1);
+        }
+
+        return $strContent;
     }
 
     /**

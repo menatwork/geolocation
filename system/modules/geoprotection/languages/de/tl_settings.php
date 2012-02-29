@@ -35,13 +35,16 @@ $GLOBALS['TL_LANG']['tl_settings']['gp_protection_legend'] = 'Geo Protection Glo
 /**
  * Fields
  */
- 
-$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'] = array('Benutzerdefinierte IP-Adressen verwenden','Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
-
+// IP Override
 $GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps_headline'] = array('Benutzerdefinierte IP-Adressen','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
 $GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps'] = array('IP-Adressen','');
 $GLOBALS['TL_LANG']['tl_settings']['gp_countryFallback'] = array('Länder-Fallback','Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
+$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'] = array('Benutzerdefinierte IP-Adressen verwenden','Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
+
+// Country Fallback
+$GLOBALS['TL_LANG']['tl_settings']['gp_activateCountryFallback'] = array('Benutzerdefiniertes Länder-Fallback', 'Wählen Sie hier das Fallback-Land.');
 $GLOBALS['TL_LANG']['tl_settings']['gp_customCountryFallback'] = array('Benutzerdefiniertes Länder-Fallback','Wählen Sie hier das Fallback-Land, das für die benutzerdefinierten IP-Adresse gelten soll.');
-$GLOBALS['TL_LANG']['tl_settings']['gp_allCountries'] = 'Alle Länder';
-$GLOBALS['TL_LANG']['tl_settings']['gp_mode'] = array('Sichtbarkeit','Bitte wählen Sie ob das Inhaltselement angezeigt oder versteckt werden soll.');
-$GLOBALS['TL_LANG']['tl_settings']['gp_countries'] = array('Länder','Bitte wählen Sie ein oder mehrere Länder aus.');
+
+// Cookies
+$GLOBALS['TL_LANG']['tl_settings']['gp_activateCookies'] = array("Cookies aktivieren.", "Wählen Sie diese Option wenn die Geo Informationen in Cookies gespeichert werden sollen.");
+$GLOBALS['TL_LANG']['tl_settings']['gp_cookieDuration'] = array("Cookie Lebenszeit", "Hier können Sie die Lebenszeit der Cookies setzten. Links für Cookies die per W3C Gelocation ermittelt wurden. Rechts für die Einstellung die der Benutzer getroffen hat.");

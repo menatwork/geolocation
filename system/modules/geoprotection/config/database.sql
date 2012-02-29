@@ -8,18 +8,6 @@
 -- ********************************************************
 
 -- 
--- Table `tl_news`
--- 
-
-CREATE TABLE `tl_content` (
-  `gp_protected` char(1) NOT NULL default '',
-  `gp_protected_overwrite` char(1) NOT NULL default '',
-  `gp_mode` varchar(7) NOT NULL default '',
-  `gp_countries` blob NULL,
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
--- 
 -- Table `tl_geodata`
 -- 
 
@@ -51,3 +39,13 @@ CREATE TABLE `tl_geodatacache` (
   KEY `lat` (`lat`),
   KEY `lon` (`lon`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- 
+-- Table `tl_modules`
+-- 
+
+CREATE TABLE `tl_module` (
+  `gpTemplate` varchar(255) NOT NULL default '', 
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
