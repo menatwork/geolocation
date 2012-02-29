@@ -1,4 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
+
+if (!defined('TL_ROOT'))
+    die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -26,10 +29,23 @@
  * @license    GNU/LGPL
  * @filesource
  */
-
-
-$GLOBALS['TL_DCA']['tl_module']['palettes']['geoProtectionInformation'] = '{title_legend},name,type;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['geoProtection'] = '{title_legend},name,type;{template_legend:hide},gpTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['gpTemplate'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['gpTemplate'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => array('gp_tl_module', 'getTemplates'),
+    'eval' => array('mandatory' => true)
+);
+
+class gp_tl_module extends Backend
+{
+    public function getTemplates()
+    {
+        return $this->getTemplateGroup('mod_geoprotection');
+    }
+}
 ?>
