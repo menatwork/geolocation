@@ -1,7 +1,8 @@
 /**
- * Class GeoProptection
+ * Class GeoProtection Core
  *
  * Provide methods for GeoProtection.
+ * 
  * @copyright  MEN AT WORK 2011-2012
  * @package    GeoProtection
  */
@@ -21,7 +22,9 @@ var GeoProtection = new Class({
         denyGeoLocation: false,
         loadByCookie: false,
         lat: 0,
-        lon: 0        
+        lon: 0,
+        country: "",
+        countryShort: ""
     },
     // Initialize function -----------------------------------------------------
     initialize: function(options){
@@ -38,7 +41,7 @@ var GeoProtection = new Class({
     },
     setCookieLifetime: function(lifetime)
     {
-        this.options.cookieLifetime = lifetime;
+        this.options.cookieLifeTime = lifetime;
     },    
     // Run ---------------------------------------------------------------------
     run: function ()
@@ -73,7 +76,9 @@ var GeoProtection = new Class({
         this.vars.cookie = JSON.decode(this.vars.cookie);
         
         this.vars.lon = this.vars.cookie.lon;
-        this.vars.lat = this.vars.cookie.lat;        
+        this.vars.lat = this.vars.cookie.lat;      
+        this.vars.country = this.vars.cookie.country;
+        this.vars.countryShort = this.vars.cookie.countryShort;
         this.vars.loadByCookie = true;        
     },    
     updateCookie: function()
@@ -86,7 +91,9 @@ var GeoProtection = new Class({
         
         var cookieValues = {
             lat: this.vars.lat, 
-            lon: this.vars.lon
+            lon: this.vars.lon,
+            country: this.vars.country,
+            countryShort: this.vars.countryShort
         };
         
         var cookieOption = {
@@ -109,6 +116,8 @@ var GeoProtection = new Class({
     // Get information ---------------------------------------------------------
     runGeolocation: function()
     {
+        this.onProgress();
+        
         if(this.vars.loadByCookie)
         {
             if(this.options.debug == true) console.log("Get location by cookie");
@@ -116,6 +125,7 @@ var GeoProtection = new Class({
             this.updatePosition();
         }       
         else if (navigator.geolocation) {
+            
             navigator.geolocation.getCurrentPosition(
                 function(position)
                 {
@@ -140,6 +150,7 @@ var GeoProtection = new Class({
     },    
     updateError: function(errorID)
     {        
+        // Debug Information
         if(this.options.debug == true)
         {
             console.log("Start error updating");
@@ -171,47 +182,66 @@ var GeoProtection = new Class({
             evalScripts:false,
             evalResponse:false,
             onSuccess:function(json,responseElements){   
+                // Update Request Token
+                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                {
+                    REQUEST_TOKEN = json.token;
+                }
+                
+                // Debug Information
                 if(this.options.debug == true)
                 {
                     console.log("Success");
                     console.log(responseElements);
                 }
                 
-                this.onFailure();
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(errorID);
             }.bind(this),
             onFailure:function(json,responseElements){                               
+                // Debug Information
                 if(this.options.debug == true)
                 {
                     console.log("Error by Json Request");
                     console.log(responseElements);
                 }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20);
             }.bind(this)
         }).send();
     },
     updatePosition: function()
     {
+        // Debug Information
         if(this.options.debug == true)
         {
             console.log("Start location updating");
             console.log(this.vars);
         }
-        
+                
         // Check if the request token is set
         if( typeof(REQUEST_TOKEN) !== 'undefined' )
         {
             data = {
-                "action"    : "GeoProSetLocation",
-                "lat"  : this.vars.lat,
-                "lon"  : this.vars.lon,
+                "action"        : "GeoProSetLocation",
+                "lat"           : this.vars.lat,
+                "lon"           : this.vars.lon,
+                "country"       : this.vars.country,
+                "countryShort"  : this.vars.countryShort,
                 "REQUEST_TOKEN" : REQUEST_TOKEN
             }
         }
         else
         {
             data = {
-                "action"    : "GeoProSetLocation",
-                "lat"  : this.vars.lat,
-                "lon"  : this.vars.lon
+                "action"        : "GeoProSetLocation",
+                "lat"           : this.vars.lat,
+                "lon"           : this.vars.lon,
+                "country"       : this.vars.country,
+                "countryShort"  : this.vars.countryShort
             }
         }
                  
@@ -223,43 +253,102 @@ var GeoProtection = new Class({
             evalScripts:false,
             evalResponse:false,
             onSuccess:function(json,responseElements){                    
+                // Update Request Token
+                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                {
+                    REQUEST_TOKEN = json.token;
+                }
+                
+                // Check if server send success
                 if(json.content.success == true)
                 {
-                    this.updateCookie();     
+                    // Update Cookie
+                    this.updateCookie();    
+                    
+                    // To the onSuccess method
+                    this.afterProgress();
                     this.onSuccess();
                 }
-                else if(json.success != true)
+                else
                 {
-                    this.removeCookie(); 
+                    // Remove Cookie
+                    this.removeCookie();
+                    
+                    // Show Debug information
                     if(this.options.debug == true)
                     {
                         console.log("Error by server");
                         console.log(responseElements);
                     }
+                    
+                    this.afterProgress();
                 }
-            }.bind(this),
+                
+            }.bind(this),            
             onFailure:function(json,responseElements){
+                // Remove cookie
                 this.removeCookie(); 
                 
+                //Show debug
                 if(this.options.debug == true)
                 {
                     console.log("Error by Json Request");
                     console.log(responseElements);
                 }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20)
             }.bind(this)
         }).send();
-    }, 
+    },
+    // Helper Functions --------------------------------------------------------
+    onProgress: function()
+    {        
+        $("geoLocationInformation").set("html", gp_msc_Start);
+    },
+    afterProgress: function()
+    {
+        $("geoLocationInformation").set("html", gp_msc_Finished);
+    },
     onSuccess: function()
     {
         window.location.reload();
     },    
-    onFailure: function()
+    onFailure: function(errorID)
     {
-        
+        switch (errorID) {            
+            case 1: // Premission Denied
+                $("geoLocationInformation").set("text", gp_err_PremissionDenied);
+                break;
+            case 2: // Position unavailable
+                $("geoLocationInformation").set("text", gp_err_PositionUnavailable);
+                break;
+            case 3: // Time out
+                $("geoLocationInformation").set("text", gp_err_TimeOut);
+                break;
+            case 10: // Unsupported Browser
+                $("geoLocationInformation").set("text", gp_err_UnsupportedBrowser);
+                break;
+            case 20: // Connection problems for AJAX
+                $("geoLocationInformation").set("text", gp_err_NoConnection);
+                break;
+            default: // Unknown Error
+                $("geoLocationInformation").set("text", gp_err_UnknownError);
+                break;
+        }
     }
 });
 
 var RunGeoProtection = new GeoProtection();
-//RunGeoProtection.setDebug(true);
-RunGeoProtection.setCookie(true);
-RunGeoProtection.run();
+
+RunGeoProtection.setDebug(true);
+RunGeoProtection.setCookie(gp_cookieEnabeld);
+RunGeoProtection.setCookieLifetime(gp_cookieDurationW3C);
+
+window.addEvent('domready', function(){
+    RunGeoProtection.run(); 	
+});
+
+
+
