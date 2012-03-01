@@ -27,4 +27,4 @@
  * @filesource
  */
 
-$GLOBALS['TL_LANG']['FMD']['geoProtection'] = array('GeoProtection Informationsleiste', '');
+$GLOBALS['TL_LANG']['FMD']['geolocation'] = array('Geolocation Informationsleiste', '');

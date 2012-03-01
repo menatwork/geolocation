@@ -31,4 +31,4 @@
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_module']['gpTemplate'] = array('Templates', 'Hier können Sie das Template auswählen.');
+$GLOBALS['TL_LANG']['tl_module']['geoTemplate'] = array('Templates', 'Hier können Sie das Template auswählen.');
