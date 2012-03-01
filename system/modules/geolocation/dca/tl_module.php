@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -25,27 +22,35 @@ if (!defined('TL_ROOT'))
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @package    GeoLocation
  * @license    GNU/LGPL
  * @filesource
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['geoProtection'] = '{title_legend},name,type;{template_legend:hide},gpTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
+/**
+ * Palettes 
+ */
+$GLOBALS['TL_DCA']['tl_module']['palettes']['geolocation'] = '{title_legend},name,type;{template_legend:hide},geoTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
-
-$GLOBALS['TL_DCA']['tl_module']['fields']['gpTemplate'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['gpTemplate'],
+/**
+ * Fields 
+ */
+$GLOBALS['TL_DCA']['tl_module']['fields']['geoTemplate'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['geoTemplate'],
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => array('gp_tl_module', 'getTemplates'),
+    'options_callback' => array('geo_tl_module', 'getTemplates'),
     'eval' => array('mandatory' => true)
 );
 
-class gp_tl_module extends Backend
+/**
+ * Geolocation tl_module 
+ */
+class geo_tl_module extends Backend
 {
     public function getTemplates()
     {
-        return $this->getTemplateGroup('mod_geoprotection');
+        return $this->getTemplateGroup('mod_geo_');
     }
 }
 ?>

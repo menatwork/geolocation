@@ -22,34 +22,35 @@
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @package    Geolocation / Config
  * @license    GNU/LGPL
  * @filesource
  */
+
 /**
  * Register hook 
  */
-$GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('GeoProtection', 'dispatchAjax');
-$GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('GeoProtection', 'insertJSVars');
+$GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('Geolocation', 'dispatchAjax');
+$GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
 
 /**
  * Set JS/Hook for geolocation 
  */
 if (TL_MODE == 'FE')
 {
-    // Load GeoProtection for geolocation information
-    $objGeoLocation = GeoProtection::getInstance()->getUseGeoLocation();
+    // Load GeoLocation for geolocation information
+    $objGeoPosition = Geolocation::getInstance()->getUseGeolocation();
 
-    // Include css for W3C Geolocation when no user chaneg, W3C geolocation, ip lookup or fallback was done. 
-    if ((!$objGeoLocation->isChangeByUser() && !$objGeoLocation->isGeolocated() && !$objGeoLocation->isIPLookup() && !$objGeoLocation->isFallback()))
+    // Include css for W3C Geolocation when no user cahnge, W3C geolocation, ip lookup or fallback was done. 
+    if ((!$objGeoPosition->isChangeByUser() && !$objGeoPosition->isGeolocated() && !$objGeoPosition->isIPLookup() && !$objGeoPosition->isFallback()))
     {
         // Insert JS
-        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoCore.js";
+        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/GeoCore.js";
     }
 }
 
 /**
  * Add fe mod
  */
-$GLOBALS['FE_MOD']['miscellaneous']['geoProtection'] = 'ModuleGeoProtection';
+$GLOBALS['FE_MOD']['miscellaneous']['geolocation'] = 'ModuleGeolocation';
 ?>

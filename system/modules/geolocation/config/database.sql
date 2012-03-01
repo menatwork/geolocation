@@ -32,12 +32,14 @@ CREATE TABLE `tl_geodatacache` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `lat` varchar(8) NOT NULL default '0',
   `lon` varchar(8) NOT NULL default '0',
+  `ipnum` int(10) unsigned NOT NULL default '0',
   `create_on` int(10) unsigned NOT NULL default '0',
   `country_short` varchar(2) NOT NULL default '',
   `country` varchar(100) NOT NULL default '',   
   PRIMARY KEY  (`id`),
   KEY `lat` (`lat`),
-  KEY `lon` (`lon`)
+  KEY `lon` (`lon`),
+  KEY `ipnum` (`ipnum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
@@ -45,7 +47,7 @@ CREATE TABLE `tl_geodatacache` (
 -- 
 
 CREATE TABLE `tl_module` (
-  `gpTemplate` varchar(255) NOT NULL default '', 
+  `geoTemplate` varchar(255) NOT NULL default '', 
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

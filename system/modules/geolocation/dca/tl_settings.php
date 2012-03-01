@@ -22,67 +22,71 @@
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2011
- * @package    GeoProtection
+ * @package    GeoLocation
  * @license    GNU/LGPL
  * @filesource
  */
+/**
+ * Selector
+ */
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'geo_customOverridegeo';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'geo_activateCookies';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'geo_activateCountryFallback';
 
-// extend selector
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_customOverrideGp';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_activateCookies';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'gp_activateCountryFallback';
-
-// extend subpalettes
-$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_customOverrideGp'] = 'gp_overrideIps,gp_customCountryFallback';
-$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_activateCookies'] = 'gp_cookieDuration';
-$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['gp_activateCountryFallback'] = 'gp_countryFallback';
+/**
+ * Subpalettes
+ */
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['geo_customOverridegeo']       = 'geo_overrideIps,geo_customCountryFallback';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['geo_activateCookies']         = 'geo_cookieDuration';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['geo_activateCountryFallback'] = 'geo_countryFallback';
 
 /**
  * Add to palette
  */
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{gp_protection_legend},gp_activateCookies,gp_activateCountryFallback,gp_customOverrideGp';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{geo_protection_legend},geo_lookUpSettingsIP,geo_lookUpSettingsGeo,geo_activateCookies,geo_activateCountryFallback,geo_customOverridegeo';
 
 /**
  * Add field
  */
 // Cookies 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_activateCookies'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_activateCookies'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_activateCookies'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_activateCookies'],
     'inputType' => 'checkbox',
     'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_cookieDuration'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_cookieDuration'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_cookieDuration'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration'],
     'exclude' => true,
     'inputType' => 'text',
     'eval' => array('rgxp' => 'digit', 'multiple' => true, 'size' => 2, 'mandatory' => true)
 );
 
 // CountryFallback
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_activateCountryFallback'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_activateCountryFallback'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_activateCountryFallback'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_activateCountryFallback'],
     'inputType' => 'checkbox',
     'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customCountryFallback'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customCountryFallback'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_countryFallback'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_countryFallback'],
     'exclude' => true,
     'inputType' => 'select',
     'options' => $this->getCountries(),
+    'default' => 'de',
     'eval' => array('multiple' => false, 'mandatory' => true)
 );
 
 // IP Override
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_customOverrideGp'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_customOverrideGp'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_customOverridegeo'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_customOverridegeo'],
     'inputType' => 'checkbox',
     'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_overrideIps'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps_headline'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_overrideIps'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps_headline'],
     'inputType' => 'multiColumnWizard',
     'exclude' => true,
     'eval' => array
@@ -90,7 +94,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['gp_overrideIps'] = array(
         'style' => 'width:100%;',
         'columnFields' => array(
             'ipAddress' => array(
-                'label' => $GLOBALS['TL_LANG']['tl_settings']['gp_overrideIps'],
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps'],
                 'inputType' => 'text',
                 'eval' => array('style' => 'width:600px', 'nospace' => true),
             )
@@ -98,13 +102,106 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['gp_overrideIps'] = array(
     )
 );
 
-$GLOBALS['TL_DCA']['tl_settings']['fields']['gp_countryFallback'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_settings']['gp_countryFallback'],
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_customCountryFallback'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_customCountryFallback'],
     'exclude' => true,
     'inputType' => 'select',
-    'options' => array_merge(array("none" => &$GLOBALS['TL_LANG']['tl_settings']['gp_noneCountry']), $this->getCountries()),
-    'default' => 'de',
-    'eval' => array('multiple' => false, 'mandatory' => true)
+    'options' => $this->getCountries(),
+    'eval' => array('multiple' => false, 'mandatory' => true, 'includeBlankOption' => false)
 );
+
+// Lookup Settings
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_lookUpSettingsIP'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_lookUpSettingsIP'],
+    'inputType' => 'multiColumnWizard',
+    'exclude' => true,
+    'eval' => array
+        (
+        'style' => 'width:100%;',
+        'columnFields' => array(
+            'lookUpConfig' => array(
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['lookUpConfig'],
+                'inputType' => 'text',
+                'eval' => array('style' => 'width:300px'),
+            ),
+            'lookUpClass' => array(
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['lookUpClass'],
+                'inputType' => 'select',
+                'eval' => array('style' => 'width:300px'),
+                'options_callback' => array('geo_tl_settings', 'getLookUpServicesIP')
+            )
+        )
+    )
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_lookUpSettingsGeo'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_lookUpSettingsGeo'],
+    'inputType' => 'multiColumnWizard',
+    'exclude' => true,
+    'eval' => array
+        (
+        'style' => 'width:100%;',
+        'columnFields' => array(
+            'lookUpConfig' => array(
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['lookUpConfig'],
+                'inputType' => 'text',
+                'eval' => array('style' => 'width:300px'),
+            ),
+            'lookUpClass' => array(
+                'label' => $GLOBALS['TL_LANG']['tl_settings']['lookUpClass'],
+                'inputType' => 'select',
+                'eval' => array('style' => 'width:300px'),
+                'options_callback' => array('geo_tl_settings', 'getLookUpServicesGeo')
+            )
+        )
+    )
+);
+
+
+class geo_tl_settings extends Backend
+{
+
+    public function getLookUpServicesIP()
+    {
+        $arrReturn = array();
+        $arrFile = scan(TL_ROOT . "/system/modules/geolocation");
+
+        foreach ($arrFile as $value)
+        {
+            if (preg_match("/GeoLookUp.*\.php/", $value) && !preg_match("/.*(Factory|Interface).*/", $value))
+            {
+                $objService = GeoLookUpFactory::getEngine($value);
+                
+                if($objService->getType() == 1 || $objService->getType() == 3)
+                {
+                    $arrReturn[$value] = $objService->getName();
+                }
+            }
+        }
+
+        return $arrReturn;
+    }
+    
+    public function getLookUpServicesGeo()
+    {
+        $arrReturn = array();
+        $arrFile = scan(TL_ROOT . "/system/modules/geolocation");
+        
+        foreach ($arrFile as $value)
+        {
+            if(preg_match("/GeoLookUp.*\.php/", $value) && !preg_match("/.*(Factory|Interface).*/", $value))
+            {
+                $objService = GeoLookUpFactory::getEngine($value);
+                
+                if($objService->getType() == 2 || $objService->getType() == 3)
+                {
+                    $arrReturn[$value] = $objService->getName();
+                }
+            }
+        }
+        
+        return $arrReturn;
+    }
+}
 
 ?>
