@@ -29,18 +29,18 @@ if (!defined('TL_ROOT'))
  * @license    GNU/LGPL
  * @filesource
  */
-class ModuleGeoProtection extends Module
+class ModuleGeolocation extends Module
 {
 
     /**
      * Template
      * @var string
      */
-    protected $strTemplate = 'mod_geopro_default';
+    protected $strTemplate = 'mod_geobasis';
 
     /**
      * GeoProtection Object
-     * @var GeoProtection 
+     * @var GeoLocation 
      */
     protected $objGeoProtection;
 
@@ -50,9 +50,9 @@ class ModuleGeoProtection extends Module
 
         if (TL_MODE == 'FE')
         {
-            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/choosen/chosen.min.js";
-            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geoprotection/html/js/GeoProtection.js";
-            $GLOBALS['TL_CSS'][]        = "system/modules/geoprotection/html/js/choosen/chosen.css";
+            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/choosen/chosen.min.js";
+            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/Geolocation.js";
+            $GLOBALS['TL_CSS'][]        = "system/modules/geolocation/html/js/choosen/chosen.css";
         }
 
         return parent::generate();
@@ -61,11 +61,11 @@ class ModuleGeoProtection extends Module
     protected function compile()
     {
         // load current GeoProteaction instance
-        $this->objGeoProtection = GeoProtection::getInstance();
+        $this->objGeoProtection = Geolocation::getInstance();
         // Create new Template
-        $objTemplate = new FrontendTemplate($this->gpTemplate);
+        $objTemplate = new FrontendTemplate($this->geoTemplate);
         // Add Location obeject        
-        $objTemplate->GeoLocation = $this->objGeoProtection->getUseGeoLocation();
+        $objTemplate->GeoLocation = $this->objGeoProtection->getUseGeolocation();
         // Output on main template
         $this->Template->content = $objTemplate->parse();
     }

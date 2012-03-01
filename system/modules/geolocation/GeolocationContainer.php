@@ -28,13 +28,13 @@
  */
 
 /**
- * Class GeoProtectionContainer
+ * Class GeolocationContainer
  *
  * Container class for geolocation information
  * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @package    Geolocation
  */
-class GeoProtectionContainer
+class GeolocationContainer
 {
 
     protected $strCountry;
@@ -181,7 +181,6 @@ class GeoProtectionContainer
     {
         $this->booFallback = $booFallback;
     }
-
 }
 
 ?>
