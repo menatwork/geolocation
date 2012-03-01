@@ -2,7 +2,7 @@
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2011 Leo Feyer
+ * Copyright (C) 2005-2010 Leo Feyer
  *
  * Formerly known as TYPOlight Open Source CMS.
  *
@@ -10,36 +10,57 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program. If not, please visit the Free
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geoprotection
  * @license    GNU/LGPL
  * @filesource
  */
 
 /**
- * Class GeoProLookUpInterface
- *
- * Provide methods for decoding msg from look up services.
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * Factory for create the codifyengine
  */
-interface GeoProLookUpInterface
+class GeoLookUpFactory extends Backend
 {
+
     /**
-     * return String shortTag of location
+     * Create the codifyengine.
+     * 
+     * @return GeoLookUpResolveInterface 
      */
-    public function getLocation($strMsg);
+    public static function getEngine($strEngine)
+    {
+        // Check if engine exists in filesystem
+        if (!file_exists(TL_ROOT . "/system/modules/geolocation/$strEngine"))
+        {
+            throw new Exception("Unknown 'LookUp' class: $strEngine");
+        }
+        
+        $strEngine = preg_replace("/\.php/", "", $strEngine);
+                
+        // Get a new class
+        $objEnginge = new $strEngine();
+        
+        // Get engine
+        if ($objEnginge instanceof GeoLookUpInterface)
+        {
+            return $objEnginge;
+        }
+        else
+        {
+            throw new Exception("$strEngine is not fro typ");
+        }
+    }
 }
 
 ?>
