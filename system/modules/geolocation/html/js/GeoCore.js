@@ -1,12 +1,12 @@
 /**
- * Class GeoProtection Core
+ * Class Geolocation Core
  *
- * Provide methods for GeoProtection.
+ * Provide methods for Geolocation.
  * 
  * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @package    geolocation
  */
-var GeoProtection = new Class({
+var Geolocation = new Class({
     // Implements --------------------------------------------------------------
     Implements: Options,    
     // Option set --------------------------------------------------------------
@@ -161,7 +161,7 @@ var GeoProtection = new Class({
         if( typeof(REQUEST_TOKEN) !== 'undefined' )
         {
             data = {
-                "action"        : "GeoProSetError",
+                "action"        : "GeoSetError",
                 "errID"         : errorID,
                 "REQUEST_TOKEN" : REQUEST_TOKEN
             }
@@ -169,7 +169,7 @@ var GeoProtection = new Class({
         else
         {
             data = {
-                "action"        : "GeoProSetError",
+                "action"        : "GeoSetError",
                 "errID"         : errorID
             }
         }
@@ -199,6 +199,19 @@ var GeoProtection = new Class({
                 this.afterProgress();
                 this.onFailure(errorID);
             }.bind(this),
+            onError:function(text, error)
+            {
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("Error by Json Request");
+                    console.log(error);
+                }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20);
+            }.bind(this),
             onFailure:function(json,responseElements){                               
                 // Debug Information
                 if(this.options.debug == true)
@@ -226,7 +239,7 @@ var GeoProtection = new Class({
         if( typeof(REQUEST_TOKEN) !== 'undefined' )
         {
             data = {
-                "action"        : "GeoProSetLocation",
+                "action"        : "GeoSetLocation",
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
                 "country"       : this.vars.country,
@@ -237,7 +250,7 @@ var GeoProtection = new Class({
         else
         {
             data = {
-                "action"        : "GeoProSetLocation",
+                "action"        : "GeoSetLocation",
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
                 "country"       : this.vars.country,
@@ -284,7 +297,20 @@ var GeoProtection = new Class({
                     this.afterProgress();
                 }
                 
-            }.bind(this),            
+            }.bind(this),   
+            onError:function(text, error)
+            {
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("Error by Json Request");
+                    console.log(error);
+                }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20);
+            }.bind(this),
             onFailure:function(json,responseElements){
                 // Remove cookie
                 this.removeCookie(); 
@@ -305,11 +331,11 @@ var GeoProtection = new Class({
     // Helper Functions --------------------------------------------------------
     onProgress: function()
     {        
-        $("geoLocationInformation").set("html", gp_msc_Start);
+        $("geoLocationInformation").set("html", geo_msc_Start);
     },
     afterProgress: function()
     {
-        $("geoLocationInformation").set("html", gp_msc_Finished);
+        $("geoLocationInformation").set("html", geo_msc_Finished);
     },
     onSuccess: function()
     {
@@ -319,35 +345,35 @@ var GeoProtection = new Class({
     {
         switch (errorID) {            
             case 1: // Premission Denied
-                $("geoLocationInformation").set("text", gp_err_PremissionDenied);
+                $("geoLocationInformation").set("text", geo_err_PremissionDenied);
                 break;
             case 2: // Position unavailable
-                $("geoLocationInformation").set("text", gp_err_PositionUnavailable);
+                $("geoLocationInformation").set("text", geo_err_PositionUnavailable);
                 break;
             case 3: // Time out
-                $("geoLocationInformation").set("text", gp_err_TimeOut);
+                $("geoLocationInformation").set("text", geo_err_TimeOut);
                 break;
             case 10: // Unsupported Browser
-                $("geoLocationInformation").set("text", gp_err_UnsupportedBrowser);
+                $("geoLocationInformation").set("text", geo_err_UnsupportedBrowser);
                 break;
             case 20: // Connection problems for AJAX
-                $("geoLocationInformation").set("text", gp_err_NoConnection);
+                $("geoLocationInformation").set("text", geo_err_NoConnection);
                 break;
             default: // Unknown Error
-                $("geoLocationInformation").set("text", gp_err_UnknownError);
+                $("geoLocationInformation").set("text", geo_err_UnknownError);
                 break;
         }
     }
 });
 
-var RunGeoProtection = new GeoProtection();
+var RunGeolocation = new Geolocation();
 
-RunGeoProtection.setDebug(true);
-RunGeoProtection.setCookie(gp_cookieEnabeld);
-RunGeoProtection.setCookieLifetime(gp_cookieDurationW3C);
+RunGeolocation.setDebug(true);
+RunGeolocation.setCookie(geo_cookieEnabeld);
+RunGeolocation.setCookieLifetime(geo_cookieDurationW3C);
 
 window.addEvent('domready', function(){
-    RunGeoProtection.run(); 	
+    RunGeolocation.run(); 	
 });
 
 

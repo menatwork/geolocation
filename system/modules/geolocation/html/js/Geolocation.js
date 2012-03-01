@@ -18,7 +18,7 @@ window.addEvent('domready', function(){
 /**
 * Change the location by user settings
 */
-function GeoProtectionChangeLocation()
+function GeoChangeLocation()
 {
     var value = $("changeGeoLocation").getSelected().get("text")[0];
     var valueShort = $("changeGeoLocation").getSelected().get("value")[0];        
@@ -27,7 +27,7 @@ function GeoProtectionChangeLocation()
     if( typeof(REQUEST_TOKEN) !== 'undefined' )
     {
         data = {
-            "action"        : "GeoProChangeLocation",
+            "action"        : "GeoChangeLocation",
             "location"      : valueShort,
             "REQUEST_TOKEN" : REQUEST_TOKEN
         }
@@ -35,13 +35,13 @@ function GeoProtectionChangeLocation()
     else
     {
         data = {
-            "action"        : "GeoProChangeLocation",
+            "action"        : "GeoChangeLocation",
             "location"      : valueShort
         }
     }
      
     // Start Progress
-    $("geoLocationInformation").set("html", gp_msc_Changing);
+    $("geoLocationInformation").set("html", geo_msc_Changing);
                  
     // Send new request
     new Request.JSON({
@@ -60,7 +60,7 @@ function GeoProtectionChangeLocation()
             if(json.content.success == true)
             {
                 // Update Cookie
-                if(gp_cookieEnabeld == true)
+                if(geo_cookieEnabeld == true)
                 {               
                     var cookieValues = {
                         lat: "", 
@@ -70,7 +70,7 @@ function GeoProtectionChangeLocation()
                     };
         
                     var cookieOption = {
-                        duration: gp_cookieDurationUser 
+                        duration: geo_cookieDurationUser 
                     }
                 
                     Cookie.write('GeoProtectionUser', JSON.encode(cookieValues), cookieOption);
@@ -85,7 +85,7 @@ function GeoProtectionChangeLocation()
             }             
         }.bind(this),
         onFailure:function(json,responseElements){                               
-            $("geoLocationInformation").set("html", gp_err_NoConnection);
+            $("geoLocationInformation").set("html", geo_err_NoConnection);
         }.bind(this)
     }).send();
 }
