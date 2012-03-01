@@ -43,7 +43,7 @@
                     <option value="<?php echo $key; ?>"<?php if ($key == $this->GeoLocation->getCountryShort()) echo ' selected="selected"'; ?>> <?php echo $value; ?> </option>
                 <?php endforeach; ?>
             </select>
-            <input type="button" value="Senden" name="changeLand" onclick="GeoProtectionChangeLocation();" />
+            <input type="button" value="Senden" name="changeLand" onclick="GeoChangeLocation();" />
             <span id="geoLocationInformation" style="padding:25px 0; float:right;"> Status information geo location </span>
         </div>
     <?php endif; ?>        
