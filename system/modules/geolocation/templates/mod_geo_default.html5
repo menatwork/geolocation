@@ -1,51 +1,56 @@
-<div>
-    <?php // Show information when no location was done. ?>
-    <?php if (!$this->GeoLocation->isChangeByUser() && !$this->GeoLocation->isGeolocated() && !$this->GeoLocation->isIPLookup() && !$this->GeoLocation->isFallback()): ?>
-        <span style="float:left;">Wir versuchen sie zu tracken. Stand still couse it`s my will.</span>
-        <span id="geoLocationInformation" style="float:right;"> Status information geo location </span>
-    <?php elseif ($this->GeoLocation->isGeolocated()): // W3C Geolocation success?>
-        Mode: W3C
-        <br />
-        Country long: <?php echo $this->GeoLocation->getCountry(); ?>
-        <br />
-        Country short: <?php echo $this->GeoLocation->getCountryShort(); ?>
-    <?php elseif ($this->GeoLocation->isIPLookup()): // IP Look up success?>
-        Mode: IP
-        <br />
-        Country long: <?php echo $this->GeoLocation->getCountry(); ?>
-        <br />
-        Country short: <?php echo $this->GeoLocation->getCountryShort(); ?>
-    <?php elseif ($this->GeoLocation->isFallback()): // Fallback or Override ?>
-        Mode: Fallback / Override
-        <br />
-        Country long: <?php echo $this->GeoLocation->getCountry(); ?>
-        <br />
-        Country short: <?php echo $this->GeoLocation->getCountryShort(); ?>
-    <?php elseif ($this->GeoLocation->isChangeByUser()): ?>
-        Mode: User change
-        <br />
-        Country long: <?php echo $this->GeoLocation->getCountry(); ?>
-        <br />
-        Country short: <?php echo $this->GeoLocation->getCountryShort(); ?>
-    <?php endif; ?>         
-    <?php if ($this->GeoLocation->isFailed()): // If we have a failer for geolocation?>
-        <br>
-        Error by getting Geolocation by W3C or IP.
-        <br />
-        Error ID: <?php echo $this->GeoLocation->getErrorID(); ?>
-        <br />
-        Error MSG: <?php echo $this->GeoLocation->getError(); ?>
-    <?php endif; ?>  
-    <?php if ($this->GeoLocation->isChangeByUser() || $this->GeoLocation->isGeolocated() || $this->GeoLocation->isIPLookup() || $this->GeoLocation->isFallback()): ?>
-        <div style="padding:25px 0; color:black;" >
-            <select id="changeGeoLocation" >
-                <?php foreach ($this->getCountries() as $key => $value) : ?>
-                    <option value="<?php echo $key; ?>"<?php if ($key == $this->GeoLocation->getCountryShort()) echo ' selected="selected"'; ?>> <?php echo $value; ?> </option>
-                <?php endforeach; ?>
-            </select>
-            <input type="button" value="Senden" name="changeLand" onclick="GeoChangeLocation();" />
-            <span id="geoLocationInformation" style="padding:25px 0; float:right;"> Status information geo location </span>
-        </div>
-    <?php endif; ?>        
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+
+    <div>
+        <?php // Show information when no location was done. ?>
+        <?php if (!$this->UserGeolocation->isChangeByUser() && !$this->UserGeolocation->isGeolocated() && !$this->UserGeolocation->isIPLookup() && !$this->UserGeolocation->isFallback()): ?>
+            <span style="float:left;">Wir versuchen sie zu tracken. Stand still couse it`s my will.</span>
+            <span id="geoLocationInformation" style="float:right;"> Status information geo location </span>
+        <?php elseif ($this->UserGeolocation->isGeolocated()): // W3C Geolocation success?>
+            Mode: W3C
+            <br />
+            Country long: <?php echo $this->UserGeolocation->getCountry(); ?>
+            <br />
+            Country short: <?php echo $this->UserGeolocation->getCountryShort(); ?>
+        <?php elseif ($this->UserGeolocation->isIPLookup()): // IP Look up success?>
+            Mode: IP
+            <br />
+            Country long: <?php echo $this->UserGeolocation->getCountry(); ?>
+            <br />
+            Country short: <?php echo $this->UserGeolocation->getCountryShort(); ?>
+        <?php elseif ($this->UserGeolocation->isFallback()): // Fallback or Override ?>
+            Mode: Fallback / Override
+            <br />
+            Country long: <?php echo $this->UserGeolocation->getCountry(); ?>
+            <br />
+            Country short: <?php echo $this->UserGeolocation->getCountryShort(); ?>
+        <?php elseif ($this->UserGeolocation->isChangeByUser()): ?>
+            Mode: User change
+            <br />
+            Country long: <?php echo $this->UserGeolocation->getCountry(); ?>
+            <br />
+            Country short: <?php echo $this->UserGeolocation->getCountryShort(); ?>
+        <?php endif; ?>         
+        <?php if ($this->UserGeolocation->isFailed()): // If we have a failer for geolocation?>
+            <br>
+            Error by getting Geolocation by W3C or IP.
+            <br />
+            Error ID: <?php echo $this->UserGeolocation->getErrorID(); ?>
+            <br />
+            Error MSG: <?php echo $this->UserGeolocation->getError(); ?>
+        <?php endif; ?>  
+        <?php if ($this->UserGeolocation->isChangeByUser() || $this->UserGeolocation->isGeolocated() || $this->UserGeolocation->isIPLookup() || $this->UserGeolocation->isFallback()): ?>
+            <div style="padding:25px 0; color:black;" >
+                <select id="changeGeoLocation" >
+                    <?php foreach ($this->getCountries() as $key => $value) : ?>
+                        <option value="<?php echo $key; ?>"<?php if ($key == $this->UserGeolocation->getCountryShort()) echo ' selected="selected"'; ?>> <?php echo $value; ?> </option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="button" value="Senden" name="changeLand" onclick="GeoChangeLocation();" />
+                <span id="geoLocationInformation" style="padding:25px 0; float:right;"> Status information geo location </span>
+            </div>
+        <?php endif; ?>        
+    </div>
+    <br />
+    <pre><?php var_dump($this->UserGeolocation); ?></pre>
+
 </div>
-<pre><?php var_dump($this->GeoLocation); ?></pre>
