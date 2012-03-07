@@ -1,4 +1,4 @@
-<?php //if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 /**
  * Contao Open Source CMS
  * Copyright (C) 2005-2011 Leo Feyer
@@ -32,11 +32,6 @@
 define('TL_MODE', 'BE');
 require_once('../../initialize.php');
 
-
-echo __DIR__;
-exit();
-
-
 /**
  * Class PurgeLog
  */
@@ -56,8 +51,6 @@ class UpdateGeoData extends Backend
 	 */
 	public function run()
 	{
-            echo "123";
-            
             $this->import("Files");
             $zipname = 'system/tmp/tmp.zip';
             $csvFile = 'system/tmp/geoData.csv';
