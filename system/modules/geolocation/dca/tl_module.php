@@ -21,8 +21,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoLocation
+ * @copyright  MEN AT WORK 2013
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -30,27 +30,27 @@
 /**
  * Palettes 
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['geolocation'] = '{title_legend},name,type;{template_legend:hide},geoTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['geolocation'] = '{title_legend},name,type;{template_legend:hide},geo_template;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 /**
  * Fields 
  */
-$GLOBALS['TL_DCA']['tl_module']['fields']['geoTemplate'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_module']['geoTemplate'],
+$GLOBALS['TL_DCA']['tl_module']['fields']['geo_template'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['geo_template'],
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => array('geo_tl_module', 'getTemplates'),
+    'options_callback' => array('tl_module_geolocation', 'getTemplates'),
     'eval' => array('mandatory' => true)
 );
 
 /**
  * Geolocation tl_module 
  */
-class geo_tl_module extends Backend
+class tl_module_geolocation extends Backend
 {
     public function getTemplates()
     {
-        return $this->getTemplateGroup('mod_geo_');
+        return $this->getTemplateGroup('mod_geo');
     }
 }
 ?>
