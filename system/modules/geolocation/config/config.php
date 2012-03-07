@@ -21,8 +21,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    Geolocation / Config
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -39,18 +39,18 @@ $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJS
 if (TL_MODE == 'FE')
 {
     // Load GeoLocation for geolocation information
-    $objGeoPosition = Geolocation::getInstance()->getUseGeolocation();
+    $objUserGeolocation = Geolocation::getInstance()->getUserGeolocation();
 
     // Include css for W3C Geolocation when no user cahnge, W3C geolocation, ip lookup or fallback was done. 
-    if ((!$objGeoPosition->isChangeByUser() && !$objGeoPosition->isGeolocated() && !$objGeoPosition->isIPLookup() && !$objGeoPosition->isFallback()))
+    if ((!$objUserGeolocation->isChangeByUser() && !$objUserGeolocation->isGeolocated() && !$objUserGeolocation->isIPLookup() && !$objUserGeolocation->isFallback()))
     {
-        // Insert JS
-        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/GeoCore.js";
+        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geoCore.js";
     }
 }
 
 /**
- * Add fe mod
+ * Add FE Mod
  */
 $GLOBALS['FE_MOD']['miscellaneous']['geolocation'] = 'ModuleGeolocation';
+
 ?>

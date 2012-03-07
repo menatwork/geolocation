@@ -36,15 +36,21 @@
  */
 class GeolocationContainer
 {
-
+    // Informations
     protected $strCountry;
     protected $strCountryShort;
     protected $strIP;
+    protected $strLat;
+    protected $strLon;
+    protected $strCacheID;
+    // Flags
     protected $booGeolocated;
     protected $booIPLookup;
     protected $booFailed;
     protected $booChangeByUser;
     protected $booFallback;
+    protected $booDeactivated;
+    // Error
     protected $strError;
     protected $intError;
 
@@ -53,11 +59,15 @@ class GeolocationContainer
         $this->strCountry = "";
         $this->strCountryShort = "";
         $this->strIP = "";
+        $this->strLon = "";
+        $this->strLat = "";
+        $this->strCacheID = "";
         $this->booGeolocated = false;
         $this->booIPLookup = false;
         $this->booFailed = false;
         $this->booChangeByUser = false;
         $this->booFallback = false;
+        $this->booDeactivated = false;
         $this->strError = "";
         $this->intError = 0;
     }
@@ -65,17 +75,22 @@ class GeolocationContainer
     public function asArray()
     {
         return array(
+            // Default
+            "cacheID" => $this->strCacheID,
             // Country Information
             "country" => $this->strCountry,
             "country_short" => $this->strCountryShort,
-            // IP
+            // IP/Location
             "ip" => $this->strIP,
+            "lat" => $this->strLat,
+            "lon" => $this->strLon,
             // Flags
             "geolocated" => $this->booGeolocated,
             "ip_lookup" => $this->booIPLookup,
             "faild" => $this->booFailed,
             "userChanged" => $this->booChangeByUser,
             "fallback" => $this->booFallback,
+            "deactivated" => $this->booDeactivated,
             // Error
             "error" => $this->strError,
             "error_ID" => $this->intError
@@ -180,6 +195,46 @@ class GeolocationContainer
     public function setFallback($booFallback)
     {
         $this->booFallback = $booFallback;
+    }
+    
+    public function getLat()
+    {
+        return $this->strLat;
+    }
+
+    public function setLat($strLat)
+    {
+        $this->strLat = $strLat;
+    }
+
+    public function getLon()
+    {
+        return $this->strLon;
+    }
+
+    public function setLon($strLon)
+    {
+        $this->strLon = $strLon;
+    }
+
+    public function isDeactivated()
+    {
+        return $this->booDeactivated;
+    }
+
+    public function setDeactivated($booDeactivated)
+    {
+        $this->booDeactivated = $booDeactivated;
+    }
+    
+    public function getCacheID()
+    {
+        return $this->strCacheID;
+    }
+
+    public function setCacheID($strCacheID)
+    {
+        $this->strCacheID = $strCacheID;
     }
 }
 

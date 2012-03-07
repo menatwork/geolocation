@@ -23,8 +23,7 @@ var Geolocation = new Class({
         loadByCookie: false,
         lat: 0,
         lon: 0,
-        country: "",
-        countryShort: ""
+        cacheID: ""        
     },
     // Initialize function -----------------------------------------------------
     initialize: function(options){
@@ -45,42 +44,10 @@ var Geolocation = new Class({
     },    
     // Run ---------------------------------------------------------------------
     run: function ()
-    {
-        this.checkCookies();        
+    {     
         this.runGeolocation();
     },    
-    // Cookies -----------------------------------------------------------------
-    checkCookies: function()
-    {
-        // Check if the cookie function is on
-        if(this.options.cookie != true)
-        {
-            return;
-        }
-        
-        // Check if a cookie is set
-        this.vars.cookie = Cookie.read('GeoProtectionUser');
-               
-        if(this.options.debug == true)
-        {
-            console.log("Get cookie:");
-            console.log(this.vars.cookie);
-        }
-        
-        if(this.vars.cookie == null)
-        {
-            return;
-        }
-        
-        // Decode cookie information
-        this.vars.cookie = JSON.decode(this.vars.cookie);
-        
-        this.vars.lon = this.vars.cookie.lon;
-        this.vars.lat = this.vars.cookie.lat;      
-        this.vars.country = this.vars.cookie.country;
-        this.vars.countryShort = this.vars.cookie.countryShort;
-        this.vars.loadByCookie = true;        
-    },    
+    // Cookies -----------------------------------------------------------------    
     updateCookie: function()
     {
         // Check if the cookie function is on
@@ -92,8 +59,7 @@ var Geolocation = new Class({
         var cookieValues = {
             lat: this.vars.lat, 
             lon: this.vars.lon,
-            country: this.vars.country,
-            countryShort: this.vars.countryShort
+            cacheID: this.cacheID
         };
         
         var cookieOption = {
@@ -107,11 +73,11 @@ var Geolocation = new Class({
             console.log(cookieOption);
         }
         
-        Cookie.write('GeoProtectionUser', JSON.encode(cookieValues),cookieOption);
+        Cookie.write('Geolocation', JSON.encode(cookieValues),cookieOption);
     },
     removeCookie: function()
     {
-        Cookie.dispose('GeoProtectionUser');
+        Cookie.dispose('Geolocation');
     },
     // Get information ---------------------------------------------------------
     runGeolocation: function()
@@ -148,84 +114,6 @@ var Geolocation = new Class({
             this.updateError(10);
         }
     },    
-    updateError: function(errorID)
-    {        
-        // Debug Information
-        if(this.options.debug == true)
-        {
-            console.log("Start error updating");
-            console.log(errorID);
-        }
-        
-        // Check if the request token is set
-        if( typeof(REQUEST_TOKEN) !== 'undefined' )
-        {
-            data = {
-                "action"        : "GeoSetError",
-                "errID"         : errorID,
-                "REQUEST_TOKEN" : REQUEST_TOKEN
-            }
-        }
-        else
-        {
-            data = {
-                "action"        : "GeoSetError",
-                "errID"         : errorID
-            }
-        }
-                 
-        // Send new request
-        new Request.JSON({
-            method:'post',
-            url: "ajax.php",
-            data: data,
-            evalScripts:false,
-            evalResponse:false,
-            onSuccess:function(json,responseElements){   
-                // Update Request Token
-                if( typeof(REQUEST_TOKEN) !== 'undefined' )
-                {
-                    REQUEST_TOKEN = json.token;
-                }
-                
-                // Debug Information
-                if(this.options.debug == true)
-                {
-                    console.log("Success");
-                    console.log(responseElements);
-                }
-                
-                // Call the onFailer method
-                this.afterProgress();
-                this.onFailure(errorID);
-            }.bind(this),
-            onError:function(text, error)
-            {
-                // Debug Information
-                if(this.options.debug == true)
-                {
-                    console.log("Error by Json Request");
-                    console.log(error);
-                }
-                
-                // Call the onFailer method
-                this.afterProgress();
-                this.onFailure(20);
-            }.bind(this),
-            onFailure:function(json,responseElements){                               
-                // Debug Information
-                if(this.options.debug == true)
-                {
-                    console.log("Error by Json Request");
-                    console.log(responseElements);
-                }
-                
-                // Call the onFailer method
-                this.afterProgress();
-                this.onFailure(20);
-            }.bind(this)
-        }).send();
-    },
     updatePosition: function()
     {
         // Debug Information
@@ -276,6 +164,7 @@ var Geolocation = new Class({
                 if(json.content.success == true)
                 {
                     // Update Cookie
+                    this.cacheID = json.content.cache_id;
                     this.updateCookie();    
                     
                     // To the onSuccess method
@@ -328,40 +217,128 @@ var Geolocation = new Class({
             }.bind(this)
         }).send();
     },
+    updateError: function(errorID)
+    {        
+        // Debug Information
+        if(this.options.debug == true)
+        {
+            console.log("Start error updating");
+            console.log(errorID);
+        }
+        
+        // Check if the request token is set
+        if( typeof(REQUEST_TOKEN) !== 'undefined' )
+        {
+            data = {
+                "action"        : "GeoSetError",
+                "errID"         : errorID,
+                "REQUEST_TOKEN" : REQUEST_TOKEN
+            }
+        }
+        else
+        {
+            data = {
+                "action"        : "GeoSetError",
+                "errID"         : errorID
+            }
+        }
+                 
+        // Send new request
+        new Request.JSON({
+            method:'post',
+            url: "ajax.php",
+            data: data,
+            evalScripts:false,
+            evalResponse:false,
+            onSuccess:function(json,responseElements){   
+                // Update Request Token
+                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                {
+                    REQUEST_TOKEN = json.token;
+                }                
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("Success");
+                    console.log(responseElements);
+                }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(errorID);
+            }.bind(this),
+            onError:function(text, error)
+            {
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("Error by Json Request");
+                    console.log(error);
+                }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20);
+            }.bind(this),
+            onFailure:function(json,responseElements){                               
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("Error by Json Request");
+                    console.log(responseElements);
+                }
+                
+                // Call the onFailer method
+                this.afterProgress();
+                this.onFailure(20);
+            }.bind(this)
+        }).send();
+    },    
     // Helper Functions --------------------------------------------------------
     onProgress: function()
     {        
-        $("geoLocationInformation").set("html", geo_msc_Start);
+        if($("geoLocationInformation"))
+        {
+            $("geoLocationInformation").set("html", geo_msc_Start);
+        }
+        
+        
     },
     afterProgress: function()
     {
-        $("geoLocationInformation").set("html", geo_msc_Finished);
+        if($("geoLocationInformation"))
+        {
+            $("geoLocationInformation").set("html", geo_msc_Finished);
+        }
     },
     onSuccess: function()
     {
-        window.location.reload();
+    //window.location.reload();
     },    
     onFailure: function(errorID)
     {
-        switch (errorID) {            
-            case 1: // Premission Denied
-                $("geoLocationInformation").set("text", geo_err_PremissionDenied);
-                break;
-            case 2: // Position unavailable
-                $("geoLocationInformation").set("text", geo_err_PositionUnavailable);
-                break;
-            case 3: // Time out
-                $("geoLocationInformation").set("text", geo_err_TimeOut);
-                break;
-            case 10: // Unsupported Browser
-                $("geoLocationInformation").set("text", geo_err_UnsupportedBrowser);
-                break;
-            case 20: // Connection problems for AJAX
-                $("geoLocationInformation").set("text", geo_err_NoConnection);
-                break;
-            default: // Unknown Error
-                $("geoLocationInformation").set("text", geo_err_UnknownError);
-                break;
+        if($("geoLocationInformation"))
+        {
+            switch (errorID) {            
+                case 1: // Premission Denied
+                    $("geoLocationInformation").set("text", geo_err_PremissionDenied);
+                    break;
+                case 2: // Position unavailable
+                    $("geoLocationInformation").set("text", geo_err_PositionUnavailable);
+                    break;
+                case 3: // Time out
+                    $("geoLocationInformation").set("text", geo_err_TimeOut);
+                    break;
+                case 10: // Unsupported Browser
+                    $("geoLocationInformation").set("text", geo_err_UnsupportedBrowser);
+                    break;
+                case 20: // Connection problems for AJAX
+                    $("geoLocationInformation").set("text", geo_err_NoConnection);
+                    break;
+                default: // Unknown Error
+                    $("geoLocationInformation").set("text", geo_err_UnknownError);
+                    break;
+            }
         }
     }
 });

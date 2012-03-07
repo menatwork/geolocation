@@ -30,6 +30,7 @@ CREATE TABLE `tl_geodata` (
 
 CREATE TABLE `tl_geodatacache` (
   `id` int(10) unsigned NOT NULL auto_increment,
+  `cache_id` varchar(32) NOT NULL default '',
   `lat` varchar(8) NOT NULL default '0',
   `lon` varchar(8) NOT NULL default '0',
   `ipnum` int(10) unsigned NOT NULL default '0',
@@ -47,7 +48,7 @@ CREATE TABLE `tl_geodatacache` (
 -- 
 
 CREATE TABLE `tl_module` (
-  `geoTemplate` varchar(255) NOT NULL default '', 
+  `geo_template` varchar(255) NOT NULL default '', 
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

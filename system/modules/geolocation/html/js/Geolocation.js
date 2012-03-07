@@ -65,6 +65,7 @@ function GeoChangeLocation()
                     var cookieValues = {
                         lat: "", 
                         lon: "",
+                        cacheID: "",
                         country: value,
                         countryShort: valueShort
                     };
@@ -73,7 +74,7 @@ function GeoChangeLocation()
                         duration: geo_cookieDurationUser 
                     }
                 
-                    Cookie.write('GeoProtectionUser', JSON.encode(cookieValues), cookieOption);
+                    Cookie.write('Geolocation', JSON.encode(cookieValues), cookieOption);
                 }
                 
             // Reload page

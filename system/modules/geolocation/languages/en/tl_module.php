@@ -1,8 +1,8 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2011 Leo Feyer
+ * Copyright (C) 2005-2010 Leo Feyer
  *
  * Formerly known as TYPOlight Open Source CMS.
  *
@@ -21,22 +21,13 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
- * @package    GeoProtection
- * @license    GNU/LGPL
+ * @copyright  MEN AT WORK 2012
+ * @package    Language
+ * @license    GNU/LGPL 
  * @filesource
  */
 
-
 /**
- * Countries
+ * Fields
  */
-$GLOBALS['TL_LANG']['CONTINENT']['africa'] = 'Afrika';
-$GLOBALS['TL_LANG']['CONTINENT']['antarctica'] = 'Antarktis';
-$GLOBALS['TL_LANG']['CONTINENT']['asia'] = 'Asien';
-$GLOBALS['TL_LANG']['CONTINENT']['australia'] = 'Australien';
-$GLOBALS['TL_LANG']['CONTINENT']['europe'] = 'Europa';
-$GLOBALS['TL_LANG']['CONTINENT']['north america'] = 'Nordamerika';
-$GLOBALS['TL_LANG']['CONTINENT']['south america'] = 'Südamerika';
-
-?>
+$GLOBALS['TL_LANG']['tl_module']['geo_template'] = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');

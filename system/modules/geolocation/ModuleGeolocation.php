@@ -36,38 +36,28 @@ class ModuleGeolocation extends Module
      * Template
      * @var string
      */
-    protected $strTemplate = 'mod_geobasis';
-
-    /**
-     * GeoProtection Object
-     * @var GeoLocation 
-     */
-    protected $objGeoProtection;
+    protected $strTemplate = '';
 
     public function generate()
     {
-        $this->loadLanguageFile("geoProtection");
-
         if (TL_MODE == 'FE')
         {
             $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/choosen/chosen.min.js";
-            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/Geolocation.js";
+            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geolocation.js";
             $GLOBALS['TL_CSS'][]        = "system/modules/geolocation/html/js/choosen/chosen.css";
         }
 
+        // Change template
+        $this->strTemplate = $this->geo_template;
+
+        // Call parent
         return parent::generate();
     }
 
     protected function compile()
     {
-        // load current GeoProteaction instance
-        $this->objGeoProtection = Geolocation::getInstance();
-        // Create new Template
-        $objTemplate = new FrontendTemplate($this->geoTemplate);
         // Add Location obeject        
-        $objTemplate->GeoLocation = $this->objGeoProtection->getUseGeolocation();
-        // Output on main template
-        $this->Template->content = $objTemplate->parse();
+        $this->Template->UserGeolocation = Geolocation::getInstance()->getUserGeolocation();
     }
 
 }

@@ -21,14 +21,13 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
+ * @copyright  MEN AT WORK 2012
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
  */
 
-
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_module']['geoTemplate'] = array('Templates', 'Hier können Sie das Template auswählen.');
+$GLOBALS['TL_LANG']['tl_module']['geo_template'] = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');
