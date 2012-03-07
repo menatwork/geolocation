@@ -1,4 +1,7 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php
+
+if (!defined('TL_ROOT'))
+    die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -34,7 +37,7 @@
  * @copyright  MEN AT WORK 2011-2012
  * @package    GeoProtection
  */
-class GeoLookUpInternDB extends Backend implements GeoLookUpInterface
+class GeoLookUpInternIP extends Backend implements GeoLookUpInterface
 {
 
     /**
@@ -49,38 +52,51 @@ class GeoLookUpInternDB extends Backend implements GeoLookUpInterface
     }
 
     /**
-     * @return String shortTag of location
+     * @return GeolocationContainer
      */
-    public function getLocation($strConfig, $strLat, $strLon, $strIP)
+    public function getLocation($strConfig, GeolocationContainer $objGeolocation)
     {
         //calculate ipNum
-        $arrIP = explode(".", $strIP);
+        $arrIP = explode(".", $objGeolocation->getIP());
         $ipNum = 16777216 * $arrIP[0] + 65536 * $arrIP[1] + 256 * $arrIP[2] + $arrIP[3];
 
+        
         // Load country from cache or do a db-lookup
         if (!isset(self::$arrIPCache[$ipNum]))
         {
             // Initialize cache
             self::$arrIPCache[$ipNum] = '';
 
-            $country = $this->Database->prepare("SELECT country_short FROM tl_geodata WHERE ? >= ipnum_start AND ? <= ipnum_end")
+            $arrResult = $this->Database->prepare("SELECT * FROM tl_geodata WHERE ? >= ipnum_start AND ? <= ipnum_end")
                     ->limit(1)
-                    ->execute($ipNum, $ipNum);
+                    ->execute($ipNum, $ipNum)
+                    ->fetchAllAssoc();
             
-            if($country->numRows != 0 )
-            {
-                self::$arrIPCache[$ipNum] = $country->country_short;
-                return $country->country_short;
+            if (count($arrResult) != 0)
+            {                
+                $country_short = strtolower($arrResult[0]['country_short']);
+                
+                $arrCountries = $this->getCountries();
+                
+                self::$arrIPCache[$ipNum] = $country_short;
+
+                $objGeolocation->setCountryShort($country_short);
+                $objGeolocation->setCountry($arrCountries[$country_short]);
             }
-            else 
+            else
             {
                 return false;
-            }            
+            }
         }
         else
         {
-            return self::$arrIPCache[$ipNum];
+            $arrCountries = $this->getCountries();
+
+            $objGeolocation->setCountryShort(self::$arrIPCache[$ipNum]);
+            $objGeolocation->setCountry($arrCountries[self::$arrIPCache[$ipNum]]);
         }
+        
+        return $objGeolocation;
     }
 
     /**
@@ -89,7 +105,17 @@ class GeoLookUpInternDB extends Backend implements GeoLookUpInterface
      */
     public function getName()
     {
-        return "Intern DB Look UP";
+        return $GLOBALS['TL_LANG']['Geolocation']['lu']['InternIP'][0];
+    }
+    
+    /**
+     *
+     * @param type $strLanguage
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $GLOBALS['TL_LANG']['Geolocation']['lu']['InternIP'][1];
     }
 
     /**
@@ -97,8 +123,9 @@ class GeoLookUpInternDB extends Backend implements GeoLookUpInterface
      */
     public function getType()
     {
-        return 1;
+        return GeoLookUpInterface::IP;
     }
+    
 
 }
 

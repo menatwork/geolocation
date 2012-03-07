@@ -36,15 +36,25 @@
  */
 interface GeoLookUpInterface
 {
+    const IP = 1;
+    const GEO = 2;
+    const BOTH = 3;
+
     /**
-     * @return String shortTag of location
+     * @return GeolocationContainer
      */
-    public function getLocation($strConfig, $strLat, $strLon, $strIP);
+    public function getLocation($strConfig, GeolocationContainer $objGeolocation);
     
     /**
      * @return String Name of LookUp Service
      */
-    public function getName();
+    public function getName();    
+    
+    /**
+     * @param string $strLanguage
+     * @return String - Description of this class.
+     */
+    public function getDescription();
     
     /**
      * @return int 1 IP | 2 Lon/Lat | 3 Both

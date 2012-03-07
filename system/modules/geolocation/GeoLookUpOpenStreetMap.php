@@ -37,7 +37,7 @@ if (!defined('TL_ROOT'))
  * @copyright  MEN AT WORK 2011-2012
  * @package    GeoProtection
  */
-class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
+class GeoLookUpOpenStreetMap extends Backend implements GeoLookUpInterface
 {
 
     public function __construct()
@@ -46,12 +46,12 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
     }
 
     /**
-     * @return String shortTag of location
+     * @return GeolocationContainer
      */
     public function getLocation($strConfig, GeolocationContainer $objGeolocation)
     {
         $objRequest = new Request();
-        $objRequest->send(vsprintf($strConfig, $objGeolocation->getLat(), $objGeolocation->getLon()));
+        $objRequest->send(vsprintf($strConfig, array($objGeolocation->getLat(), $objGeolocation->getLon())));
 
         if ($objRequest->code != 200)
         {
@@ -66,44 +66,16 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
             $this->log("Response is not a array.", __CLASS__ . " | " . __FUNCTION__, __FUNCTION__);
             return false;
         }
-
-        return $this->searchCountry($arrJson);
-    }
-
-    protected function searchCountry($arrArray)
-    {
-        foreach ($arrArray as $key => $value)
-        {
-            if (is_array($value) == true)
-            {
-                $strCountry = searchCountry($value);
-
-                if ($strCountry !== false)
-                {
-                    return $strCountry;
-                }
-            }
-            else
-            {
-                if (preg_match("/.*(country).*/", $key))
-                {
-                    if (strlen($value) == 2)
-                    {
-                        return $value;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    continue;
-                }
-            }
-        }
-
-        return false;
+        
+        $arrCountries = $this->getCountries();
+        
+        $strCountryShort = $arrJson['address']['country_code'];
+        $strCounty = $arrCountries[$arrJson['address']['country_code']];
+             
+        $objGeolocation->setCountryShort($strCountryShort);
+        $objGeolocation->setCountry($strCounty);     
+        
+        return $objGeolocation;        
     }
 
     /**
@@ -112,9 +84,9 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
      */
     public function getName()
     {
-        return $GLOBALS['TL_LANG']['Geolocation']['lu']['WebsiteJson'][0];
+        return $GLOBALS['TL_LANG']['Geolocation']['lu']['OpenStreetMap'][0];
     }
-
+    
     /**
      *
      * @param type $strLanguage
@@ -122,17 +94,17 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
      */
     public function getDescription()
     {
-        return $GLOBALS['TL_LANG']['Geolocation']['lu']['WebsiteJson'][1];
+        return $GLOBALS['TL_LANG']['Geolocation']['lu']['OpenStreetMap'][1];
     }
-    
+
     /**
      * @return int 1 IP | 2 Lon/Lat | 3 Both
      */
     public function getType()
     {
-        return GeoLookUpInterface::BOTH;
+        return GeoLookUpInterface::GEO;
     }
-
+    
 
 }
 
