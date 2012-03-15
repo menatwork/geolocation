@@ -13,17 +13,15 @@ var Geolocation = new Class({
     options: {
         // Config
         debug: false,
-        cookie: false,
         cookieLifeTime: 1
     }, 
     // Vars --------------------------------------------------------------------
     vars: {
         cookie: "",
-        denyGeoLocation: false,
-        loadByCookie: false,
         lat: 0,
         lon: 0,
-        cacheID: ""        
+        countryShort: "",
+        mode: -1
     },
     // Initialize function -----------------------------------------------------
     initialize: function(options){
@@ -33,10 +31,6 @@ var Geolocation = new Class({
     setDebug: function(debug)
     {
         this.options.debug = debug;
-    },    
-    setCookie: function(cookie)
-    {
-        this.options.cookie = cookie;
     },
     setCookieLifetime: function(lifetime)
     {
@@ -49,17 +43,12 @@ var Geolocation = new Class({
     },    
     // Cookies -----------------------------------------------------------------    
     updateCookie: function()
-    {
-        // Check if the cookie function is on
-        if(this.options.cookie == false || this.vars.loadByCookie == true)
-        {
-            return;
-        }
-        
+    {        
         var cookieValues = {
             lat: this.vars.lat, 
             lon: this.vars.lon,
-            cacheID: this.cacheID
+            countryShort: this.vars.countryShort,
+            mode: this.vars.mode
         };
         
         var cookieOption = {
@@ -84,33 +73,29 @@ var Geolocation = new Class({
     {
         this.onProgress();
         
-        if(this.vars.loadByCookie)
-        {
-            if(this.options.debug == true) console.log("Get location by cookie");
-            
-            this.updatePosition();
-        }       
-        else if (navigator.geolocation) {
-            
+        if (navigator.geolocation) {            
             navigator.geolocation.getCurrentPosition(
+                // Success
                 function(position)
                 {
                     this.vars.lat = position.coords.latitude;
                     this.vars.lon = position.coords.longitude;
                                         
                     this.updatePosition();
-                }.bind(this),                
-                function(error) {
-                    if(this.options.debug == true)
-                    {                        
-                        this.updateError(error.code);
-                    }                    
+                }.bind(this), 
+                // Error
+                function(error) {                                          
+                    this.updateError(error.code);                                        
                 }.bind(this)
                 );
         }
         else
         {
-            if(this.options.debug == true) console.log("Geolocation is not supported by this browser");
+            if(this.options.debug == true)
+            {
+                console.log("Geolocation is not supported by this browser");
+            }
+            
             this.updateError(10);
         }
     },    
@@ -130,8 +115,7 @@ var Geolocation = new Class({
                 "action"        : "GeoSetLocation",
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
-                "country"       : this.vars.country,
-                "countryShort"  : this.vars.countryShort,
+                "isAJAX"        : true,
                 "REQUEST_TOKEN" : REQUEST_TOKEN
             }
         }
@@ -141,8 +125,7 @@ var Geolocation = new Class({
                 "action"        : "GeoSetLocation",
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
-                "country"       : this.vars.country,
-                "countryShort"  : this.vars.countryShort
+                "isAJAX"        : true
             }
         }
                  
@@ -164,7 +147,10 @@ var Geolocation = new Class({
                 if(json.content.success == true)
                 {
                     // Update Cookie
-                    this.cacheID = json.content.cache_id;
+                    this.vars.countryShort = json.content.countryShort;
+                    this.vars.lat = json.content.lat;
+                    this.vars.lon = json.content.lon;
+                    this.vars.mode = json.content.mode;
                     this.updateCookie();    
                     
                     // To the onSuccess method
@@ -200,11 +186,9 @@ var Geolocation = new Class({
                 this.afterProgress();
                 this.onFailure(20);
             }.bind(this),
-            onFailure:function(json,responseElements){
-                // Remove cookie
-                this.removeCookie(); 
-                
-                //Show debug
+            onFailure:function(json,responseElements)
+            {
+                // Debug Information
                 if(this.options.debug == true)
                 {
                     console.log("Error by Json Request");
@@ -232,6 +216,7 @@ var Geolocation = new Class({
             data = {
                 "action"        : "GeoSetError",
                 "errID"         : errorID,
+                "isAJAX"        : true,
                 "REQUEST_TOKEN" : REQUEST_TOKEN
             }
         }
@@ -239,7 +224,8 @@ var Geolocation = new Class({
         {
             data = {
                 "action"        : "GeoSetError",
-                "errID"         : errorID
+                "errID"         : errorID,
+                "isAJAX"        : true
             }
         }
                  
@@ -261,6 +247,17 @@ var Geolocation = new Class({
                 {
                     console.log("Success");
                     console.log(responseElements);
+                }
+                
+                // Check if server send success
+                if(json.content.success == true)
+                {
+                    // Update Cookie
+                    this.vars.countryShort = json.content.countryShort;
+                    this.vars.lat = json.content.lat;
+                    this.vars.lon = json.content.lon;   
+                    this.vars.mode = json.content.mode;
+                    this.updateCookie();  
                 }
                 
                 // Call the onFailer method
@@ -301,8 +298,6 @@ var Geolocation = new Class({
         {
             $("geoLocationInformation").set("html", geo_msc_Start);
         }
-        
-        
     },
     afterProgress: function()
     {
@@ -313,15 +308,17 @@ var Geolocation = new Class({
     },
     onSuccess: function()
     {
-    //window.location.reload();
+        window.location.reload();
     },    
     onFailure: function(errorID)
     {
+        //window.location.reload();
+        
         if($("geoLocationInformation"))
         {
             switch (errorID) {            
                 case 1: // Premission Denied
-                    $("geoLocationInformation").set("text", geo_err_PremissionDenied);
+                    $("geoLocationInformation").set("text", geo_err_PermissionDenied);
                     break;
                 case 2: // Position unavailable
                     $("geoLocationInformation").set("text", geo_err_PositionUnavailable);
@@ -345,8 +342,11 @@ var Geolocation = new Class({
 
 var RunGeolocation = new Geolocation();
 
-RunGeolocation.setDebug(true);
-RunGeolocation.setCookie(geo_cookieEnabeld);
+if(console != undefined)
+{
+    RunGeolocation.setDebug(false);  
+}
+
 RunGeolocation.setCookieLifetime(geo_cookieDurationW3C);
 
 window.addEvent('domready', function(){

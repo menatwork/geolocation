@@ -18,7 +18,7 @@ window.addEvent('domready', function(){
 /**
 * Change the location by user settings
 */
-function GeoChangeLocation()
+function changeGeoLocation()
 {
     var value = $("changeGeoLocation").getSelected().get("text")[0];
     var valueShort = $("changeGeoLocation").getSelected().get("value")[0];        
@@ -41,7 +41,10 @@ function GeoChangeLocation()
     }
      
     // Start Progress
-    $("geoLocationInformation").set("html", geo_msc_Changing);
+    if($("geoLocationInformation") != null)
+    {
+        $("geoLocationInformation").set("html", geo_msc_Changing);
+    }
                  
     // Send new request
     new Request.JSON({
@@ -58,35 +61,36 @@ function GeoChangeLocation()
             }
             
             if(json.content.success == true)
-            {
-                // Update Cookie
-                if(geo_cookieEnabeld == true)
-                {               
-                    var cookieValues = {
-                        lat: "", 
-                        lon: "",
-                        cacheID: "",
-                        country: value,
-                        countryShort: valueShort
-                    };
+            {             
+                var cookieValues = {
+                    lat: json.content.lat, 
+                    lon: json.content.lon,
+                    countryShort: valueShort,
+                    mode: 5
+                };
         
-                    var cookieOption = {
-                        duration: geo_cookieDurationUser 
-                    }
-                
-                    Cookie.write('Geolocation', JSON.encode(cookieValues), cookieOption);
+                var cookieOption = {
+                    duration: geo_cookieDurationUser 
                 }
                 
-            // Reload page
-            window.location.reload(); 
+                Cookie.write('Geolocation', JSON.encode(cookieValues), cookieOption);                
+                
+                // Reload page
+                window.location.reload(); 
             }
             else
             {
-                $("geoLocationInformation").set("html", json.content.error);
+                if($("geoLocationInformation"))
+                {
+                    $("geoLocationInformation").set("html", json.content.error);
+                }
             }             
         }.bind(this),
-        onFailure:function(json,responseElements){                               
-            $("geoLocationInformation").set("html", geo_err_NoConnection);
+        onFailure:function(json,responseElements){   
+            if($("geoLocationInformation"))
+            {
+                $("geoLocationInformation").set("html", geo_err_NoConnection);
+            }           
         }.bind(this)
     }).send();
 }
