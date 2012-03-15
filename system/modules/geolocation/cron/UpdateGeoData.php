@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php //if (!defined('TL_ROOT')) die('You can not access this file directly!');
 /**
  * Contao Open Source CMS
  * Copyright (C) 2005-2011 Leo Feyer
@@ -20,8 +20,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -33,7 +33,7 @@ define('TL_MODE', 'BE');
 require_once('../../initialize.php');
 
 /**
- * Class PurgeLog
+ * Class UpdateGeoData
  */
 class UpdateGeoData extends Backend
 {
@@ -44,7 +44,7 @@ class UpdateGeoData extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-	} // __construct
+	}
 	
 	/**
 	 * Implement the commands to run by this batch program
@@ -95,9 +95,9 @@ class UpdateGeoData extends Backend
             }
             $this->Files->delete($zipname);
             $this->log('Geodata updated successfully.', 'UpdateGeoData run()', TL_GENERAL);
-	} // run
+	}
 	
-} // class PurgeLog
+}
 
 /**
  * Instantiate log purger
