@@ -24,8 +24,8 @@ if (!defined('TL_ROOT'))
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    Geolrotection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -33,12 +33,20 @@ if (!defined('TL_ROOT'))
 /**
  * Class Geolocation
  *
- * Provide methods for Geolocation.
- * @copyright  MEN AT WORK 2011-2012
- * @package    Geolocation
+ * Provide methods for geolocation
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  */
 class Geolocation extends Frontend
 {
+    // States for geolocation
+
+    const RESET          = 0;
+    const GEO_LOCATION   = 1;
+    const IP_LOCATION    = 2;
+    const FALLBACK       = 3;
+    const DEACTIVAIT     = 4;
+    const CHANGE_BY_USER = 5;
 
     /**
      * Container for geo information
@@ -65,71 +73,78 @@ class Geolocation extends Frontend
         $this->import("Environment");
         $this->import("Input");
 
-        // Get geolocation from session/cookie or create a new one        
-        $objGeoLocationSession = $this->loadSession();
-        $objGeoLocationCookie  = $this->loadCookie();
+        // Load location from Session ------------------------------------------
 
-        // Load first Session
-        if ($objGeoLocationSession != null && is_object($objGeoLocationSession))
+        $this->loadSession();
+
+        if ($this->objUserGeolocation != null && is_object($this->objUserGeolocation))
         {
-            $this->objUserGeolocation = $objGeoLocationSession;
-            return;
-        }
-
-        // Try to load from cookie
-        if (true || $objGeoLocationCookie != null && $objGeoLocationCookie != "")
-        {
-            $arrCookie = json_decode($objGeoLocationCookie, true);
-
-            if (is_array($arrCookie) && strlen($arrCookie['cacheID']) != 0)
+            // Fallback for nojs or missing user input
+            if ($this->objUserGeolocation->isTracked() != true && $this->Input->post("isAJAX") != true)
             {
-                $objResult = $this->Database
-                        ->prepare("SELECT * FROM tl_geodatacache WHERE cache_id=?")
-                        ->limit(1)
-                        ->execute($arrCookie['cacheID']);
-
-                if ($objResult->numRows != 0)
-                {
-                    $this->objUserGeolocation = new GeolocationContainer();
-
-                    $this->objUserGeolocation->setIP($objResult->ipnum);
-                    $this->objUserGeolocation->setLat($objResult->lat);
-                    $this->objUserGeolocation->setLon($objResult->lon);
-
-                    $this->objUserGeolocation->setCountryShort($objResult->country_short);
-                    $this->objUserGeolocation->setCountry($this->getCountryByShortTag($objResult->country_short));
-
-                    if ($objResult->ipnum != "0")
-                    {
-                        $this->objUserGeolocation->setIPLookup(true);
-                    }
-                    else
-                    {
-                        $this->objUserGeolocation->setGeolocated(true);
-                    }
-
-                    $this->saveSession($this->objUserGeolocation);
-
-                    return;
-                }
-            }
-
-            if (is_array($arrCookie) && strlen($arrCookie['countryShort']) != 0 && $this->getCountryByShortTag($arrCookie['countryShort']) != false)
-            {
-                $this->objUserGeolocation = new GeolocationContainer();
-
-                $this->objUserGeolocation->setCountryShort($arrCookie['countryShort']);
-                $this->objUserGeolocation->setCountry($this->getCountryByShortTag($arrCookie['countryShort']));
+                $this->objUserGeolocation->setIP($this->Environment->ip);
+                $objResult = $this->doIPLookUp($this->objUserGeolocation);
                 
-                $this->objUserGeolocation->setChangeByUser(true);
+                if($objResult == FALSE)
+                {
+                    $this->objUserGeolocation->setTracked(true);
+                    $this->objUserGeolocation->setDeactivated(true);
+                }
+                else
+                {
+                    $this->objUserGeolocation = $objResult;
+                    $this->objUserGeolocation->setTracked(true);
+                }
+                
+                $this->saveSession();
 
-                $this->saveSession($this->objUserGeolocation);
-
+                return;
+            }
+            else
+            {
                 return;
             }
         }
 
-        // No session or cookie so make a new geolocation container
+        // Load location from Cookie -------------------------------------------
+
+        $objGeoLocationCookie = $this->loadCookie();
+
+        if ($objGeoLocationCookie != null && $objGeoLocationCookie != "")
+        {
+            // Make a array from the cookie
+            $arrCookie = json_decode($objGeoLocationCookie, true);
+
+            if (is_array($arrCookie))
+            {
+                // Check if the mandatory fields are set
+                if (key_exists("countryShort", $arrCookie) && key_exists("mode", $arrCookie))
+                {
+                    // Create new container
+                    $this->objUserGeolocation = new GeolocationContainer();
+
+                    // Set values from cookie
+                    $this->objUserGeolocation->setCountryShort($arrCookie['countryShort']);
+                    $this->objUserGeolocation->setCountry($this->getCountryByShortTag($arrCookie['countryShort']));
+                    $this->objUserGeolocation->setLat($arrCookie['lat']);
+                    $this->objUserGeolocation->setLon($arrCookie['lon']);
+
+                    // Set state
+                    $this->changeState($arrCookie['mode']);
+
+                    // Special Flags
+                    $this->objUserGeolocation->setFailed(false);
+                    $this->objUserGeolocation->setTracked(true);
+
+                    // Save in Session
+                    $this->saveSession();
+
+                    return;
+                }
+            }
+        }
+
+        // IP Override or new creation -----------------------------------------
         // Init object
         $this->objUserGeolocation = new GeolocationContainer();
 
@@ -151,16 +166,13 @@ class Geolocation extends Frontend
                     {
                         $this->objUserGeolocation->setCountry($arrCountries[$strCountryShort]);
                         $this->objUserGeolocation->setCountryShort($strCountryShort);
-                        $this->objUserGeolocation->setChangeByUser(false);
-                        $this->objUserGeolocation->setFailed(false);
-                        $this->objUserGeolocation->setGeolocated(false);
-                        $this->objUserGeolocation->setIPLookup(false);
-                        $this->objUserGeolocation->setFallback(true);
-                        $this->objUserGeolocation->setIP("");
-                        $this->objUserGeolocation->setError("");
-                        $this->objUserGeolocation->setErrorID(0);
 
-                        $this->Session->set("geolocation", $this->objUserGeolocation);
+                        // Set state
+                        $this->changeState(self::FALLBACK);
+
+                        // Special Flags
+                        $this->objUserGeolocation->setFailed(false);
+                        $this->objUserGeolocation->setTracked(true);
 
                         break;
                     }
@@ -168,7 +180,7 @@ class Geolocation extends Frontend
             }
         }
 
-        $this->saveSession($this->objUserGeolocation);
+        $this->saveSession();
     }
 
     /**
@@ -188,16 +200,27 @@ class Geolocation extends Frontend
 
     // Session / Cookies -------------------------------------------------------
 
-    protected function saveSession(GeolocationContainer $objUserGeolocation)
+    /**
+     * Save the container $this->objUserGeolocation into the Session 
+     */
+    protected function saveSession()
     {
-        $this->Session->set("geolocation", $objUserGeolocation);
+        $this->Session->set("geolocation", $this->objUserGeolocation);
     }
 
+    /**
+     * Load from the Session the geolocation into $this->objUserGeolocation
+     */
     protected function loadSession()
     {
-        return $this->Session->get("geolocation");
+        $this->objUserGeolocation = $this->Session->get("geolocation");
     }
 
+    /**
+     * Load the geolocation cookier
+     * 
+     * @return String 
+     */
     protected function loadCookie()
     {
         return $this->Input->cookie("Geolocation");
@@ -206,9 +229,7 @@ class Geolocation extends Frontend
     // Getter / Setter ---------------------------------------------------------
 
     /**
-     * Get either the current geolocation from session.
-     * If no session was found, check ip override or return a new 
-     * empty geolocation.
+     * Get the current geolocation, see constructor for more information.
      * 
      * @return GeolocationContainer 
      */
@@ -227,14 +248,18 @@ class Geolocation extends Frontend
     {
         if ($this->getCountryByShortTag($strCountryShort) != FALSE)
         {
-            $this->objUserGeolocation = new GeolocationContainer();
-
             $this->objUserGeolocation->setCountryShort($strCountryShort);
             $this->objUserGeolocation->setCountry($this->getCountryByShortTag($strCountryShort));
 
-            $this->objUserGeolocation->setChangeByUser(true);
+            // Set satet
+            $this->changeState(self::CHANGE_BY_USER);
 
-            $this->saveSession($this->objUserGeolocation);
+            // Set special flags
+            $this->objUserGeolocation->setTracked(true);
+            $this->objUserGeolocation->setFailed(false);
+
+            // Save in session
+            $this->saveSession();
         }
         else
         {
@@ -244,6 +269,68 @@ class Geolocation extends Frontend
 
     // Helper ------------------------------------------------------------------
 
+    /**
+     * Set the state for the container
+     * 
+     * @param int $intMode
+     * @throws Exception when a unknown mode is set. 
+     */
+    protected function changeState($intMode)
+    {
+        // Reset state
+        switch ($intMode)
+        {
+            case self::RESET:
+            case self::GEO_LOCATION:
+            case self::IP_LOCATION:
+            case self::FALLBACK:
+            case self::DEACTIVAIT:
+            case self::CHANGE_BY_USER:
+                $this->objUserGeolocation->setGeolocated(false);
+                $this->objUserGeolocation->setIPLookup(false);
+                $this->objUserGeolocation->setFallback(false);
+                $this->objUserGeolocation->setDeactivated(false);
+                $this->objUserGeolocation->setChangeByUser(false);
+                break;
+
+            default:
+                throw new Exception("Unknown state: $intMode");
+                break;
+        }
+
+        switch ($intMode)
+        {
+            case self::GEO_LOCATION:
+                $this->objUserGeolocation->setGeolocated(true);
+                break;
+            case self::IP_LOCATION:
+                $this->objUserGeolocation->setIPLookup(true);
+                break;
+
+            case self::FALLBACK:
+                $this->objUserGeolocation->setFallback(true);
+                break;
+
+            case self::DEACTIVAIT:
+                $this->objUserGeolocation->setDeactivated(true);
+                break;
+
+            case self::CHANGE_BY_USER:
+                $this->objUserGeolocation->setChangeByUser(true);
+                break;
+
+            default:
+                throw new Exception("Unknown state: $intMode");
+                break;
+        }
+    }
+
+    /**
+     * User the Contao function to get a full country name for a short tag
+     * 
+     * @param type $strShort
+     * @return boolean 
+     */
     protected function getCountryByShortTag($strShort)
     {
         $arrCountries = $this->getCountries();
@@ -259,45 +346,51 @@ class Geolocation extends Frontend
     }
 
     /**
-     * Set in Header settings for geoProtection 
+     * Insert JS vars for geoCore and geolocation 
      * 
      * @param string $strContent
      * @param string $strTemplate
-     * @return Stirng 
+     * @return String 
      */
     public function insertJSVars($strContent, $strTemplate)
     {
         if ($strTemplate == "fe_page")
         {
-            // Load language
-            $this->loadLanguageFile("default");
-
-            if (!is_array($GLOBALS['TL_LANG']['Geolocation']['js']))
+            // Init array if isn't set
+            if (!is_array($GLOBALS['TL_LANG']['MSC']['JS']))
             {
-                $GLOBALS['TL_LANG']['Geolocation']['js'] = array();
+                $GLOBALS['TL_LANG']['MSC']['JS'] = array();
             }
 
+            if (!is_array($GLOBALS['TL_LANG']['ERR']['JS']))
+            {
+                $GLOBALS['TL_LANG']['ERR']['JS'] = array();
+            }
+
+            // Load duration time for cookies
             $arrDurations = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
 
+            // Build html code
             $strJS = "";
             $strJS .= "<script>";
-            $strJS .= "\n";
-            $strJS .= "var geo_cookieEnabeld = true;";
-            $strJS .= "\n";
-            $strJS .= "var geo_cookieDurationW3C = " . (is_numeric($arrDurations[0]) ? $arrDurations[0] : "0") . ";";
-            $strJS .= "\n";
-            $strJS .= "var geo_cookieDurationUser = " . (is_numeric($arrDurations[1]) ? $arrDurations[1] : "0") . ";";
-            $strJS .= "\n";
+            $strJS .= " var geo_cookieDurationW3C = " . (is_numeric($arrDurations[0]) ? $arrDurations[0] : "0") . ";";
+            $strJS .= " var geo_cookieDurationUser = " . (is_numeric($arrDurations[1]) ? $arrDurations[1] : "0") . ";";
 
-            foreach ($GLOBALS['TL_LANG']['Geolocation']['js'] as $key => $value)
+            // Define language
+            foreach ($GLOBALS['TL_LANG']['MSC']['JS'] as $key => $value)
             {
-                $strJS .= "var $key = '$value';";
-                $strJS .= "\n";
+                $strJS .= " var $key = '$value';";
             }
 
-            $strJS .= "</script>";
+            foreach ($GLOBALS['TL_LANG']['ERR']['JS'] as $key => $value)
+            {
+                $strJS .= " var $key = '$value';";
+            }
+
+            $strJS .= " </script>";
             $strJS .= "\n";
 
+            // Insert into html 
             $strContent = preg_replace("^<script ^", "$strJS$0", $strContent, 1);
         }
 
@@ -311,7 +404,7 @@ class Geolocation extends Frontend
      * 
      * @param string $strLat
      * @param string $strLon
-     * @return \GeolocationContainer
+     * @return GeolocationContainer
      * @throws Exception If Lat/Lon is not valide
      */
     public function doGeoLookUP(GeolocationContainer $objGeolocation)
@@ -326,103 +419,36 @@ class Geolocation extends Frontend
             throw new Exception("The longitude or latitude dosen't seem to be a valid loaction.");
         }
 
-        // Only get the last three numbers after the point 
-        $arrLat[1] = substr($arrLat[1], 0, 3);
-        $arrLon[1] = substr($arrLon[1], 0, 3);
+        // Try to loat information from lookup services
+        $arrLookUpServices    = deserialize($GLOBALS['TL_CONFIG']['geo_GeolookUpSettings']);
+        $objGeolocationResult = FALSE;
 
-        // Check if we have the location already in database
-        $objResult = $this->Database
-                ->prepare("SELECT * FROM tl_geodatacache WHERE lat=? AND lon=?")
-                ->execute(implode(".", $arrLat), implode(".", $arrLon));
-
-        // No values found, so try to get the country
-        if ($objResult->numRows == 0)
+        // Run trough each service
+        foreach ($arrLookUpServices as $value)
         {
-            $arrLookUpServices    = deserialize($GLOBALS['TL_CONFIG']['geo_GeolookUpSettings']);
-            $objGeolocationResult = FALSE;
+            $objLookUpService     = GeoLookUpFactory::getEngine($value["lookUpClass"]);
+            $objGeolocationResult = $objLookUpService->getLocation($value["lookUpConfig"], $objGeolocation);
 
-            foreach ($arrLookUpServices as $value)
+            if ($objGeolocationResult !== FALSE)
             {
-                $objLookUpService     = GeoLookUpFactory::getEngine($value["lookUpClass"]);
-                $objGeolocationResult = $objLookUpService->getLocation($value["lookUpConfig"], $objGeolocation);
-
-                if ($objGeolocationResult !== FALSE)
-                {
-                    $objGeolocation = $objGeolocationResult;
-                    break;
-                }
-            }
-
-            if ($objGeolocationResult === FALSE)
-            {
-                // Set information for geolocation
-                $objGeolocation->setCacheID("");
-
-                $objGeolocation->setCountry("");
-                $objGeolocation->setCountryShort("");
-
-                $objGeolocation->setLat(implode(".", $arrLatFull));
-                $objGeolocation->setLon(implode(".", $arrLonFull));
-
-                $objGeolocation->setGeolocated(false);
-                $objGeolocation->setFailed(true);
-                $objGeolocation->setIPLookup(false);
-                $objGeolocation->setChangeByUser(false);
-                $objGeolocation->setFallback(false);
-                $objGeolocation->setDeactivated(false);
-
-                $objGeolocation->setError("No geolocation found.");
-                $objGeolocation->setErrorID(-1);
-            }
-            else
-            {
-                $strCacheID = md5(implode(".", $arrLat) . " | " . implode(".", $arrLon) . " | " . $objGeolocation->getCountryShort());
-
-                $this->Database->prepare("INSERT INTO tl_geodatacache %s")
-                        ->set(array(
-                            "lat" => implode(".", $arrLat),
-                            "lon" => implode(".", $arrLon),
-                            "create_on" => time(),
-                            "country" => $objGeolocation->getCountry(),
-                            "country_short" => $objGeolocation->getCountryShort(),
-                            "cache_ID" => $strCacheID
-                        ))
-                        ->execute();
-
-                // Set information for geolocation
-                $objGeolocation->setCacheID($strCacheID);
-
-                $objGeolocation->setGeolocated(true);
-                $objGeolocation->setFailed(false);
-                $objGeolocation->setIPLookup(false);
-                $objGeolocation->setChangeByUser(false);
-                $objGeolocation->setFallback(false);
-                $objGeolocation->setDeactivated(false);
-
-                $objGeolocation->setError("");
-                $objGeolocation->setErrorID(0);
+                $objGeolocation = $objGeolocationResult;
+                break;
             }
         }
-        // Found a entry in database
+
+        // Check if we have a positive result form one of the lookup services
+        if ($objGeolocationResult === FALSE)
+        {
+            return FALSE;
+        }
         else
         {
-            // Set information for geolocation
-            $objGeolocation->setCacheID($objResult->cache_id);
-
-            $objGeolocation->setCountry($objResult->country);
-            $objGeolocation->setCountryShort($objResult->country_short);
-
-            $objGeolocation->setIP("");
-            $objGeolocation->setLat($objResult->lat);
-            $objGeolocation->setLon($objResult->lon);
-
             $objGeolocation->setGeolocated(true);
-            $objGeolocation->setFailed(false);
             $objGeolocation->setIPLookup(false);
-            $objGeolocation->setChangeByUser(false);
             $objGeolocation->setFallback(false);
-            $objGeolocation->setDeactivated(false);
+            $objGeolocation->setChangeByUser(false);
 
+            $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
             $objGeolocation->setErrorID(0);
         }
@@ -436,128 +462,60 @@ class Geolocation extends Frontend
      * @param GeolocationContainer $objGeolocation
      * @return \GeolocationContainer 
      */
-    public function doIPLookUp(GeolocationContainer $objGeolocation = null)
+    public function doIPLookUp(GeolocationContainer $objGeolocation)
     {
-        if ($objGeolocation == null)
+        // No values found, so try to get the country
+        $arrLookUpServices    = deserialize($GLOBALS['TL_CONFIG']['geo_IPlookUpSettings']);
+        $objGeolocationResult = FALSE;
+
+        foreach ($arrLookUpServices as $value)
         {
-            $objGeolocation = new GeolocationContainer();
+            $objLookUpService     = GeoLookUpFactory::getEngine($value["lookUpClass"]);
+            $objGeolocationResult = $objLookUpService->getLocation($value["lookUpConfig"], $objGeolocation);
+
+            if ($objGeolocationResult !== FALSE)
+            {
+                $objGeolocation = $objGeolocationResult;
+                break;
+            }
         }
 
-        // Build number from ip
-        $arrIP = explode(".", $this->Environment->ip);
-        $ipNum = 16777216 * $arrIP[0] + 65536 * $arrIP[1] + 256 * $arrIP[2] + $arrIP[3];
-
-        // Check if we have the location already in database
-        $objResult = $this->Database
-                ->prepare("SELECT * FROM tl_geodatacache WHERE ipnum=?")
-                ->execute($ipNum);
-
-        // No values found, so try to get the country
-        if ($objResult->numRows == 0)
+        if ($objGeolocationResult === FALSE)
         {
-            $arrLookUpServices    = deserialize($GLOBALS['TL_CONFIG']['geo_IPlookUpSettings']);
-            $objGeolocationResult = FALSE;
-
-            foreach ($arrLookUpServices as $value)
+            // Check if a fallback is define
+            if (strlen($GLOBALS['TL_CONFIG']['geo_countryFallback']) != 0)
             {
-                $objLookUpService     = GeoLookUpFactory::getEngine($value["lookUpClass"]);
-                $objGeolocationResult = $objLookUpService->getLocation($value["lookUpConfig"], $objGeolocation);
-
-                if ($objGeolocationResult !== FALSE)
-                {
-                    $objGeolocation = $objGeolocationResult;
-                    break;
-                }
-            }
-
-            if ($objGeolocationResult === FALSE)
-            {
-                // Check if a fallback is define
-                if (strlen($GLOBALS['TL_CONFIG']['geo_countryFallback']) != 0)
-                {
-                    $strCountryFallback = $GLOBALS['TL_CONFIG']['geo_countryFallback'];
-
-                    // Set information for geolocation
-                    $objGeolocation->setCountry($this->getCountryByShortTag($strCountryFallback));
-                    $objGeolocation->setCountryShort($strCountryFallback);
-
-                    $objGeolocation->setIP("");
-
-                    $objGeolocation->setGeolocated(false);
-                    $objGeolocation->setFailed(false);
-                    $objGeolocation->setIPLookup(false);
-                    $objGeolocation->setChangeByUser(false);
-                    $objGeolocation->setFallback(true);
-                    $objGeolocation->setDeactivated(false);
-                }
-                else
-                {
-                    // Set information for geolocation
-                    $objGeolocation->setCountry("");
-                    $objGeolocation->setCountryShort("");
-                    $objGeolocation->setIP("");
-
-                    $objGeolocation->setGeolocated(false);
-                    $objGeolocation->setFailed(false);
-                    $objGeolocation->setIPLookup(false);
-                    $objGeolocation->setChangeByUser(false);
-                    $objGeolocation->setFallback(false);
-                    $objGeolocation->setDeactivated(true);
-
-                    $objGeolocation->setError("No geolocation|IP|Fallback found.");
-                    $objGeolocation->setErrorID(-1);
-                }
-            }
-            else
-            {
-                $strCacheID = md5($ipNum . " | " . $objGeolocation->getCountryShort());
-
-                $this->Database->prepare("INSERT INTO tl_geodatacache %s")
-                        ->set(array(
-                            "ipnum" => $ipNum,
-                            "create_on" => time(),
-                            "country" => $objGeolocation->getCountry(),
-                            "country_short" => $objGeolocation->getCountryShort(),
-                            "cache_id" => $strCacheID
-                        ))
-                        ->execute();
-
                 // Set information for geolocation
-                $objGeolocation->setIP(preg_replace("/\..*$/", ".XXX", $objGeolocation->getIP()));
+                $objGeolocation->setCountry($this->getCountryByShortTag($GLOBALS['TL_CONFIG']['geo_countryFallback']));
+                $objGeolocation->setCountryShort($GLOBALS['TL_CONFIG']['geo_countryFallback']);
 
-                $objGeolocation->setCacheID($strCacheID);
+                $objGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $objGeolocation->getIP()));
 
                 $objGeolocation->setGeolocated(false);
-                $objGeolocation->setFailed(false);
-                $objGeolocation->setIPLookup(true);
+                $objGeolocation->setIPLookup(false);
+                $objGeolocation->setFallback(true);
                 $objGeolocation->setChangeByUser(false);
-                $objGeolocation->setFallback(false);
-                $objGeolocation->setDeactivated(false);
 
+                $objGeolocation->setFailed(false);
                 $objGeolocation->setError("");
                 $objGeolocation->setErrorID(0);
             }
+            else
+            {
+                return FALSE;
+            }
         }
-        // Found a entry in database
         else
         {
             // Set information for geolocation
-            $objGeolocation->setCacheID($objResult->cache_id);
-
-            $objGeolocation->setCountry($objResult->country);
-            $objGeolocation->setCountryShort($objResult->country_short);
-
-            $objGeolocation->setIP("");
-            $objGeolocation->setLat("");
-            $objGeolocation->setLon("");
+            $objGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $objGeolocation->getIP()));
 
             $objGeolocation->setGeolocated(false);
-            $objGeolocation->setFailed(false);
             $objGeolocation->setIPLookup(true);
-            $objGeolocation->setChangeByUser(false);
             $objGeolocation->setFallback(false);
-            $objGeolocation->setDeactivated(false);
+            $objGeolocation->setChangeByUser(false);
 
+            $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
             $objGeolocation->setErrorID(0);
         }
@@ -581,38 +539,75 @@ class Geolocation extends Frontend
             "error" => ""
         );
 
-        // Chose function
-        switch ($this->Input->post("action"))
+        try
         {
-            /**
-             * Set geolocation for user.
-             * Try to get the lat/lon from cache db or use lookup service.
-             * Write all information into session. 
-             */
-            case "GeoSetLocation":
-                $arrReturn = $this->ajaxSetLocation($arrReturn);
-                break;
+            // Chose function
+            switch ($this->Input->post("action"))
+            {
+                /**
+                 * Set geolocation for user.
+                 * Try to get the lat/lon from cache db or use lookup service.
+                 * Write all information into session. 
+                 */
+                case "GeoSetLocation":
+                    $arrReturn = $this->ajaxSetLocation($arrReturn);
+                    break;
 
-            /**
-             * Set error msg from js script.
-             */
-            case "GeoSetError":
-                $arrReturn = $this->ajaxSetError($arrReturn);
-                break;
+                /**
+                 * Set error msg from js script.
+                 */
+                case "GeoSetError":
+                    $arrReturn = $this->ajaxSetError($arrReturn);
+                    break;
 
-            /**
-             * Change location by user settings 
-             */
-            case "GeoChangeLocation":
-                $arrReturn = $this->ajaxChangeLocation($arrReturn);
-                break;
+                /**
+                 * Change location by user settings 
+                 */
+                case "GeoChangeLocation":
+                    $arrReturn = $this->ajaxChangeLocation($arrReturn);
+                    break;
 
-            default:
-                return false;
+                default:
+                    return false;
+            }
+
+            // Save in Session
+            $this->saveSession();
+
+            // Set Information about location
+            $arrReturn["lat"]          = $this->objUserGeolocation->getLat();
+            $arrReturn["lon"]          = $this->objUserGeolocation->getLon();
+            $arrReturn["countryShort"] = $this->objUserGeolocation->getCountryShort();
+            $arrReturn["error"]        = $this->objUserGeolocation->getError();
+
+            if ($this->objUserGeolocation->isChangeByUser())
+            {
+                $arrReturn["mode"] = self::CHANGE_BY_USER;
+            }
+            else if ($this->objUserGeolocation->isGeolocated())
+            {
+                $arrReturn["mode"] = self::GEO_LOCATION;
+            }
+            else if ($this->objUserGeolocation->isIPLookup())
+            {
+                $arrReturn["mode"] = self::IP_LOCATION;
+            }
+            else if ($this->objUserGeolocation->isFallback())
+            {
+                $arrReturn["mode"] = self::FALLBACK;
+            }
+            else if ($this->objUserGeolocation->isDeactivated())
+            {
+                $arrReturn["mode"] = self::DEACTIVAIT;
+            }
         }
+        catch (Exception $exc)
+        {
+            $arrReturn["success"] = false;
+            $arrReturn["error"]   = "Unknown error.";
 
-        // Save in Session
-        $this->saveSession($this->objUserGeolocation);
+            $this->log($exc->getMessage(), __CLASS__ . " | " . __FUNCTION__, TL_ERROR);
+        }
 
         // Return answer
         return $arrReturn;
@@ -626,48 +621,49 @@ class Geolocation extends Frontend
      */
     protected function ajaxSetLocation($arrReturn)
     {
-        try
+
+        // Check if lat/lon is set
+        if ((strlen($this->Input->post("lat")) == 0 || strlen($this->Input->post("lon")) == 0) && (strlen($this->Input->post("country")) == 0 || strlen($this->Input->post("countryShort")) == 0))
         {
-            // Check if lat/lon is set
-            if ((strlen($this->Input->post("lat")) == 0 || strlen($this->Input->post("lon")) == 0) && (strlen($this->Input->post("country")) == 0 || strlen($this->Input->post("countryShort")) == 0))
-            {
-                throw new Exception("Missing longitude/latitude or country/countryShort.");
-            }
-
-            $this->objUserGeolocation->setLat($this->Input->post("lat"));
-            $this->objUserGeolocation->setLon($this->Input->post("lon"));
-
-            // Do geolocation look up
-            $this->objUserGeolocation = $this->doGeoLookUP($this->objUserGeolocation);
-
-            // Check if there was a result
-            if ($this->objUserGeolocation->isFailed())
-            {
-                // Do a ip look up as fallback
-                $this->objUserGeolocation->setIP($this->Environment->IP);
-                $this->objUserGeolocation = $this->doIPLookUp($this->objUserGeolocation);
-
-                // Check if we have a result
-                if ($this->objUserGeolocation->isFailed())
-                {
-                    // Error handling
-                    $arrReturn["success"] = false;
-                    $arrReturn["error"]   = $this->objUserGeolocation->getError();
-                }
-            }
-        }
-        catch (Exception $exc)
-        {
-            // Try to load the location by IP
-            $this->objUserGeolocation->setIP($this->Environment->IP);
-            $this->objUserGeolocation = $this->doIPLookUp($this->objUserGeolocation);
-
-            // Error handling
-            $arrReturn["success"] = false;
-            $arrReturn["error"]   = $exc->getMessage();
+            throw new Exception("Missing longitude/latitude or country/countryShort.");
         }
 
-        $arrReturn["cache_id"] = $this->objUserGeolocation->getCacheID();
+        $this->objUserGeolocation->setLat($this->Input->post("lat"));
+        $this->objUserGeolocation->setLon($this->Input->post("lon"));
+
+        // Do geolocation look up
+        $objResultLocation = $this->doGeoLookUP($this->objUserGeolocation);
+
+        // Check if there was a result
+        if ($objResultLocation == FALSE)
+        {
+            // Do a ip look up as fallback
+            $this->objUserGeolocation->setIP($this->Environment->ip);
+            $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
+
+            // Check if we have a result
+            if ($objResultLocation == FALSE)
+            {
+                // Error handling
+                $arrReturn["success"] = false;
+                $arrReturn["error"]   = "No results from lookup services.";
+
+                $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
+
+                $this->objUserGeolocation->setTracked(TRUE);
+                $this->changeState(self::DEACTIVAIT);
+            }
+            else
+            {
+                $this->objUserGeolocation = $objResultLocation;
+                $this->objUserGeolocation->setTracked(TRUE);
+            }
+        }
+        else
+        {
+            $this->objUserGeolocation = $objResultLocation;
+            $this->objUserGeolocation->setTracked(TRUE);
+        }
 
         // Return debug information
         return $arrReturn;
@@ -703,27 +699,23 @@ class Geolocation extends Frontend
         $this->objUserGeolocation->setErrorID($this->Input->post("errID"));
 
         // Get Geolocation from IP
-        $this->objUserGeolocation->setIP($this->Environment->IP);
-        $this->objUserGeolocation = $this->doIPLookUp($this->objUserGeolocation);
+        $this->objUserGeolocation->setIP($this->Environment->ip);
+        $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
 
-        if ($this->objUserGeolocation->isFailed())
+        if ($objResultLocation == FALSE)
         {
             $arrReturn["success"] = false;
-            $arrReturn["error"]   = $this->objUserGeolocation->getError();
+            $arrReturn["error"]   = "No results from lookup services.";
+
+            $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
+
+            $this->objUserGeolocation->setDeactivated(TRUE);
+            $this->objUserGeolocation->setTracked(TRUE);
         }
         else
         {
-            if ($this->objUserGeolocation->isFallback() == true)
-            {
-                $arrReturn["success"] = true;
-                $arrReturn["value"]   = "Set location by fallback";
-            }
-            else
-            {
-                $arrReturn["success"]  = true;
-                $arrReturn["value"]    = "Set location by ip";
-                $arrReturn["cache_id"] = $this->objUserGeolocation->getCacheID();
-            }
+            $this->objUserGeolocation = $objResultLocation;
+            $this->objUserGeolocation->setTracked(TRUE);
         }
 
         return $arrReturn;
@@ -733,11 +725,10 @@ class Geolocation extends Frontend
     {
         if (strlen($this->Input->post("location")) == 0)
         {
-            return array(
-                "success" => false,
-                "value" => "",
-                "error" => "Missing location."
-            );
+            $arrReturn["success"] = false;
+            $arrReturn["error"]   = "Missing location.";
+
+            return $arrReturn;
         }
 
         try
@@ -746,18 +737,11 @@ class Geolocation extends Frontend
         }
         catch (Exception $exc)
         {
-            return array(
-                "success" => false,
-                "value" => "",
-                "error" => $exc->getMessage()
-            );
+            $arrReturn["success"] = false;
+            $arrReturn["error"]   = $exc->getMessage();
         }
 
-        return array(
-            "success" => true,
-            "value" => "",
-            "error" => ""
-        );
+        return $arrReturn;
     }
 
 }

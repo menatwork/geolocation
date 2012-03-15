@@ -21,8 +21,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -31,11 +31,12 @@
  * Class GeolocationContainer
  *
  * Container class for geolocation information
- * @copyright  MEN AT WORK 2011-2012
- * @package    Geolocation
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  */
 class GeolocationContainer
 {
+
     // Informations
     protected $strCountry;
     protected $strCountryShort;
@@ -44,16 +45,17 @@ class GeolocationContainer
     protected $strLon;
     protected $strCacheID;
     // Flags
-    protected $booGeolocated;
-    protected $booIPLookup;
-    protected $booFailed;
-    protected $booChangeByUser;
-    protected $booFallback;
-    protected $booDeactivated;
+    protected $booGeolocated;       // W3C Location
+    protected $booIPLookup;         // IP Location
+    protected $booChangeByUser;     // Changed by user
+    protected $booFallback;         // User fallback or override
+    protected $booDeactivated;      // Could not get location
+    protected $booTracked;          // Tracking finished
+    protected $booFailed;           // Something goes wrong
     // Error
     protected $strError;
     protected $intError;
-
+    
     public function __construct()
     {
         $this->strCountry = "";
@@ -68,6 +70,7 @@ class GeolocationContainer
         $this->booChangeByUser = false;
         $this->booFallback = false;
         $this->booDeactivated = false;
+        $this->booTracked = false;
         $this->strError = "";
         $this->intError = 0;
     }
@@ -91,6 +94,7 @@ class GeolocationContainer
             "userChanged" => $this->booChangeByUser,
             "fallback" => $this->booFallback,
             "deactivated" => $this->booDeactivated,
+            "tracked" => $this->booTracked,
             // Error
             "error" => $this->strError,
             "error_ID" => $this->intError
@@ -127,6 +131,10 @@ class GeolocationContainer
         $this->strIP = $strIP;
     }
 
+    /**
+     * True if w3c was successfully
+     * @return boolean 
+     */
     public function isGeolocated()
     {
         return $this->booGeolocated;
@@ -137,6 +145,10 @@ class GeolocationContainer
         $this->booGeolocated = $booGeolocated;
     }
 
+    /**
+     * True if ip lookup was successfully
+     * @return boolean 
+     */
     public function isIPLookup()
     {
         return $this->booIPLookup;
@@ -177,6 +189,10 @@ class GeolocationContainer
         $this->intError = $intError;
     }
 
+    /**
+     * True if user has changed his country
+     * @return boolean 
+     */
     public function isChangeByUser()
     {
         return $this->booChangeByUser;
@@ -187,6 +203,10 @@ class GeolocationContainer
         $this->booChangeByUser = $booChangeByUser;
     }
 
+     /**
+     * True if w3c and 
+     * @return boolean 
+     */
     public function isFallback()
     {
         return $this->booFallback;
@@ -196,7 +216,7 @@ class GeolocationContainer
     {
         $this->booFallback = $booFallback;
     }
-    
+
     public function getLat()
     {
         return $this->strLat;
@@ -226,7 +246,7 @@ class GeolocationContainer
     {
         $this->booDeactivated = $booDeactivated;
     }
-    
+
     public function getCacheID()
     {
         return $this->strCacheID;
@@ -236,6 +256,30 @@ class GeolocationContainer
     {
         $this->strCacheID = $strCacheID;
     }
+
+    /**
+     * Check if we have a result for tracking
+     * @return boolean True - Try to locat | False - not yet tracked 
+     */
+    public function isChooseByUser()
+    {
+        return ($this->isChangeByUser() || $this->isGeolocated() || $this->isIPLookup() || $this->isFallback() || $this->isDeactivated());
+    }
+    
+    /**
+     * Check if we allready tracked
+     * @return boolean True - Tracking is finished | False - Tracking not done  
+     */
+    public function isTracked()
+    {
+        return $this->booTracked;
+    }
+         
+    public function setTracked($booTracked)
+    {
+        $this->booTracked = $booTracked;
+    }
+
 }
 
 ?>

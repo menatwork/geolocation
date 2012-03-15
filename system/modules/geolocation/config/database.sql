@@ -25,30 +25,12 @@ CREATE TABLE `tl_geodata` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- 
--- Table `tl_geodatachache`
--- 
-
-CREATE TABLE `tl_geodatacache` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `cache_id` varchar(32) NOT NULL default '',
-  `lat` varchar(8) NOT NULL default '0',
-  `lon` varchar(8) NOT NULL default '0',
-  `ipnum` int(10) unsigned NOT NULL default '0',
-  `create_on` int(10) unsigned NOT NULL default '0',
-  `country_short` varchar(2) NOT NULL default '',
-  `country` varchar(100) NOT NULL default '',   
-  PRIMARY KEY  (`id`),
-  KEY `lat` (`lat`),
-  KEY `lon` (`lon`),
-  KEY `ipnum` (`ipnum`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- 
 -- Table `tl_modules`
 -- 
 
 CREATE TABLE `tl_module` (
-  `geo_template` varchar(255) NOT NULL default '', 
+  `geo_template` varchar(255) NOT NULL default '',
+  `geo_close` char(1) NOT NULL default '',  
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
