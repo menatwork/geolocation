@@ -24,8 +24,8 @@ if (!defined('TL_ROOT'))
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -56,7 +56,7 @@ class ModuleGeolocation extends Module
 
     protected function compile()
     {
-        // Add Location obeject        
+        // Add location object        
         $this->Template->UserGeolocation = Geolocation::getInstance()->getUserGeolocation();
     }
 

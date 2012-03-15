@@ -21,10 +21,18 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011 
+ * @copyright  MEN AT WORK 2012 
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
  */
 
-$GLOBALS['TL_LANG']['FMD']['geolocation'] = array('Geolocation Informationsleiste', '');
+/**
+ * Back end modules
+ */
+$GLOBALS['TL_LANG']['MOD']['geolocation'] = 'Geolokalisierung';
+
+/**
+ * Front end modules
+ */
+$GLOBALS['TL_LANG']['FMD']['geolocation'] = array('Geolokalisierung', 'Fügt der Seite eine Informationsleiste zur Standortbestimmung des Besuchers hinzu.');

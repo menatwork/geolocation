@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -42,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['geo_customOverride'] = 'geo_ov
 /**
  * Add to palette
  */
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{geo_protection_legend},geo_IPlookUpSettings,geo_GeolookUpSettings,geo_cookieDuration,geo_countryFallback,geo_customOverride';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{geo_legend},geo_IPlookUpSettings,geo_GeolookUpSettings,geo_countryFallback,geo_cookieDuration,geo_customOverride';
 
 /**
  * Add field
@@ -109,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_countryFallback'] = array(
     'exclude' => true,
     'inputType' => 'select',
     'options' => $this->getCountries(),
-    'eval' => array('multiple' => false, 'includeBlankOption' => true)
+    'eval' => array('tl_class' => 'w50','multiple' => false, 'includeBlankOption' => true)
 );
 
 // IP Override
@@ -141,7 +138,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_customCountryFallback'] = array
     'exclude' => true,
     'inputType' => 'select',
     'options' => $this->getCountries(),
-    'eval' => array('multiple' => false, 'mandatory' => true, 'includeBlankOption' => false)
+    'eval' => array('includeBlankOption' => true, 'mandatory' => true)
 );
 
 class tl_settings_geolocation extends Backend

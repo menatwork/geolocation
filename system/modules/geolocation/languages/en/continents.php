@@ -21,8 +21,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -31,12 +31,12 @@
 /**
  * Countries
  */
-$GLOBALS['TL_LANG']['CONTINENT']['africa'] = 'Afrika';
-$GLOBALS['TL_LANG']['CONTINENT']['antarctica'] = 'Antarktis';
-$GLOBALS['TL_LANG']['CONTINENT']['asia'] = 'Asien';
-$GLOBALS['TL_LANG']['CONTINENT']['australia'] = 'Australien';
-$GLOBALS['TL_LANG']['CONTINENT']['europe'] = 'Europa';
-$GLOBALS['TL_LANG']['CONTINENT']['north america'] = 'Nordamerika';
-$GLOBALS['TL_LANG']['CONTINENT']['south america'] = 'Südamerika';
+$GLOBALS['TL_LANG']['CONTINENT']['africa']              = 'Afrika';
+$GLOBALS['TL_LANG']['CONTINENT']['antarctica']          = 'Antarktis';
+$GLOBALS['TL_LANG']['CONTINENT']['asia']                = 'Asien';
+$GLOBALS['TL_LANG']['CONTINENT']['australia']           = 'Australien';
+$GLOBALS['TL_LANG']['CONTINENT']['europe']              = 'Europa';
+$GLOBALS['TL_LANG']['CONTINENT']['north america']       = 'Nordamerika';
+$GLOBALS['TL_LANG']['CONTINENT']['south america']       = 'Südamerika';
 
 ?>

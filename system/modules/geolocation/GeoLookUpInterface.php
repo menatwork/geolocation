@@ -21,8 +21,8 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -30,9 +30,9 @@
 /**
  * Class GeoProLookUpInterface
  *
- * Provide methods for decoding msg from look up services.
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * Provide methods for decoding messages from look up services.
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  */
 interface GeoLookUpInterface
 {
@@ -46,15 +46,9 @@ interface GeoLookUpInterface
     public function getLocation($strConfig, GeolocationContainer $objGeolocation);
     
     /**
-     * @return String Name of LookUp Service
+     * @return String name of look up service
      */
     public function getName();    
-    
-    /**
-     * @param string $strLanguage
-     * @return String - Description of this class.
-     */
-    public function getDescription();
     
     /**
      * @return int 1 IP | 2 Lon/Lat | 3 Both

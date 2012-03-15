@@ -21,34 +21,30 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012 
+ * @copyright  MEN AT WORK 2012
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
  */
 
 /**
- * Translation for JS 
+ * Translation for JS
  */
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Start']               = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Versuch Standtort zu ermitteln.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Finished']            = 'Standort Ermittelung fertiggestellt.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Changing']            = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Standort wird geändert.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_NoConnection']        = 'Fehler beim Verbinden zum Server.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_PremissionDenied']    = 'Erlaubnis verwehrt.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_PositionUnavailable'] = 'Position konnte nicht ermittelt werden.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_TimeOut']             = 'Zeit überschreitung.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_UnsupportedBrowser']  = 'Ihr Browser ist zu alt. Kaufen Sie sich einen neuen Rechner.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Start']               = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Ihr Herkunftsland wird ermittelt.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Finished']            = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Changing']            = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Ihr Herkunftsland wurde geändert.';
+
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_NoConnection']        = 'Es ist ein Fehler bei der Serververbindung aufgetreten.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PermissionDenied']    = 'Sie haben die Bestimmung Ihres Herkunftslandes verweigert.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PositionUnavailable'] = 'Ihr Herkunftsland konnte nicht ermittelt werden.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_TimeOut']             = 'Zeitüberschreitung.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnsupportedBrowser']  = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
 
 /**
- * Translation for LookUp Services
+ * Lookup Services 
  */
-$GLOBALS['TL_LANG']['Geolocation']['lu']['InternIP']        = array('Interner IP Lookup', 'Über eine interne Datenbank wird versucht einer IP einem Land zuzuweisen.');
-$GLOBALS['TL_LANG']['Geolocation']['lu']['WebsiteJson']     = array('Webseiten Abfrage - JSON', 'Es wird versuch ein Anfrage an eine Webseite zu senden und einer Antwort zu inerprtieren. Als Konfiguration muss die Adresse der Seite mit Platzhaltern "%s" zu versehen an der die IP Adresse oder Lat/Lon Werte plaziert werden sollen.');
-$GLOBALS['TL_LANG']['Geolocation']['lu']['OpenStreetMap']   = array('Open Street Map - JSON', 'Es wird versucht per Open Street Map das Land zu ermitteln.Als Konfiguration muss die Adresse, sowie die Platzhalter ("%s") für die Lat/Lon Wert angegeben werden.<br />Beispiel:<br />http://open.mapquestapi.com/nominatim/v1/reverse?format=json&lat=%s&lon=%s');
-
-/**
- * Translation for module
- */
-$GLOBALS['TL_LANG']['Geolocation']['module'] = "";
-
+$GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = "Interne IP-Datenbank";
+$GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = "OpenStreetMap (JSON)";
+$GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = "Externer Service (JSON)";
+$GLOBALS['TL_LANG']['GEO']['geoplugin']                         = "geoplugin.net";

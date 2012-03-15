@@ -21,7 +21,7 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012 
+ * @copyright  MEN AT WORK 2012
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
@@ -30,18 +30,21 @@
 /**
  * Translation for JS 
  */
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Start']               = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Versuch Standtort zu ermitteln.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Finished']            = 'Standort Ermittelung fertiggestellt.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_msc_Changing']            = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Standort wird geändert.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_NoConnection']        = 'Fehler beim Verbinden zum Server.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_PremissionDenied']    = 'Erlaubnis verwehrt.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_PositionUnavailable'] = 'Position konnte nicht ermittelt werden.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_TimeOut']             = 'Zeit überschreitung.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_UnsupportedBrowser']  = 'Ihr Browser ist zu alt. Kaufen Sie sich einen neuen Rechner.';
-$GLOBALS['TL_LANG']['Geolocation']['js']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Start']               = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Ihr Standort wird verarbeitet.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Finished']            = 'Standort Ermittelung fertiggestellt.';
+$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Changing']            = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Standort wird geändert.';
 
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_NoConnection']        = 'Fehler beim Verbinden zum Server.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PermissionDenied']    = 'Erlaubnis verwehrt.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PositionUnavailable'] = 'Position konnte nicht ermittelt werden.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_TimeOut']             = 'Zeit überschreitung.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnsupportedBrowser']  = 'Ihr Browser ist zu alt. Kaufen Sie sich einen neuen Rechner.';
+$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
 
 /**
- * Translation for module
+ * Lookup Services 
  */
-$GLOBALS['TL_LANG']['Geolocation']['module'] = "";
+$GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = "Interne IP-Datenbank";
+$GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = "OpenStreetMap (JSON)";
+$GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = "Externer Service (JSON)";
+$GLOBALS['TL_LANG']['GEO']['geoplugin']                         = "geoplugin.net";

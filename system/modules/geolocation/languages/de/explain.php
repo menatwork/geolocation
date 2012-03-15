@@ -21,33 +21,16 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
+ * @copyright  MEN AT WORK 2012
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
  */
 
-$GLOBALS['TL_LANG']['XPL']['lookUpClassGeo'] = array();
-$GLOBALS['TL_LANG']['XPL']['lookUpClassIP'] = array();
-
-$arrFile = scan(TL_ROOT . "/system/modules/geolocation");
-
-foreach ($arrFile as $value)
-{
-    if (preg_match("/GeoLookUp.*\.php/", $value) && !preg_match("/.*(Factory|Interface).*/", $value))
-    {
-        $objService = GeoLookUpFactory::getEngine($value);
-
-        if ($objService->getType() == GeoLookUpInterface::GEO || $objService->getType() == GeoLookUpInterface::BOTH)
-        {
-            $GLOBALS['TL_LANG']['XPL']['lookUpClassGeo'][] = array($objService->getName(), $objService->getDescription("de"));
-        }
-        
-        if ($objService->getType() == GeoLookUpInterface::IP || $objService->getType() == GeoLookUpInterface::BOTH)
-        {
-            $GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][] = array($objService->getName(), $objService->getDescription("de"));
-        }
-    }
-}
+$GLOBALS['TL_LANG']['XPL']['lookUpClassGeo'][0]         = array('Externer Service (JSON)', 'Es wird über einen externen Service der Standort des Besuchers ermittelt. Als Konfiguration muss die Adresse des externen Services mit Platzhaltern "%s" versehen werden, in der die IP-Adresse oder Lat/Lon Werte platziert werden.');
+$GLOBALS['TL_LANG']['XPL']['lookUpClassGeo'][1]         = array('OpenStreetMap (JSON)', 'Es wird per OpenStreetMap der Standort des Besuchers ermittelt. Als Konfiguration muss die Adresse des externen Services mit Platzhaltern "%s" versehen werden, in der die Lat/Lon Werte platziert werden.<br /><br /><strong>Beispiel:</strong><br />http://open.mapquestapi.com/nominatim/v1/reverse?format=json&lat=%s&lon=%s'); 
+$GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][0]          = array('Interne IP-Datenbank', 'Es wird über eine interne Datenbank die IP des Besuchers einem Land zugeordnet.');
+$GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][1]          = array('geoplugin.net', 'Es wird für die Standortbestimmung des Besuchers die folgende Konfiguration benötigt:<br /> http://www.geoplugin.net/php.gp?ip=%s');
+$GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][2]          = array('Externer Service (JSON)', 'Es wird über einen externen Service der Standort des Besuchers ermittelt. Als Konfiguration muss die Adresse des externen Services mit Platzhaltern "%s" versehen werden, in der die IP-Adresse oder Lat/Lon Werte platziert werden.');
 
 ?>

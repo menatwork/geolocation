@@ -21,7 +21,7 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011
+ * @copyright  MEN AT WORK 2012
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
@@ -30,27 +30,20 @@
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_settings']['geo_protection_legend'] = 'Geolocation-Einstellungen';
+$GLOBALS['TL_LANG']['tl_settings']['geo_legend']                    = 'Geolocation-Einstellungen';
 
 /**
  * Fields
  */
-// IP Override
 $GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps_headline']      = array('Benutzerdefinierte IP-Adressen','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
 $GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps']               = array('IP-Adressen','');
-$GLOBALS['TL_LANG']['tl_settings']['geo_countryFallback']           = array('Länder-Fallback','Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_customOverride']            = array('Benutzerdefinierte IP-Adressen verwenden','Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_countryFallback']           = array('Länder-Fallback', 'Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_customOverride']            = array('Benutzerdefinierte IP-Adressen verwenden', 'Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_customCountryFallback']     = array('Benutzerdefiniertes Länder-Fallback', 'Wählen Sie hier das Fallback-Land aus, das für die benutzerdefinierten IP-Adresse gelten soll.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration']            = array('Cookie Lebenszeit', 'Hier können Sie die Lebenszeit der Cookies setzen. Links für Cookies die per W3C Gelocation ermittelt wurden, rechts für Einstellungen die vom Benutzer getroffen wurden.');
 
-// Country Fallback
-$GLOBALS['TL_LANG']['tl_settings']['geo_activateCountryFallback']   = array('Benutzerdefiniertes Länder-Fallback', 'Wählen Sie hier das Fallback-Land.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_customCountryFallback']     = array('Benutzerdefiniertes Länder-Fallback','Wählen Sie hier das Fallback-Land, das für die benutzerdefinierten IP-Adresse gelten soll.');
-
-// Cookies
-$GLOBALS['TL_LANG']['tl_settings']['geo_activateCookies']           = array("Cookies aktivieren.", "Wählen Sie diese Option wenn die Geo Informationen in Cookies gespeichert werden sollen.");
-$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration']            = array("Cookie Lebenszeit", "Hier können Sie die Lebenszeit der Cookies setzten. Links für Cookies die per W3C Gelocation ermittelt wurden. Rechts für die Einstellung die der Benutzer getroffen hat.");
-
-// Look Up
-$GLOBALS['TL_LANG']['tl_settings']['geo_IPlookUpSettings']          = array("IP Nachschlag Service", "Hier können Sie einstellen welcher Dienst Benutzt werden soll, um die IP Adresse in einen Standort aufzulösen."); 
-$GLOBALS['TL_LANG']['tl_settings']['geo_GeolookUpSettings']         = array("Geo Nachschlag Service", "Hier können Sie einstellen welcher Dienst Benutzt werden soll, um Lat/Lon in einen Standort aufzulösen."); 
-$GLOBALS['TL_LANG']['tl_settings']['lookUpConfig']                  = array("Konfiguration", "Hier können Sie einen String mit geben für die Konfiguration.");
-$GLOBALS['TL_LANG']['tl_settings']['lookUpClass']                   = array("Klassen auswahl", "Wählen Sie den Services aus der ausgeführt werden soll.");
+// LookUp Services
+$GLOBALS['TL_LANG']['tl_settings']['geo_IPlookUpSettings']          = array('IP-Service', 'Hier können Sie einstellen welcher Dienst Benutzt werden soll, um die IP Adresse in einen Standort aufzulösen.'); 
+$GLOBALS['TL_LANG']['tl_settings']['geo_GeolookUpSettings']         = array('W3C-Service', 'Hier können Sie einstellen welcher Dienst Benutzt werden soll, um Lat/Lon in einen Standort aufzulösen.'); 
+$GLOBALS['TL_LANG']['tl_settings']['lookUpConfig']                  = array('Service-URL', 'Geben Sie hier einen String für die Konfiguration ein.');
+$GLOBALS['TL_LANG']['tl_settings']['lookUpClass']                   = array('Klasse', 'Wählen Sie den Service aus, der ausgeführt werden soll.');

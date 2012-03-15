@@ -1,9 +1,9 @@
  /*
-  * cron
-  * http://www.contao.org/erweiterungsliste/view/cron.html
+  * MultiColumnWizard
+  * http://www.contao.org/erweiterungsliste/view/MultiColumnWizard.html
   */
   
  /*
-  * MultiColumnWizard
-  * http://www.contao.org/erweiterungsliste/view/MultiColumnWizard.html
+  * httprequestextended
+  * http://www.contao.org/erweiterungsliste/view/httprequestextended.html
   */

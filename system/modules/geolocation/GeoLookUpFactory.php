@@ -22,7 +22,7 @@
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2012
- * @package    geoprotection
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */

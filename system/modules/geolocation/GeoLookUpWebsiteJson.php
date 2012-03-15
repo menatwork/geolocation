@@ -24,8 +24,8 @@ if (!defined('TL_ROOT'))
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
  */
@@ -33,9 +33,9 @@ if (!defined('TL_ROOT'))
 /**
  * Class GeoProLookUpInterface
  *
- * Provide methods for decoding msg from look up services.
- * @copyright  MEN AT WORK 2011-2012
- * @package    GeoProtection
+ * Provide methods for decoding messages from look up services
+ * @copyright  MEN AT WORK 2012
+ * @package    geolocation
  */
 class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
 {
@@ -112,17 +112,7 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
      */
     public function getName()
     {
-        return $GLOBALS['TL_LANG']['Geolocation']['lu']['WebsiteJson'][0];
-    }
-
-    /**
-     *
-     * @param type $strLanguage
-     * @return string 
-     */
-    public function getDescription()
-    {
-        return $GLOBALS['TL_LANG']['Geolocation']['lu']['WebsiteJson'][1];
+        return $GLOBALS['TL_LANG']['GEO']['websiteJSON'];
     }
     
     /**

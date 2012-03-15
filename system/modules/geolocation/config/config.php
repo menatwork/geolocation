@@ -38,11 +38,10 @@ $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJS
  */
 if (TL_MODE == 'FE')
 {
-    // Load GeoLocation for geolocation information
     $objUserGeolocation = Geolocation::getInstance()->getUserGeolocation();
 
-    // Include css for W3C Geolocation when no user cahnge, W3C geolocation, ip lookup or fallback was done. 
-    if ((!$objUserGeolocation->isChangeByUser() && !$objUserGeolocation->isGeolocated() && !$objUserGeolocation->isIPLookup() && !$objUserGeolocation->isFallback()))
+    // Include js for W3C Geolocation when no user cahnge, W3C geolocation, ip lookup or fallback was done. 
+    if ((!$objUserGeolocation->isChangeByUser() && !$objUserGeolocation->isGeolocated() && !$objUserGeolocation->isIPLookup() && !$objUserGeolocation->isFallback() && !$objUserGeolocation->isDeactivated()))
     {
         $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geoCore.js";
     }
