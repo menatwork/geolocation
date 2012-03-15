@@ -31,3 +31,4 @@
  * Fields
  */
 $GLOBALS['TL_LANG']['tl_module']['geo_template'] = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');
+$GLOBALS['TL_LANG']['tl_module']['geo_close'] = array('Schließen-Link anzeigen', 'Hier können Sie auswählen, ob in der Informationsleiste ein Schließen-Link integriert wird.');

@@ -21,7 +21,7 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2013
+ * @copyright  MEN AT WORK 2012
  * @package    geolocation
  * @license    GNU/LGPL
  * @filesource
@@ -30,7 +30,7 @@
 /**
  * Palettes 
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['geolocation'] = '{title_legend},name,type;{template_legend:hide},geo_template;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['geolocation'] = '{title_legend},name,headline,type;{template_legend:hide},geo_template,geo_close;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 /**
  * Fields 
@@ -43,8 +43,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['geo_template'] = array(
     'eval' => array('mandatory' => true)
 );
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['geo_close'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['geo_close'],
+    'inputType' => 'checkbox'
+);
+
 /**
- * Geolocation tl_module 
+ * tl_module_geolocation
  */
 class tl_module_geolocation extends Backend
 {
@@ -53,4 +58,5 @@ class tl_module_geolocation extends Backend
         return $this->getTemplateGroup('mod_geo');
     }
 }
+
 ?>
