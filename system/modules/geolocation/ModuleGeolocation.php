@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -55,9 +52,39 @@ class ModuleGeolocation extends Module
     }
 
     protected function compile()
-    {
+    {   
+        global $objPage;
+        
+        // Load duration time for cookies
+        $arrDurations = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
+        
+        $strJS = "<script type=\"text/javascript\">//<![CDATA[";
+        $strJS .="
+            window.addEvent('domready', function(){
+                if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');
+                GeoUpdater.setCookieLifetime(".(is_numeric($arrDurations[1]) ? $arrDurations[1] : "0").");
+                GeoUpdater.setMessages({
+                    geo_msc_Start : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',
+                    geo_msc_Finished : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',
+                    geo_msc_Changing : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}',
+                    geo_err_NoConnection : '{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',
+                    geo_err_PermissionDenied : '{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',
+                    geo_err_PositionUnavailable : '{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',
+                    geo_err_TimeOut : '{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',
+                    geo_err_UnsupportedBrowser : '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',
+                    geo_err_UnknownError : '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}'
+                });    
+            });
+        ";
+        $strJS .= "//]]></script>";
+
         // Add location object        
         $this->Template->UserGeolocation = Geolocation::getInstance()->getUserGeolocation();
+        
+        // Add JS
+        $this->Template->strJS = $strJS;
+        $this->Template->strId = $this->id;
+        $this->Template->lang = $GLOBALS['TL_LANGUAGE'];
     }
 
 }
