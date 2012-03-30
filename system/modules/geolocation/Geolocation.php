@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -55,7 +52,6 @@ class Geolocation extends Frontend
     protected $objUserGeolocation;
 
     /**
-     * Container for geo information
      * @var Geolocation 
      */
     protected static $instance = null;
@@ -73,7 +69,7 @@ class Geolocation extends Frontend
         $this->import("Environment");
         $this->import("Input");
 
-        // Load location from Session ------------------------------------------
+        // Load location from Session
 
         $this->loadSession();
 
@@ -82,10 +78,10 @@ class Geolocation extends Frontend
             // Fallback for nojs or missing user input
             if ($this->objUserGeolocation->isTracked() != true && $this->Input->post("isAJAX") != true)
             {
-                $this->objUserGeolocation->setIP($this->Environment->ip);
+                $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
                 $objResult = $this->doIPLookUp($this->objUserGeolocation);
-                
-                if($objResult == FALSE)
+
+                if ($objResult == FALSE)
                 {
                     $this->objUserGeolocation->setTracked(true);
                     $this->objUserGeolocation->setDeactivated(true);
@@ -95,7 +91,7 @@ class Geolocation extends Frontend
                     $this->objUserGeolocation = $objResult;
                     $this->objUserGeolocation->setTracked(true);
                 }
-                
+
                 $this->saveSession();
 
                 return;
@@ -106,7 +102,7 @@ class Geolocation extends Frontend
             }
         }
 
-        // Load location from Cookie -------------------------------------------
+        // Load location from Cookie
 
         $objGeoLocationCookie = $this->loadCookie();
 
@@ -144,7 +140,7 @@ class Geolocation extends Frontend
             }
         }
 
-        // IP Override or new creation -----------------------------------------
+        // IP Override or new creation
         // Init object
         $this->objUserGeolocation = new GeolocationContainer();
 
@@ -162,7 +158,7 @@ class Geolocation extends Frontend
                 // Search in array for current IP
                 foreach ($arrIP as $value)
                 {
-                    if ($value["ipAddress"] == $this->Environment->ip)
+                    if ($value["ipAddress"] == $_SERVER['REMOTE_ADDR'])
                     {
                         $this->objUserGeolocation->setCountry($arrCountries[$strCountryShort]);
                         $this->objUserGeolocation->setCountryShort($strCountryShort);
@@ -356,42 +352,41 @@ class Geolocation extends Frontend
     {
         if ($strTemplate == "fe_page")
         {
-            // Init array if isn't set
-            if (!is_array($GLOBALS['TL_LANG']['MSC']['JS']))
-            {
-                $GLOBALS['TL_LANG']['MSC']['JS'] = array();
-            }
-
-            if (!is_array($GLOBALS['TL_LANG']['ERR']['JS']))
-            {
-                $GLOBALS['TL_LANG']['ERR']['JS'] = array();
-            }
-
             // Load duration time for cookies
             $arrDurations = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
 
             // Build html code
             $strJS = "";
-            $strJS .= "<script>";
-            $strJS .= " var geo_cookieDurationW3C = " . (is_numeric($arrDurations[0]) ? $arrDurations[0] : "0") . ";";
-            $strJS .= " var geo_cookieDurationUser = " . (is_numeric($arrDurations[1]) ? $arrDurations[1] : "0") . ";";
+            $strJS .= "<script type=\"text/javascript\">";
 
-            // Define language
-            foreach ($GLOBALS['TL_LANG']['MSC']['JS'] as $key => $value)
-            {
-                $strJS .= " var $key = '$value';";
-            }
+            $strJS .= "var RunGeolocation = new Geolocation({options:
+                {messages:{
+                    geo_err_NoConnection: '{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',                     
+                    geo_err_PermissionDenied: '{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',
+                    geo_err_PositionUnavailable: '{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',
+                    geo_err_TimeOut: '{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',
+                    geo_err_UnsupportedBrowser: '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',
+                    geo_err_UnknownError: '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}',
+                    geo_msc_Start: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',
+                    geo_msc_Finished: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',
+                    geo_msc_Changing: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}'
+}}});
+RunGeolocation.setCookieLifetime(" . (is_numeric($arrDurations[0]) ? $arrDurations[0] : "0") . ");";
+            $strJS .= "</script>";
+            $strJS .= "\n</head>";
 
-            foreach ($GLOBALS['TL_LANG']['ERR']['JS'] as $key => $value)
-            {
-                $strJS .= " var $key = '$value';";
-            }
+            // Insert into html
+            $strContent = str_replace('</head>', $strJS, $strContent);
 
-            $strJS .= " </script>";
-            $strJS .= "\n";
+            // Build html code
+            $strJS = "";
+            $strJS .= "<script type=\"text/javascript\">";
+            $strJS .= "window.addEvent('domready', function(){RunGeolocation.runGeolocation();});";
+            $strJS .= "</script>";
+            $strJS .= "\n</body>";
 
-            // Insert into html 
-            $strContent = preg_replace("^<script ^", "$strJS$0", $strContent, 1);
+            // Insert into html          
+            $strContent = str_replace('</body>', $strJS, $strContent);
         }
 
         return $strContent;
@@ -402,10 +397,9 @@ class Geolocation extends Frontend
     /**
      * User lookup services to get information about a lat/lon value
      * 
-     * @param string $strLat
-     * @param string $strLon
-     * @return GeolocationContainer
-     * @throws Exception If Lat/Lon is not valide
+     * @param GeolocationContainer $objGeolocation
+     * @return boolean|GeolocationContainer Fales if no result else a GeolocationContainer
+     * @throws Exception 
      */
     public function doGeoLookUP(GeolocationContainer $objGeolocation)
     {
@@ -460,7 +454,7 @@ class Geolocation extends Frontend
      * User lookup service to get informations about a ip adress
      * 
      * @param GeolocationContainer $objGeolocation
-     * @return \GeolocationContainer 
+     * @return boolean|GeolocationContainer Fales if no result else a GeolocationContainer
      */
     public function doIPLookUp(GeolocationContainer $objGeolocation)
     {
@@ -536,7 +530,8 @@ class Geolocation extends Frontend
         $arrReturn = array(
             "success" => true,
             "value" => "",
-            "error" => ""
+            "error" => "",
+            'lang' => $GLOBALS['TL_LANGUAGE']
         );
 
         try
@@ -616,7 +611,7 @@ class Geolocation extends Frontend
     /**
      *
      * @param type $arrReturn
-     * @return string|boolean
+     * @return array
      * @throws Exception 
      */
     protected function ajaxSetLocation($arrReturn)
@@ -638,7 +633,7 @@ class Geolocation extends Frontend
         if ($objResultLocation == FALSE)
         {
             // Do a ip look up as fallback
-            $this->objUserGeolocation->setIP($this->Environment->ip);
+            $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
             $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
 
             // Check if we have a result
@@ -669,6 +664,11 @@ class Geolocation extends Frontend
         return $arrReturn;
     }
 
+    /**
+     *
+     * @param type $arrReturn
+     * @return array 
+     */
     protected function ajaxSetError($arrReturn)
     {
         switch ($this->Input->post("errID"))
@@ -699,7 +699,7 @@ class Geolocation extends Frontend
         $this->objUserGeolocation->setErrorID($this->Input->post("errID"));
 
         // Get Geolocation from IP
-        $this->objUserGeolocation->setIP($this->Environment->ip);
+        $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
         $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
 
         if ($objResultLocation == FALSE)
@@ -721,6 +721,11 @@ class Geolocation extends Frontend
         return $arrReturn;
     }
 
+    /**
+     *
+     * @param type $arrReturn
+     * @return array 
+     */
     protected function ajaxChangeLocation($arrReturn)
     {
         if (strlen($this->Input->post("location")) == 0)
