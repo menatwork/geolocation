@@ -58,7 +58,7 @@ class GeoLookUpFactory extends Backend
         }
         else
         {
-            throw new Exception("$strEngine is not fro typ");
+            throw new Exception("$strEngine is not from type GeoLookUpInterface");
         }
     }
 }

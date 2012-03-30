@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -46,7 +43,10 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
     }
 
     /**
-     * @return String shortTag of location
+     *
+     * @param type $strConfig
+     * @param GeolocationContainer $objGeolocation
+     * @return boolean|\GeolocationContainer 
      */
     public function getLocation($strConfig, GeolocationContainer $objGeolocation)
     {
@@ -67,7 +67,22 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
             return false;
         }
 
-        return $this->searchCountry($arrJson);
+        $mixResult = $this->searchCountry($arrJson);
+
+        if ($mixResult == false)
+        {
+            return false;
+        }
+
+        $arrCountries = $this->getCountries();
+
+        $strCountryShort = $mixResult;
+        $strCounty       = $arrCountries[$mixResult];
+
+        $objGeolocation->setCountryShort($strCountryShort);
+        $objGeolocation->setCountry($strCounty);
+
+        return $objGeolocation;
     }
 
     protected function searchCountry($arrArray)
@@ -114,15 +129,14 @@ class GeoLookUpWebsiteJson extends Backend implements GeoLookUpInterface
     {
         return $GLOBALS['TL_LANG']['GEO']['websiteJSON'];
     }
-    
+
     /**
      * @return int 1 IP | 2 Lon/Lat | 3 Both
      */
     public function getType()
     {
-        return GeoLookUpInterface::BOTH;
+        return GeoLookUpInterface::GEO;
     }
-
 
 }
 

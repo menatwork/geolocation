@@ -1,7 +1,4 @@
-<?php
-
-if (!defined('TL_ROOT'))
-    die('You cannot access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
@@ -31,7 +28,7 @@ if (!defined('TL_ROOT'))
  */
 
 /**
- * Class GeoProLookUpInterface
+ * Class GeoLookUpGeoplugin
  *
  * Provide methods for decoding messages from look up services
  * @copyright  MEN AT WORK 2012
@@ -46,7 +43,10 @@ class GeoLookUpGeoplugin extends Backend implements GeoLookUpInterface
     }
 
     /**
-     * @return GeolocationContainer
+     * 
+     * @param String $strConfig
+     * @param GeolocationContainer $objGeolocation
+     * @return boolean|GeolocationContainer 
      */
     public function getLocation($strConfig, GeolocationContainer $objGeolocation)
     {
