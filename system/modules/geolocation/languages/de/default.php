@@ -30,16 +30,16 @@
 /**
  * Translation for JS
  */
-$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Start']               = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Ihr Herkunftsland wird ermittelt.';
-$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Finished']            = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
-$GLOBALS['TL_LANG']['MSC']['JS']['geo_msc_Changing']            = '<img src="system/modules/geolocation/html/img/ajax-loader.gif" /> Ihr Herkunftsland wurde geändert.';
+$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']               = 'Ihr Herkunftsland wird ermittelt.';
+$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']            = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
+$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']            = 'Ihr Herkunftsland wird geändert.';
 
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_NoConnection']        = 'Es ist ein Fehler bei der Serververbindung aufgetreten.';
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PermissionDenied']    = 'Sie haben die Bestimmung Ihres Herkunftslandes verweigert.';
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_PositionUnavailable'] = 'Ihr Herkunftsland konnte nicht ermittelt werden.';
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_TimeOut']             = 'Zeitüberschreitung.';
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnsupportedBrowser']  = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
-$GLOBALS['TL_LANG']['ERR']['JS']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']        = 'Es ist ein Fehler bei der Serververbindung aufgetreten.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']    = 'Sie haben die Bestimmung Ihres Herkunftslandes verweigert.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable'] = 'Ihr Herkunftsland konnte nicht ermittelt werden.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']             = 'Zeitüberschreitung.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']  = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
+$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']        = 'Unbekannter Fehler.';
 
 /**
  * Lookup Services 
@@ -48,3 +48,9 @@ $GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = "Interne IP-Da
 $GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = "OpenStreetMap (JSON)";
 $GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = "Externer Service (JSON)";
 $GLOBALS['TL_LANG']['GEO']['geoplugin']                         = "geoplugin.net";
+
+/**
+ *  Template vars 
+ */
+$GLOBALS['TL_LANG']['GEO']['your_country']                      = "Ihr Land:";
+$GLOBALS['TL_LANG']['GEO']['unknown_country']                   = "Ihr Land konnte nicht ermittelt werden.";
