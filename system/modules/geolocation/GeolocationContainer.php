@@ -34,8 +34,33 @@
  * @copyright  MEN AT WORK 2012
  * @package    geolocation
  */
-class GeolocationContainer
+class GeolocationContainer implements Serializable
 {
+    /* -------------------------------------------------------------------------
+     * Const
+     */
+
+    // LookUp
+    const LOCATION_NONE         = 0;
+    const LOCATION_W3C          = 1;
+    const LOCATION_IP           = 2;
+    const LOCATION_FALLBACK     = 3;
+    const LOCATION_IP_OVERRIDE  = 4;
+    const LOCATION_BY_USER      = 5;
+
+    // Errors
+    const ERROR_NONE                 = 0;
+    const ERROR_PERMISSION_DENIES    = 1;
+    const ERROR_POSITION_UNAVAILABLE = 2;
+    const ERROR_TIME_OUT             = 3;
+    const ERROR_UNSUPPORTED_BROWSER  = 10;
+    const ERROR_CONNECTION_AJAX      = 20;
+    const ERROR_NO_IP_RESULT         = 30;
+    const ERROR_NO_W3C_RESULT        = 31;
+
+    /* -------------------------------------------------------------------------
+     * Vars
+     */
 
     // Informations
     protected $strCountry;
@@ -43,19 +68,19 @@ class GeolocationContainer
     protected $strIP;
     protected $strLat;
     protected $strLon;
-    protected $strCacheID;
-    // Flags
-    protected $booGeolocated;       // W3C Location
-    protected $booIPLookup;         // IP Location
-    protected $booChangeByUser;     // Changed by user
-    protected $booFallback;         // User fallback or override
-    protected $booDeactivated;      // Could not get location
+    // State
+    protected $intRunningTrackType;
+    protected $intTrackType;
     protected $booTracked;          // Tracking finished
     protected $booFailed;           // Something goes wrong
     // Error
     protected $strError;
     protected $intError;
-    
+
+    /* -------------------------------------------------------------------------
+     * Basic functions
+     */
+
     public function __construct()
     {
         $this->strCountry = "";
@@ -63,43 +88,58 @@ class GeolocationContainer
         $this->strIP = "";
         $this->strLon = "";
         $this->strLat = "";
-        $this->strCacheID = "";
-        $this->booGeolocated = false;
-        $this->booIPLookup = false;
-        $this->booFailed = false;
-        $this->booChangeByUser = false;
-        $this->booFallback = false;
-        $this->booDeactivated = false;
+        $this->intRunningTrackType = self::LOCATION_NONE;
+        $this->intTrackType = self::LOCATION_NONE;
         $this->booTracked = false;
+        $this->booFailed = false;
         $this->strError = "";
-        $this->intError = 0;
+        $this->intError = self::ERROR_NONE;
+    }
+
+    /**
+     * Serialize all information 
+     * 
+     * @return type 
+     */
+    public function serialize()
+    {
+        return serialize($this->asArray());
+    }
+
+    public function unserialize($serialized)
+    {
+        // Get a list with all DefaultProperties
+        $reflectionClass      = new ReflectionClass('GeolocationContainer');
+        $reflectionProperties = $reflectionClass->getDefaultProperties();
+
+        // Deserialize the data and check it
+        $serialized = unserialize($serialized);
+
+        foreach ($serialized as $key => $value)
+        {
+            if (key_exists($key, $reflectionProperties))
+            {
+                $this->$key = $value;
+            }
+        }
     }
 
     public function asArray()
     {
-        return array(
-            // Default
-            "cacheID" => $this->strCacheID,
-            // Country Information
-            "country" => $this->strCountry,
-            "country_short" => $this->strCountryShort,
-            // IP/Location
-            "ip" => $this->strIP,
-            "lat" => $this->strLat,
-            "lon" => $this->strLon,
-            // Flags
-            "geolocated" => $this->booGeolocated,
-            "ip_lookup" => $this->booIPLookup,
-            "faild" => $this->booFailed,
-            "userChanged" => $this->booChangeByUser,
-            "fallback" => $this->booFallback,
-            "deactivated" => $this->booDeactivated,
-            "tracked" => $this->booTracked,
-            // Error
-            "error" => $this->strError,
-            "error_ID" => $this->intError
-        );
+        $reflectionClass = new ReflectionClass('GeolocationContainer');
+        $arrReturn       = array();
+
+        foreach (array_keys($reflectionClass->getDefaultProperties()) as $value)
+        {
+            $arrReturn[$value] = $this->$value;
+        }
+
+        return $arrReturn;
     }
+
+    /* -------------------------------------------------------------------------
+     * Getter / Setter for informations
+     */
 
     public function getCountry()
     {
@@ -131,34 +171,64 @@ class GeolocationContainer
         $this->strIP = $strIP;
     }
 
-    /**
-     * True if w3c was successfully
-     * @return boolean 
+    public function getLat()
+    {
+        return $this->strLat;
+    }
+
+    public function setLat($strLat)
+    {
+        $this->strLat = $strLat;
+    }
+
+    public function getLon()
+    {
+        return $this->strLon;
+    }
+
+    public function setLon($strLon)
+    {
+        $this->strLon = $strLon;
+    }
+
+    /* -------------------------------------------------------------------------
+     * Getter / Setter for flags and state information
      */
-    public function isGeolocated()
-    {
-        return $this->booGeolocated;
-    }
-
-    public function setGeolocated($booGeolocated)
-    {
-        $this->booGeolocated = $booGeolocated;
-    }
 
     /**
-     * True if ip lookup was successfully
-     * @return boolean 
+     * Check if we allready tracked
+     * @return boolean True - Tracking is finished | False - Tracking not done  
      */
-    public function isIPLookup()
+    public function isTracked()
     {
-        return $this->booIPLookup;
+        return $this->booTracked;
     }
 
-    public function setIPLookup($booIPLookup)
+    public function setTracked($booTracked)
     {
-        $this->booIPLookup = $booIPLookup;
+        $this->booTracked = $booTracked;
+    }
+    
+    public function getTrackType()
+    {
+        return $this->intTrackType;
     }
 
+    public function setTrackType($intTrackType)
+    {
+        $this->intTrackType = $intTrackType;
+    }
+    
+    public function getRunningTrackType()
+    {
+        return $this->intRunningTrackType;
+    }
+
+    public function setRunningTrackType($intRunningTrackType)
+    {
+        $this->intRunningTrackType = $intRunningTrackType;
+    }
+    
     public function isFailed()
     {
         return $this->booFailed;
@@ -188,98 +258,6 @@ class GeolocationContainer
     {
         $this->intError = $intError;
     }
-
-    /**
-     * True if user has changed his country
-     * @return boolean 
-     */
-    public function isChangeByUser()
-    {
-        return $this->booChangeByUser;
-    }
-
-    public function setChangeByUser($booChangeByUser)
-    {
-        $this->booChangeByUser = $booChangeByUser;
-    }
-
-     /**
-     * True if w3c and 
-     * @return boolean 
-     */
-    public function isFallback()
-    {
-        return $this->booFallback;
-    }
-
-    public function setFallback($booFallback)
-    {
-        $this->booFallback = $booFallback;
-    }
-
-    public function getLat()
-    {
-        return $this->strLat;
-    }
-
-    public function setLat($strLat)
-    {
-        $this->strLat = $strLat;
-    }
-
-    public function getLon()
-    {
-        return $this->strLon;
-    }
-
-    public function setLon($strLon)
-    {
-        $this->strLon = $strLon;
-    }
-
-    public function isDeactivated()
-    {
-        return $this->booDeactivated;
-    }
-
-    public function setDeactivated($booDeactivated)
-    {
-        $this->booDeactivated = $booDeactivated;
-    }
-
-    public function getCacheID()
-    {
-        return $this->strCacheID;
-    }
-
-    public function setCacheID($strCacheID)
-    {
-        $this->strCacheID = $strCacheID;
-    }
-
-    /**
-     * Check if we have a result for tracking
-     * @return boolean True - Try to locat | False - not yet tracked 
-     */
-    public function isChooseByUser()
-    {
-        return ($this->isChangeByUser() || $this->isGeolocated() || $this->isIPLookup() || $this->isFallback() || $this->isDeactivated());
-    }
-    
-    /**
-     * Check if we allready tracked
-     * @return boolean True - Tracking is finished | False - Tracking not done  
-     */
-    public function isTracked()
-    {
-        return $this->booTracked;
-    }
-         
-    public function setTracked($booTracked)
-    {
-        $this->booTracked = $booTracked;
-    }
-
 }
 
 ?>
