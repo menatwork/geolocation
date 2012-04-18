@@ -31,21 +31,7 @@
  * Register hook 
  */
 $GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('Geolocation', 'dispatchAjax');
-
-/**
- * Set JS/Hook for geolocation 
- */
-if (TL_MODE == 'FE')
-{
-    $objUserGeolocation = Geolocation::getInstance()->getUserGeolocation();
-
-    // Include js for W3C Geolocation when no user cahnge, W3C geolocation, ip lookup or fallback was done. 
-    if (!$objUserGeolocation->isTracked())
-    {
-        $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geoCore.js";
-        $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
-    }
-}
+$GLOBALS['TL_HOOKS']['generatePage'][] = array('Geolocation', 'checkFrontpage');
 
 /**
  * Add FE Mod
