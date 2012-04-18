@@ -8,30 +8,25 @@
  */
 var Geolocation = new Class({
     Implements: [Options],   
-    options: {
-        // Config
-        debug: false,
-        cookieLifeTime: 1
+    options: 
+    {
+        debug: false
     },
     infoElements: [],
-    vars: {
-        cookie: "",
+    vars: 
+    {        
         lat: 0,
         lon: 0,
-        countryShort: "",
         mode: -1
     },
-    initialize: function(options){
+    initialize: function(options)
+    {
         this.setOptions(options);
     },    
     // Setter / Getter
     setDebug: function(debug)
     {
         this.options.debug = debug;
-    },
-    setCookieLifetime: function(lifetime)
-    {
-        this.options.cookieLifeTime = lifetime;
     },
     addInfoElement: function(key)
     {
@@ -41,33 +36,7 @@ var Geolocation = new Class({
         }
 		
         this.infoElements.include(key);
-    },   
-    updateCookie: function()
-    {        
-        var cookieValues = {
-            lat: this.vars.lat, 
-            lon: this.vars.lon,
-            countryShort: this.vars.countryShort,
-            mode: this.vars.mode
-        };
-        
-        var cookieOption = {
-            duration: this.options.cookieLifeTime
-        }
-        
-        if(this.options.debug == true)
-        {
-            console.log("Set cookie:");
-            console.log(cookieValues);
-            console.log(cookieOption);
-        }
-        
-        Cookie.write('Geolocation', JSON.encode(cookieValues),cookieOption);
-    },
-    removeCookie: function()
-    {
-        Cookie.dispose('Geolocation');
-    },
+    }, 
     // Get information
     runGeolocation: function()
     {
@@ -128,7 +97,14 @@ var Geolocation = new Class({
                 "isAJAX"        : true
             }
         }
-                 
+        
+        // Debug Information
+        if(this.options.debug == true)
+        {
+            console.log("Start Request");
+            console.log(this.vars);
+        }  
+        
         // Send new request
         new Request.JSON({
             method:'post',
@@ -136,7 +112,15 @@ var Geolocation = new Class({
             data: data,
             evalScripts:false,
             evalResponse:false,
-            onSuccess:function(json,responseElements){                    
+            onSuccess:function(json,responseElements){   
+                
+                // Debug Information
+                if(this.options.debug == true)
+                {
+                    console.log("On Success");
+                    console.log(this.vars);
+                }
+                
                 // Update Request Token
                 if( typeof(REQUEST_TOKEN) !== 'undefined' )
                 {
@@ -145,31 +129,17 @@ var Geolocation = new Class({
                 
                 // Check if server send success
                 if(json.content.success == true)
-                {
-                    // Update Cookie
-                    this.vars.countryShort = json.content.countryShort;
-                    this.vars.lat = json.content.lat;
-                    this.vars.lon = json.content.lon;
-                    this.vars.mode = json.content.mode;
-                    this.updateCookie();    
-                    
-                    // To the onSuccess method 
-                    // this.afterProgress();
+                {  
                     this.onSuccess();
                 }
                 else
-                {
-                    // Remove Cookie
-                    this.removeCookie();
-                    
+                {                    
                     // Show Debug information
                     if(this.options.debug == true)
                     {
                         console.log("Error by server");
                         console.log(responseElements);
                     }
-                    
-                   // this.afterProgress();
                 }
                 
             }.bind(this),   
@@ -182,8 +152,6 @@ var Geolocation = new Class({
                     console.log(error);
                 }
                 
-                // Call the onFailer method
-                // this.afterProgress();
                 this.onFailure(20);
             }.bind(this),
             onFailure:function(json,responseElements)
@@ -195,8 +163,6 @@ var Geolocation = new Class({
                     console.log(responseElements);
                 }
                 
-                // Call the onFailer method
-                // this.afterProgress();
                 this.onFailure(20)
             }.bind(this)
         }).send();
@@ -249,19 +215,6 @@ var Geolocation = new Class({
                     console.log(responseElements);
                 }
                 
-                // Check if server send success
-                if(json.content.success == true)
-                {
-                    // Update Cookie
-                    this.vars.countryShort = json.content.countryShort;
-                    this.vars.lat = json.content.lat;
-                    this.vars.lon = json.content.lon;   
-                    this.vars.mode = json.content.mode;
-                    this.updateCookie();  
-                }
-                
-                // Call the onFailer method
-                //this.afterProgress();
                 this.onFailure(errorID);
             }.bind(this),
             onError:function(text, error)
@@ -273,8 +226,6 @@ var Geolocation = new Class({
                     console.log(error);
                 }
                 
-                // Call the onFailer method
-                // this.afterProgress();
                 this.onFailure(20);
             }.bind(this),
             onFailure:function(json,responseElements){                               
@@ -285,14 +236,13 @@ var Geolocation = new Class({
                     console.log(responseElements);
                 }
                 
-                // Call the onFailer method
-                //this.afterProgress();
                 this.onFailure(20);
             }.bind(this)
         }).send();
     },    
     // Helper Functions
-    updateInfoElements: function(message){
+    updateInfoElements: function(message)
+    {
         this.infoElements.each(function(key)
         {
            $(key).set("html", message);
@@ -317,7 +267,7 @@ var Geolocation = new Class({
         if($("geoLocationInformation"))
         {
             switch (errorID) {            
-                case 1: // Premission Denied
+                case 1: // Permission Denied
                     this.updateInfoElements(this.options.options.messages.geo_err_PermissionDenied);                   
                     break;
                 case 2: // Position unavailable

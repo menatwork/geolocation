@@ -62,7 +62,7 @@ var GeoEdit = new Class({
                 "location"      : valueShort
             }
         }
-        console.log(data);
+
         // Start Progress
         if($(geoInfoId) != null)
         {
