@@ -41,12 +41,13 @@ class GeolocationContainer implements Serializable
      */
 
     // LookUp
-    const LOCATION_NONE         = 0;
-    const LOCATION_W3C          = 1;
-    const LOCATION_IP           = 2;
-    const LOCATION_FALLBACK     = 3;
-    const LOCATION_IP_OVERRIDE  = 4;
-    const LOCATION_BY_USER      = 5;
+
+    const LOCATION_NONE        = 0;
+    const LOCATION_W3C         = 1;
+    const LOCATION_IP          = 2;
+    const LOCATION_FALLBACK    = 3;
+    const LOCATION_IP_OVERRIDE = 4;
+    const LOCATION_BY_USER     = 5;
 
     // Errors
     const ERROR_NONE                 = 0;
@@ -68,8 +69,7 @@ class GeolocationContainer implements Serializable
     protected $strIP;
     protected $strLat;
     protected $strLon;
-    // State
-    protected $intRunningTrackType;
+    // State   
     protected $intTrackType;
     protected $booTracked;          // Tracking finished
     protected $booFailed;           // Something goes wrong
@@ -89,6 +89,7 @@ class GeolocationContainer implements Serializable
         $this->strLon = "";
         $this->strLat = "";
         $this->intRunningTrackType = self::LOCATION_NONE;
+        $this->arrFinishedrackType = array();
         $this->intTrackType = self::LOCATION_NONE;
         $this->booTracked = false;
         $this->booFailed = false;
@@ -136,7 +137,7 @@ class GeolocationContainer implements Serializable
 
         return $arrReturn;
     }
-
+   
     /* -------------------------------------------------------------------------
      * Getter / Setter for informations
      */
@@ -208,7 +209,7 @@ class GeolocationContainer implements Serializable
     {
         $this->booTracked = $booTracked;
     }
-    
+
     public function getTrackType()
     {
         return $this->intTrackType;
@@ -218,7 +219,7 @@ class GeolocationContainer implements Serializable
     {
         $this->intTrackType = $intTrackType;
     }
-    
+
     public function getRunningTrackType()
     {
         return $this->intRunningTrackType;
@@ -228,7 +229,17 @@ class GeolocationContainer implements Serializable
     {
         $this->intRunningTrackType = $intRunningTrackType;
     }
-    
+
+    public function getFinishedrackType()
+    {
+        return $this->arrFinishedrackType;
+    }
+
+    public function setFinishedrackType($arrFinishedrackType)
+    {
+        $this->arrFinishedrackType = $arrFinishedrackType;
+    }
+
     public function isFailed()
     {
         return $this->booFailed;
@@ -258,6 +269,7 @@ class GeolocationContainer implements Serializable
     {
         $this->intError = $intError;
     }
+
 }
 
 ?>

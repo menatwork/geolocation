@@ -196,7 +196,7 @@ class Geolocation extends Frontend
         {
             $arrDuration = array(5, 1);
         }
-        
+
         $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
 
         // User another lifetime for cookies if the geolocation failed or is deactivated
@@ -432,9 +432,10 @@ class Geolocation extends Frontend
                 switch ($value)
                 {
                     case "w3c":
-                        if ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE
-                                || ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C && count($arrMethods) == 1)
-                        )
+                        $booNoneRunning     = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE);
+                        $booOnlyW3C         = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C && count($arrMethods) == 1);
+
+                        if (($booNoneRunning || $booOnlyW3C))
                         {
                             $GLOBALS['TL_JAVASCRIPT']['geoCore']            = "system/modules/geolocation/html/js/geoCore.js";
                             $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
@@ -446,13 +447,15 @@ class Geolocation extends Frontend
                         else if ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C)
                         {
                             $this->objUserGeolocation->setRunningTrackType(GeolocationContainer::LOCATION_NONE);
+                            $this->objUserGeolocation->addFinishedTrack(GeolocationContainer::LOCATION_W3C);
                         }
                         break;
 
                     case "ip":
-                        if ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE
-                                || count($arrMethods) == 1
-                        )
+                        $booNoneRunning = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE);
+                        $booOnlyW3C     = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C && count($arrMethods) == 1);
+
+                        if ($booNoneRunning || $booOnlyW3C)
                         {
                             // Try to load the location from IP
                             $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
@@ -512,6 +515,7 @@ class Geolocation extends Frontend
             $this->saveCookie();
         }
     }
+       
 
     /* -------------------------------------------------------------------------
      * Functions
