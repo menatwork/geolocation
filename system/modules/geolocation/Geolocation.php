@@ -285,6 +285,7 @@ class Geolocation extends Frontend
 
             // Save in session
             $this->saveSession();
+            $this->saveCookie();
         }
         else
         {
@@ -422,41 +423,91 @@ class Geolocation extends Frontend
 
         FB::dump("Methods", $arrMethods);
 
+        if (in_array(!$this->objUserGeolocation->getTrackRunning(), $arrMethods))
+        {
+            $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
+            $this->objUserGeolocation->setFailed(false);
+            $this->objUserGeolocation->setError("");
+            $this->objUserGeolocation->setErrorID("");
+        }
+
         // Check if optios were found
         if (count($arrMethods) != 0)
         {
             foreach ($arrMethods as $value)
             {
-                $booBreakOutter = false;
+                $booBreakOutter      = false;
+                $intCurrenRunning    = $this->objUserGeolocation->getTrackRunning();
+                $intMethodsStillLeft = count($arrMethods) - $this->objUserGeolocation->countTrackFinished();
 
                 switch ($value)
                 {
                     case "w3c":
-                        $booNoneRunning     = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE);
-                        $booOnlyW3C         = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C && count($arrMethods) == 1);
+                        $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
+                        $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_W3C);
 
-                        if (($booNoneRunning || $booOnlyW3C))
+                        fb::dump("W3C container", $this->objUserGeolocation);
+                        fb::dump("W3C none running", $booNoneRunning);
+                        fb::dump("W3C allready run", $booAllreadyRun);
+
+                        if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
+                            fb::dump("In", 1);
+
                             $GLOBALS['TL_JAVASCRIPT']['geoCore']            = "system/modules/geolocation/html/js/geoCore.js";
                             $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
 
-                            $this->objUserGeolocation->setRunningTrackType(GeolocationContainer::LOCATION_W3C);
+                            $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_W3C);
+                            $this->objUserGeolocation->setFailed(false);
 
                             $booBreakOutter = true;
                         }
-                        else if ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C)
+                        else if ($intCurrenRunning == GeolocationContainer::LOCATION_W3C && $this->objUserGeolocation->isFailed() == true)
                         {
-                            $this->objUserGeolocation->setRunningTrackType(GeolocationContainer::LOCATION_NONE);
-                            $this->objUserGeolocation->addFinishedTrack(GeolocationContainer::LOCATION_W3C);
+                            fb::dump("In", 2);
+
+                            $this->objUserGeolocation->addTrackFinished(GeolocationContainer::LOCATION_W3C);
+                            $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
+
+                            if ($intMethodsStillLeft == 1)
+                            {
+                                $this->objUserGeolocation->setTracked(true);
+                                $this->objUserGeolocation->setFailed(true);
+                            }
+                        }
+                        else if ($intCurrenRunning == GeolocationContainer::LOCATION_W3C)
+                        {
+                            if ($intMethodsStillLeft == 1)
+                            {
+                                fb::dump("In", 3);
+
+                                $GLOBALS['TL_JAVASCRIPT']['geoCore']            = "system/modules/geolocation/html/js/geoCore.js";
+                                $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
+
+                                $booBreakOutter = true;
+                            }
+                            else
+                            {
+                                fb::dump("In", 4);
+
+                                $this->objUserGeolocation->addTrackFinished(GeolocationContainer::LOCATION_W3C);
+                                $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
+                            }
                         }
                         break;
 
                     case "ip":
-                        $booNoneRunning = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_NONE);
-                        $booOnlyW3C     = ($this->objUserGeolocation->getRunningTrackType() == GeolocationContainer::LOCATION_W3C && count($arrMethods) == 1);
+                        $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
+                        $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_IP);
 
-                        if ($booNoneRunning || $booOnlyW3C)
+                        fb::dump("IP container", $this->objUserGeolocation);
+                        fb::dump("IP none running", $booNoneRunning);
+                        fb::dump("IP allready run", $booAllreadyRun);
+
+                        if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
+                            $this->objUserGeolocation->setFailed(false);
+
                             // Try to load the location from IP
                             $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
 
@@ -465,14 +516,17 @@ class Geolocation extends Frontend
                             // Check if we got a result
                             if ($objResult == FALSE)
                             {
-                                // No result
-                                $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
+                                $this->objUserGeolocation->addTrackFinished(GeolocationContainer::LOCATION_IP);
+                                $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
 
-                                $this->objUserGeolocation->setTracked(true);
-
-                                $this->objUserGeolocation->setFailed(true);
+                                $this->objUserGeolocation->setError("No ip result.");
                                 $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NO_IP_RESULT);
-                                $this->objUserGeolocation->setError("IP reverse lookup faild.");
+
+                                if ($intMethodsStillLeft == 1)
+                                {
+                                    $this->objUserGeolocation->setTracked(true);
+                                    $this->objUserGeolocation->setFailed(true);
+                                }
                             }
                             else
                             {
@@ -483,19 +537,45 @@ class Geolocation extends Frontend
                         break;
 
                     case "fallback":
+                        $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
+                        $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_FALLBACK);
+
+                        fb::dump("Fallback container", $this->objUserGeolocation);
+                        fb::dump("Fallback none running", $booNoneRunning);
+                        fb::dump("Fallback allready run", $booAllreadyRun);
+
                         // Check if a fallback is define
-                        if (strlen($GLOBALS['TL_CONFIG']['geo_countryFallback']) != 0)
+                        if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
-                            // Set information for geolocation
-                            $this->objUserGeolocation->setCountry($this->getCountryByShortTag($GLOBALS['TL_CONFIG']['geo_countryFallback']));
-                            $this->objUserGeolocation->setCountryShort($GLOBALS['TL_CONFIG']['geo_countryFallback']);
+                            if (strlen($GLOBALS['TL_CONFIG']['geo_countryFallback']) != 0)
+                            {
+                                // Set information for geolocation
+                                $this->objUserGeolocation->setCountry($this->getCountryByShortTag($GLOBALS['TL_CONFIG']['geo_countryFallback']));
+                                $this->objUserGeolocation->setCountryShort($GLOBALS['TL_CONFIG']['geo_countryFallback']);
 
-                            $this->objUserGeolocation->setTracked(true);
-                            $this->objUserGeolocation->setTrackType(GeolocationContainer::LOCATION_FALLBACK);
+                                $this->objUserGeolocation->setTracked(true);
+                                $this->objUserGeolocation->setTrackType(GeolocationContainer::LOCATION_FALLBACK);
+                                $this->objUserGeolocation->addTrackFinished(GeolocationContainer::LOCATION_FALLBACK);
 
-                            $this->objUserGeolocation->setFailed(false);
-                            $this->objUserGeolocation->setError("");
-                            $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NONE);
+                                $this->objUserGeolocation->setFailed(false);
+                                $this->objUserGeolocation->setError("");
+                                $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NONE);
+                            }
+                            else
+                            {
+                                $this->objUserGeolocation->addTrackFinished(GeolocationContainer::LOCATION_FALLBACK);
+                                $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
+
+                                $this->objUserGeolocation->setFailed(true);
+                                $this->objUserGeolocation->setError("No fallback defined");
+                                $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_POSITION_UNAVAILABLE);
+
+                                if ($intMethodsStillLeft == 1)
+                                {
+                                    $this->objUserGeolocation->setTracked(true);
+                                    $this->objUserGeolocation->setFailed(true);
+                                }
+                            }
                         }
 
                         break;
@@ -515,7 +595,6 @@ class Geolocation extends Frontend
             $this->saveCookie();
         }
     }
-       
 
     /* -------------------------------------------------------------------------
      * Functions
@@ -560,12 +639,13 @@ class Geolocation extends Frontend
         // Check if we have a positive result form one of the lookup services
         if ($objGeolocationResult === FALSE)
         {
-            return FALSE;
+            return false;
         }
         else
         {
             $objGeolocation->setTracked(true);
             $objGeolocation->setTrackType(GeolocationContainer::LOCATION_W3C);
+            $objGeolocation->addTrackFinished(GeolocationContainer::LOCATION_W3C);
 
             $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
@@ -610,6 +690,7 @@ class Geolocation extends Frontend
 
             $objGeolocation->setTracked(true);
             $objGeolocation->setTrackType(GeolocationContainer::LOCATION_IP);
+            $objGeolocation->addTrackFinished(GeolocationContainer::LOCATION_IP);
 
             $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
@@ -716,31 +797,10 @@ class Geolocation extends Frontend
         // Check if there was a result
         if ($objResultLocation == FALSE)
         {
-            // Do a ip look up as fallback
-            $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
-            $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
+            $this->objUserGeolocation->setFailed(true);
 
-            // Check if we have a result
-            if ($objResultLocation == FALSE)
-            {
-                // Error handling
-                $arrReturn["success"] = false;
-                $arrReturn["error"]   = "No results from lookup services.";
-
-                // No result
-                $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
-
-                $this->objUserGeolocation->setTracked(true);
-
-                $this->objUserGeolocation->setFailed(true);
-                $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NO_IP_RESULT);
-                $this->objUserGeolocation->setError("IP reverse lookup faild.");
-            }
-            else
-            {
-                $this->objUserGeolocation = $objResultLocation;
-                $this->objUserGeolocation->setTracked(TRUE);
-            }
+            $this->objUserGeolocation->setError("No W3C result.");
+            $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NO_W3C_RESULT);
         }
         else
         {
@@ -781,32 +841,11 @@ class Geolocation extends Frontend
                 break;
         }
 
+        $this->objUserGeolocation->setFailed(true);
+
         // Set information for geolocation
         $this->objUserGeolocation->setError($strError);
         $this->objUserGeolocation->setErrorID($this->Input->post("errID"));
-
-        // Get Geolocation from IP
-        $this->objUserGeolocation->setIP($_SERVER['REMOTE_ADDR']);
-        $objResultLocation = $this->doIPLookUp($this->objUserGeolocation);
-
-        if ($objResultLocation == FALSE)
-        {
-            $arrReturn["success"] = false;
-            $arrReturn["error"]   = "No results from lookup services.";
-
-            // No result
-            $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
-
-            $this->objUserGeolocation->setTracked(true);
-
-            $this->objUserGeolocation->setFailed(true);
-            $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NO_IP_RESULT);
-            $this->objUserGeolocation->setError("IP reverse lookup faild.");
-        }
-        else
-        {
-            $this->objUserGeolocation = $objResultLocation;
-        }
 
         return $arrReturn;
     }
