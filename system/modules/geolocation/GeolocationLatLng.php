@@ -169,15 +169,18 @@ class GeolocationLatLng
     public static function checkValues($fltLat, $fltLng)
     {
         // Check Longitude/Latitude
-        if (!is_float($fltLat))
+        if (!is_numeric($fltLat))
         {
             throw new Exception("Longitude is not a valide float value.");
         }
 
-        if (!is_float($fltLng))
+        if (!is_numeric($fltLng))
         {
             throw new Exception("Latitude is not a valide float value.");
         }
+        
+        $fltLng = floatval($fltLng);
+        $fltLat = floatval($fltLat);
 
         if ($fltLng > 180 || $fltLng < -180)
         {
