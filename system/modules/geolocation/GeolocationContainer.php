@@ -41,7 +41,6 @@ class GeolocationContainer implements Serializable
      */
 
     // LookUp
-
     const LOCATION_NONE        = 0;
     const LOCATION_W3C         = 1;
     const LOCATION_IP          = 2;
@@ -64,18 +63,20 @@ class GeolocationContainer implements Serializable
      */
 
     // Informations
-    protected $strCountry;
-    protected $strCountryShort;
-    protected $strIP;
-    protected $strLat;
-    protected $strLon;
+    protected $strCountry;          // Countryname long
+    protected $strCountryShort;     // Countryname short, 2 chars
+    protected $strIP;               // IP
+    protected $strLat;              // Lat
+    protected $strLon;              // Long
     // State   
-    protected $intTrackType;
+    protected $arrTrackFinished;    // Array with finished tracking functions
+    protected $intTrackRunning;     // Current running track type
+    protected $intTrackType;        // Tracking type
     protected $booTracked;          // Tracking finished
     protected $booFailed;           // Something goes wrong
     // Error
-    protected $strError;
-    protected $intError;
+    protected $strError;            // Error msg
+    protected $intError;            // Error ID
 
     /* -------------------------------------------------------------------------
      * Basic functions
@@ -83,18 +84,18 @@ class GeolocationContainer implements Serializable
 
     public function __construct()
     {
-        $this->strCountry = "";
-        $this->strCountryShort = "";
-        $this->strIP = "";
-        $this->strLon = "";
-        $this->strLat = "";
-        $this->intRunningTrackType = self::LOCATION_NONE;
-        $this->arrFinishedrackType = array();
-        $this->intTrackType = self::LOCATION_NONE;
-        $this->booTracked = false;
-        $this->booFailed = false;
-        $this->strError = "";
-        $this->intError = self::ERROR_NONE;
+        $this->strCountry       = "";
+        $this->strCountryShort  = "";
+        $this->strIP            = "";
+        $this->strLon           = "";
+        $this->strLat           = "";
+        $this->arrTrackFinished = array();
+        $this->intTrackRunning  = self::LOCATION_NONE;
+        $this->intTrackType     = self::LOCATION_NONE;
+        $this->booTracked       = false;
+        $this->booFailed        = false;
+        $this->strError         = "";
+        $this->intError         = self::ERROR_NONE;
     }
 
     /**
@@ -107,6 +108,11 @@ class GeolocationContainer implements Serializable
         return serialize($this->asArray());
     }
 
+    /**
+     * Unserialize 
+     * 
+     * @param type $serialized 
+     */
     public function unserialize($serialized)
     {
         // Get a list with all DefaultProperties
@@ -123,8 +129,17 @@ class GeolocationContainer implements Serializable
                 $this->$key = $value;
             }
         }
+        
+        if($this->arrTrackFinished == "")
+        {
+            $this->arrTrackFinished = array();
+        }
     }
 
+    /**
+     * Return all values as array
+     * @return type 
+     */
     public function asArray()
     {
         $reflectionClass = new ReflectionClass('GeolocationContainer');
@@ -195,7 +210,66 @@ class GeolocationContainer implements Serializable
     /* -------------------------------------------------------------------------
      * Getter / Setter for flags and state information
      */
+    
+    /**
+     * Check if a tracking type allready run
+     * 
+     * @param type $intTrackFinished
+     * @return boolean 
+     */
+    public function isTrackFinished($intTrackFinished)
+    {
+       if(in_array($intTrackFinished, $this->arrTrackFinished))
+       {
+           return true;
+       }
+       else
+       {
+           return false;
+       }
+    }
 
+    /**
+     * Add a finished tracking type
+     * 
+     * @param type $intTrackFinished 
+     */
+    public function addTrackFinished($intTrackFinished)
+    {
+        $this->arrTrackFinished[$intTrackFinished] = $intTrackFinished;
+    }
+    
+    /**
+     * Count how many traks allready finished
+     * 
+     * @return int 
+     */
+    public function countTrackFinished()
+    {
+        return count($this->arrTrackFinished);
+    }
+
+    /**
+     * Get the current running tracking type
+     * 
+     * @return type 
+     */
+    public function getTrackRunning()
+    {
+        return $this->intTrackRunning;
+    }
+
+    /**
+     * Set the current running tracking tpye.
+     * 
+     * @param type $intTrackRunning 
+     */
+    public function setTrackRunning($intTrackRunning)
+    {
+        $this->intTrackRunning = $intTrackRunning;
+    }
+
+    
     /**
      * Check if we allready tracked
      * @return boolean True - Tracking is finished | False - Tracking not done  
@@ -219,27 +293,7 @@ class GeolocationContainer implements Serializable
     {
         $this->intTrackType = $intTrackType;
     }
-
-    public function getRunningTrackType()
-    {
-        return $this->intRunningTrackType;
-    }
-
-    public function setRunningTrackType($intRunningTrackType)
-    {
-        $this->intRunningTrackType = $intRunningTrackType;
-    }
-
-    public function getFinishedrackType()
-    {
-        return $this->arrFinishedrackType;
-    }
-
-    public function setFinishedrackType($arrFinishedrackType)
-    {
-        $this->arrFinishedrackType = $arrFinishedrackType;
-    }
-
+  
     public function isFailed()
     {
         return $this->booFailed;
