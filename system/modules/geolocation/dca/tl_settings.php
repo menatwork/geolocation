@@ -26,6 +26,7 @@
  * @license    GNU/LGPL
  * @filesource
  */
+
 /**
  * Selector
  */
@@ -106,8 +107,8 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_countryFallback'] = array(
     'exclude' => true,
     'inputType' => 'select',
     'options' => $this->getCountries(),
-    'eval' => array('tl_class' => 'w50','multiple' => false, 'includeBlankOption' => true)
-);
+    'eval' => array('tl_class' => 'w50','multiple' => false, 'includeBlankOption' => true, 'chosen' => true)
+); 
 
 // IP Override
 $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_customOverride'] = array(
@@ -138,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_customCountryFallback'] = array
     'exclude' => true,
     'inputType' => 'select',
     'options' => $this->getCountries(),
-    'eval' => array('includeBlankOption' => true, 'mandatory' => true)
+    'eval' => array('includeBlankOption' => true, 'mandatory' => true, 'chosen' => true)
 );
 
 class tl_settings_geolocation extends Backend
