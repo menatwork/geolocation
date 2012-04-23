@@ -31,6 +31,7 @@
  * Class GeolocationContainer
  *
  * Container class for geolocation information
+ * 
  * @copyright  MEN AT WORK 2012
  * @package    geolocation
  */
