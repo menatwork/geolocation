@@ -11,13 +11,13 @@
 <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
 <?php endif; ?>
 
-<p id="geoInfo_<?php echo $this->strId; ?>">
+<p id="geoInfo_<?php echo $this->strId; ?>"<?php echo ($this->UserGeolocation->getCountryShort() != "") ? ' class="country_' . $this->UserGeolocation->getCountryShort() . '"' : '' ?>>
 <?php if ($this->UserGeolocation->isTracked()): ?>
 <?php echo (!$this->UserGeolocation->isFailed()) ? $GLOBALS['TL_LANG']['GEO']['your_country'].' '.$this->UserGeolocation->getCountry() : $GLOBALS['TL_LANG']['GEO']['unknown_country']; ?>
 <?php else: ?>&nbsp;
 <?php endif; ?></p>
 
-<?php if ($this->UserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER): ?>
+<?php if ($this->geo_user_change == true && $this->UserGeolocation->isTracked() == true): ?>
 <div>
 	<select id="geoChange_<?php echo $this->strId; ?>" class="geochange" >
 	<?php foreach ($this->getCountries() as $key => $value) : ?>
