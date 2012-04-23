@@ -1,15 +1,18 @@
 /**
- * GeoProtection Information Module
+ * Geolocation Information Module
  * 
  * @copyright  MEN AT WORK 2012
- * @package    GeoProtection
+ * @package    geolocation
  */
 
 /**
  * Set choosen for dropdown 
  */
 window.addEvent('domready', function(){
-    $$(".geochange").chosen();
+    if(typeof chosen == 'function')
+    {
+        $$(".geochange").chosen();
+    }
 });
 
 /**

@@ -26,6 +26,7 @@
  * @license    GNU/LGPL
  * @filesource
  */
+
 class ModuleGeolocation extends Module
 {
 
@@ -39,9 +40,13 @@ class ModuleGeolocation extends Module
     {
         if (TL_MODE == 'FE')
         {
-            $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/choosen/chosen.min.js";
+            if ($this->geo_chosen == true)
+            {
+                $GLOBALS['TL_JAVASCRIPT'][] = "plugins/chosen/chosen.js";
+                $GLOBALS['TL_CSS'][]        = "plugins/chosen/chosen.css";
+            }
+
             $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geolocation.js";
-            $GLOBALS['TL_CSS'][]        = "system/modules/geolocation/html/js/choosen/chosen.css";
         }
 
         // Change template
@@ -52,17 +57,15 @@ class ModuleGeolocation extends Module
     }
 
     protected function compile()
-    {   
-        global $objPage;
-        
+    {
         // Load duration time for cookies
         $arrDurations = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
-        
+
         $strJS = "<script type=\"text/javascript\">//<![CDATA[";
         $strJS .="
             window.addEvent('domready', function(){
                 if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');
-                GeoUpdater.setCookieLifetime(".(is_numeric($arrDurations[1]) ? $arrDurations[1] : "0").");
+                GeoUpdater.setCookieLifetime(" . (is_numeric($arrDurations[1]) ? $arrDurations[1] : "0") . ");
                 GeoUpdater.setMessages({
                     geo_msc_Start : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',
                     geo_msc_Finished : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',
@@ -80,7 +83,7 @@ class ModuleGeolocation extends Module
 
         // Add location object        
         $this->Template->UserGeolocation = Geolocation::getInstance()->getUserGeolocation();
-        
+
         // Add JS
         $this->Template->strJS = $strJS;
         $this->Template->strId = $this->id;
