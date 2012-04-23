@@ -30,5 +30,7 @@
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_module']['geo_template'] = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');
-$GLOBALS['TL_LANG']['tl_module']['geo_close'] = array('Schließen-Link anzeigen', 'Hier können Sie auswählen, ob in der Informationsleiste ein Schließen-Link integriert wird.');
+$GLOBALS['TL_LANG']['tl_module']['geo_template']    = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');
+$GLOBALS['TL_LANG']['tl_module']['geo_close']       = array('Schließen-Link anzeigen', 'Hier können Sie auswählen, ob in der Informationsleiste ein Schließen-Link integriert wird.');
+$GLOBALS['TL_LANG']['tl_module']['geo_user_change'] = array('Landauswahl anzeigen', 'Wählen Sie diese Option, wenn Sie erlauben möchten, dass ein Benutzer selber auswählen kann, aus welchen Land er kommt.');
+$GLOBALS['TL_LANG']['tl_module']['geo_chosen']      = array('Auswahlbox mit Chosen Erweitern', 'Hier können Sie bestimmen ob die erweiterte Auswahlbox für das Geolocation Modul benutzt werden soll.');
