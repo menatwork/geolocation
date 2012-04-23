@@ -33,6 +33,8 @@ CREATE TABLE `tl_geodata` (
 CREATE TABLE `tl_module` (
   `geo_template` varchar(255) NOT NULL default '',
   `geo_close` char(1) NOT NULL default '',  
+  `geo_chosen` char(1) NOT NULL default '',  
+  `geo_user_change` char(1) NOT NULL default '',  
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -42,8 +44,8 @@ CREATE TABLE `tl_module` (
 -- 
 
 CREATE TABLE `tl_page` (
-  `geo_single_page` char(1) NOT NULL default '0',
-  `geo_child_page` char(1) NOT NULL default '0',
+  `geo_single_page` char(1) NOT NULL default '',
+  `geo_child_page` char(1) NOT NULL default '',
   `geo_single_choose` blob NULL,
   `geo_child_choose` blob NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
