@@ -28,15 +28,10 @@ var GeoEdit = new Class({
     options:
     {
         debug: false,
-        cookieLifeTime: 1,
         messages: {}
     },
     initialize: function(options){
         this.setOptions(options);
-    },
-    setCookieLifetime: function(lifetime)
-    {
-        this.options.cookieLifeTime = lifetime;
     }, 
     setMessages: function(messages)
     {
@@ -69,7 +64,7 @@ var GeoEdit = new Class({
         // Start Progress
         if($(geoInfoId) != null)
         {
-            $(geoInfoId).set("html", this.options.messages.geo_msc_Changing);
+            $(geoInfoId).set("html", this.options.messages.changing);
         }
 
         // Send new request
@@ -87,20 +82,7 @@ var GeoEdit = new Class({
                 }
 
                 if(json.content.success == true)
-                {             
-                    var cookieValues = {
-                        lat: json.content.lat, 
-                        lon: json.content.lon,
-                        countryShort: valueShort,
-                        mode: 5
-                    };
-
-                    var cookieOption = {
-                        duration: this.options.cookieLifeTime 
-                    }
-
-                    Cookie.write('Geolocation', JSON.encode(cookieValues), cookieOption);                
-
+                {    
                     // Reload page
                     window.location.reload(); 
                 }
@@ -115,7 +97,7 @@ var GeoEdit = new Class({
             onFailure:function(json,responseElements){   
                 if($(geoInfoId))
                 {
-                    $(geoInfoId).set("html", this.options.messages.geo_err_NoConnection);
+                    $(geoInfoId).set("html", this.options.messages.noConnection);
                 }           
             }.bind(this)
         }).send();

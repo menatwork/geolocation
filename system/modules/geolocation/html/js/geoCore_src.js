@@ -250,40 +250,38 @@ var Geolocation = new Class({
     },
     onProgress: function()
     {
-        this.updateInfoElements(this.options.options.messages.geo_msc_Start);
+        this.updateInfoElements(this.options.options.messages.sart);
     },
     afterProgress: function()
     {
-        this.updateInfoElements(this.options.options.messages.geo_msc_Finished);
+        this.updateInfoElements(this.options.options.messages.finished);
     },
     onSuccess: function()
     {
         window.location.reload();
     },    
     onFailure: function(errorID)
-    {
-        window.location.reload();
-        
+    {        
         if($("geoLocationInformation"))
         {
             switch (errorID) {            
                 case 1: // Permission Denied
-                    this.updateInfoElements(this.options.options.messages.geo_err_PermissionDenied);                   
+                    this.updateInfoElements(this.options.options.messages.permissionDenied);                   
                     break;
                 case 2: // Position unavailable
-                    this.updateInfoElements(this.options.options.messages.geo_err_PositionUnavailable);                   
+                    this.updateInfoElements(this.options.options.messages.positionUnavailable);                   
                     break;
                 case 3: // Time out
-                    this.updateInfoElements(this.options.options.messages.geo_err_TimeOut);                   
+                    this.updateInfoElements(this.options.options.messages.timeOut);                   
                     break;
                 case 10: // Unsupported Browser
-                    this.updateInfoElements(this.options.options.messages.geo_err_UnsupportedBrowser);                   
+                    this.updateInfoElements(this.options.options.messages.unsupportedBrowser);                   
                     break;
                 case 20: // Connection problems for AJAX
-                    this.updateInfoElements(this.options.options.messages.geo_err_NoConnection);                   
+                    this.updateInfoElements(this.options.options.messages.noConnection);                   
                     break;
                 default: // Unknown Error
-                    this.updateInfoElements(this.options.options.messages.geo_err_UnknownError);                   
+                    this.updateInfoElements(this.options.options.messages.unknownError);                   
                     break;
             }
         }

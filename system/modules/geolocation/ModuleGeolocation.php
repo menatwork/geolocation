@@ -58,27 +58,21 @@ class ModuleGeolocation extends Module
 
     protected function compile()
     {
-        // Load duration time for cookies
-        $arrDurations = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
-
         $strJS = "<script type=\"text/javascript\">//<![CDATA[";
-        $strJS .="
-            window.addEvent('domready', function(){
-                if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');
-                GeoUpdater.setCookieLifetime(" . (is_numeric($arrDurations[1]) ? $arrDurations[1] : "0") . ");
-                GeoUpdater.setMessages({
-                    geo_msc_Start : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',
-                    geo_msc_Finished : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',
-                    geo_msc_Changing : '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}',
-                    geo_err_NoConnection : '{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',
-                    geo_err_PermissionDenied : '{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',
-                    geo_err_PositionUnavailable : '{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',
-                    geo_err_TimeOut : '{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',
-                    geo_err_UnsupportedBrowser : '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',
-                    geo_err_UnknownError : '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}'
-                });    
-            });
-        ";
+        $strJS .="window.addEvent('domready', function(){";
+        $strJS .="if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');";
+        $strJS .="GeoUpdater.setMessages({";
+        $strJS .="start:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',";
+        $strJS .="finished:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',";
+        $strJS .="changing:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}',";
+        $strJS .="noConnection:'{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',";
+        $strJS .="permissionDenied:'{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',";
+        $strJS .="positionUnavailable:'{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',";
+        $strJS .="timeOut:'{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',";
+        $strJS .="unsupportedBrowser:'{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',";
+        $strJS .="unknownError:'{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}'";
+        $strJS .="});";
+        $strJS .="});";
         $strJS .= "//]]></script>";
 
         // Add location object        
