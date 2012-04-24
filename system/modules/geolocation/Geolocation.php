@@ -50,6 +50,14 @@ class Geolocation extends Frontend
     protected static $instance = null;
 
     /**
+     * Flag to check if the location core function are finished
+     * 
+     * @var type 
+     */
+    protected $booRunFinished = false;
+
+
+    /**
      * Constructor 
      */
     protected function __construct()
@@ -106,6 +114,11 @@ class Geolocation extends Frontend
                 $this->saveSession();
                 $this->saveCookie();
             }
+        }
+        
+        if(!$this->Environment->isAjaxRequest)
+        {
+            $this->checkGeolocation();
         }
 
         // Save contaoner in session or cookie
@@ -261,6 +274,7 @@ class Geolocation extends Frontend
             $this->objUserGeolocation->setCountryShort($strCountryShort);
             $this->objUserGeolocation->setCountry($this->getCountryByShortTag($strCountryShort));
 
+            $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
             $this->objUserGeolocation->setTracked(true);
             $this->objUserGeolocation->setTrackType(GeolocationContainer::LOCATION_BY_USER);
 
@@ -319,19 +333,17 @@ class Geolocation extends Frontend
         // Build html code
         $strJS = "";
         $strJS .= "<script type=\"text/javascript\">";
-
-        $strJS .= "var RunGeolocation = new Geolocation({options:
-                {messages:{
-                    geo_err_NoConnection: '{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',                     
-                    geo_err_PermissionDenied: '{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',
-                    geo_err_PositionUnavailable: '{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',
-                    geo_err_TimeOut: '{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',
-                    geo_err_UnsupportedBrowser: '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',
-                    geo_err_UnknownError: '{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}',
-                    geo_msc_Start: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',
-                    geo_msc_Finished: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',
-                    geo_msc_Changing: '{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}'
-                }}});";
+        $strJS .= "var RunGeolocation = new Geolocation({options:{messages:{";
+        $strJS .= "noConnection:'{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',";                     
+        $strJS .= "permissionDenied:'{$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']}',";
+        $strJS .= "positionUnavailable:'{$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']}',";
+        $strJS .= "timeOut:'{$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']}',";
+        $strJS .= "unsupportedBrowser:'{$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']}',";
+        $strJS .= "unknownError:'{$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']}',";
+        $strJS .= "start:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']}',";
+        $strJS .= "finished:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']}',";
+        $strJS .= "changing:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}'";
+        $strJS .= "}}});";
         $strJS .= "</script>";
         $strJS .= "\n</head>";
 
@@ -358,14 +370,59 @@ class Geolocation extends Frontend
      * @param Database_Result $objLayout
      * @param PageRegular $objPageRegular 
      */
-    public function checkFrontpage(Database_Result $objPage, Database_Result $objLayout, PageRegular $objPageRegular)
-    {
-        // Check if we have allready a geolocation from user
-        if ($this->objUserGeolocation->isTracked() == true)
+    public function checkContentelement($objElement, $strBuffer)
+    {        
+        if($this->booRunFinished == true)
         {
-            return;
+            return $strBuffer;
         }
         
+        // Check if we have allready a geolocation from user
+        if ($this->objUserGeolocation->isTracked() == true)
+        {            
+            $this->booRunFinished = true;
+            return $strBuffer;
+        }  
+        
+        $this->checkGeolocation();
+       
+        return $strBuffer;
+    }
+    
+     /**
+     * Set JS/Hook for geolocation 
+     * 
+     * @param Database_Result $objPage
+     * @param Database_Result $objLayout
+     * @param PageRegular $objPageRegular 
+     */
+    public function checkModuleelement($strBuffer, $strTemplate)
+    {         
+        if($this->booRunFinished == true)
+        {
+            return $strBuffer;
+        }
+        
+        // Check if we have allready a geolocation from user
+        if ($this->objUserGeolocation->isTracked() == true)
+        {            
+            $this->booRunFinished = true;
+            return $strBuffer;
+        }  
+        
+        $this->checkGeolocation();
+       
+        return $strBuffer;
+    }
+    
+    /**
+     * Geolocation core functions
+     * 
+     * @global Object $objPage 
+     */
+    protected function checkGeolocation()
+    {        
+        global $objPage;
         $arrMethods = array();
 
         // Check options for this page 
@@ -373,11 +430,11 @@ class Geolocation extends Frontend
         {
             $arrMethods = deserialize($objPage->geo_single_choose);
         }
-         // Check options for this page 
+        // Check options for this page 
         else if ($objPage->geo_child_page == true)
         {
             $arrMethods = deserialize($objPage->geo_child_choose);
-        }        
+        }
         // Check options from parentpages
         else
         {
@@ -403,10 +460,31 @@ class Geolocation extends Frontend
                 }
             }
         }
-        
-        // Rest current running loacatin operation, if not in current methods
-        if (in_array(!$this->objUserGeolocation->getTrackRunning(), $arrMethods))
+      
+        // Get current running method as string
+        $stringCurrentRunning;
+        switch ($this->objUserGeolocation->getTrackRunning())
         {
+            case GeolocationContainer::LOCATION_W3C:
+                $stringCurrentRunning = "w3c";
+                break;
+            
+            case GeolocationContainer::LOCATION_IP:
+                $stringCurrentRunning = "ip";
+                break;
+            
+            case GeolocationContainer::LOCATION_FALLBACK:
+                $stringCurrentRunning = "fallback";
+                break;
+            
+            case GeolocationContainer::LOCATION_NONE:
+            default :
+                $stringCurrentRunning = "none";
+        }
+
+        // Rest current running loacatin operation, if not in current methods
+        if (!in_array($stringCurrentRunning, $arrMethods))
+        {            
             $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
             $this->objUserGeolocation->setFailed(false);
             $this->objUserGeolocation->setError("");
@@ -430,13 +508,13 @@ class Geolocation extends Frontend
                     case "w3c":
                         $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
                         $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_W3C);
-
+                        
                         // Check if no other method is running and if this is the first time
                         if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
                             // Include js and hock fpr w3c
-                            $GLOBALS['TL_JAVASCRIPT']['geoCore']             = "system/modules/geolocation/html/js/geoCore.js";
-                            $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][]  = array('Geolocation', 'insertJSVars');
+                            $GLOBALS['TL_JAVASCRIPT']['geoCore']            = "system/modules/geolocation/html/js/geoCore.js";
+                            $GLOBALS['TL_HOOKS']['parseFrontendTemplate'][] = array('Geolocation', 'insertJSVars');
 
                             // Set information
                             $this->objUserGeolocation->setTrackRunning(GeolocationContainer::LOCATION_W3C);
@@ -482,7 +560,7 @@ class Geolocation extends Frontend
                     case "ip":
                         $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
                         $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_IP);
-
+                        
                         // Check if no other method is running and if this is the first time
                         if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
@@ -501,7 +579,7 @@ class Geolocation extends Frontend
 
                                 $this->objUserGeolocation->setError("No ip result.");
                                 $this->objUserGeolocation->setErrorID(GeolocationContainer::ERROR_NO_IP_RESULT);
-                                
+
                                 // Set information for geolocation
                                 $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
 
@@ -522,7 +600,7 @@ class Geolocation extends Frontend
                     case "fallback":
                         $booNoneRunning = $intCurrenRunning == GeolocationContainer::LOCATION_NONE;
                         $booAllreadyRun = $this->objUserGeolocation->isTrackFinished(GeolocationContainer::LOCATION_FALLBACK);
-
+                        
                         // Check if a fallback is define
                         if ($booNoneRunning == true && $booAllreadyRun == false)
                         {
@@ -573,6 +651,8 @@ class Geolocation extends Frontend
             $this->saveSession();
             $this->saveCookie();
         }
+
+        $this->booRunFinished = true;
     }
 
     /* -------------------------------------------------------------------------
@@ -764,7 +844,6 @@ class Geolocation extends Frontend
      */
     protected function ajaxSetLocation($arrReturn)
     {
-
         // Check if lat/lon is set
         if ((strlen($this->Input->post("lat")) == 0 || strlen($this->Input->post("lon")) == 0) && (strlen($this->Input->post("country")) == 0 || strlen($this->Input->post("countryShort")) == 0))
         {
@@ -850,7 +929,7 @@ class Geolocation extends Frontend
 
         try
         {
-            $this->setUserGeolocationByShortCountry($this->Input->post("location"));
+            $this->setUserGeolocationByShortCountry($this->Input->post("location"));   
         }
         catch (Exception $exc)
         {
