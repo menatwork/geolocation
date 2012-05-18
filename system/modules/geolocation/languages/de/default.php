@@ -38,14 +38,18 @@ $GLOBALS['TL_LANG']['GEO']['your_country']                      = "Ihr Land:";
 $GLOBALS['TL_LANG']['GEO']['unknown_country']                   = "Ihr Land konnte nicht ermittelt werden.";
 
 /**
+ * Text
+ */
+$GLOBALS['TL_LANG']['MSC']['GEO']['start']                     = 'Ihr Herkunftsland wird ermittelt.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['finished']                  = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['changing']                  = 'Ihr Herkunftsland wird geändert.';
+
+/**
  * Errors
  */
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']                     = 'Ihr Herkunftsland wird ermittelt.';
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']                  = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']                  = 'Ihr Herkunftsland wird geändert.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']              = 'Es ist ein Fehler bei der Serververbindung aufgetreten.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']          = 'Sie haben die Bestimmung Ihres Herkunftslandes verweigert.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable']       = 'Ihr Herkunftsland konnte nicht ermittelt werden.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']                   = 'Zeitüberschreitung.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']        = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']              = 'Unbekannter Fehler.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['noConnection']              = 'Es ist ein Fehler bei der Serververbindung aufgetreten.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['permissionDenied']          = 'Sie haben die Bestimmung Ihres Herkunftslandes verweigert.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['positionUnavailable']       = 'Ihr Herkunftsland konnte nicht ermittelt werden.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['timeOut']                   = 'Zeitüberschreitung.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['unsupportedBrowser']        = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['unknownError']              = 'Unbekannter Fehler.';

@@ -30,16 +30,16 @@
 /**
  * Translation for JS
  */
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Start']               = 'Detecting your country.';
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Finished']            = 'Your country of origin was successfully detected and is now being processed.';
-$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']            = 'Changing your country of origin.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['start']               = 'Detecting your country.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['finished']            = 'Your country of origin was successfully detected and is now being processed.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['changing']            = 'Changing your country of origin.';
 
-$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']        = 'The connnection to the server could not be established.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_PermissionDenied']    = 'You have refused to identify your country of origin.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_PositionUnavailable'] = 'Your country could not be detected.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_TimeOut']             = 'Connection timeout.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_UnsupportedBrowser']  = 'Your browser does not support the geolocation API.';
-$GLOBALS['TL_LANG']['ERR']['geo_err_UnknownError']        = 'Unknown error.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['noConnection']        = 'The connnection to the server could not be established.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['permissionDenied']    = 'You have refused to identify your country of origin.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['positionUnavailable'] = 'Your country could not be detected.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['timeOut']             = 'Connection timeout.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['unsupportedBrowser']  = 'Your browser does not support the geolocation API.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['unknownError']        = 'Unknown error.';
 
 /**
  * Lookup Services 
