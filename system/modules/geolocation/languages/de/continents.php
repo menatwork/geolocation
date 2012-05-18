@@ -22,11 +22,10 @@
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2012
- * @package    geolocation
+ * @package    Language
  * @license    GNU/LGPL
  * @filesource
  */
-
 
 /**
  * Countries

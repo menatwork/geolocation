@@ -52,17 +52,20 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['geo_template'] = array(
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['geo_close'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_module']['geo_close'],
-    'inputType' => 'checkbox'
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'w50')
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['geo_chosen'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_module']['geo_chosen'],
-    'inputType' => 'checkbox'    
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'clr')    
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['geo_user_change'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_module']['geo_user_change'],
-    'inputType' => 'checkbox'    
+    'inputType' => 'checkbox',
+    'eval' => array('tl_class' => 'w50')
 );
 
 /**
