@@ -7,3 +7,8 @@
   * httprequestextended
   * http://www.contao.org/erweiterungsliste/view/httprequestextended.html
   */
+  
+ /*
+  * ajax
+  * http://www.contao.org/erweiterungsliste/view/ajax.html
+  */
