@@ -67,7 +67,7 @@ class ModuleGeolocation extends Module
             $strRequestToken = REQUEST_TOKEN;
         }
 
-        $strJS = "<script>";
+        $strJS = "<script type=\"text/javascript\">";
         $strJS .="window.addEvent('domready', function(){";
         $strJS .="if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');";
         $strJS .="GeoUpdater.setMessages({";
