@@ -131,7 +131,7 @@ class GeolocationContainer implements Serializable
             }
         }
         
-        if($this->arrTrackFinished == "")
+        if(!is_array($this->arrTrackFinished))
         {
             $this->arrTrackFinished = array();
         }
@@ -220,6 +220,11 @@ class GeolocationContainer implements Serializable
      */
     public function isTrackFinished($intTrackFinished)
     {
+        if(!is_array($this->arrTrackFinished))
+        {
+            $this->arrTrackFinished = array();
+        }        
+        
        if(in_array($intTrackFinished, $this->arrTrackFinished))
        {
            return true;

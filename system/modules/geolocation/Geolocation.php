@@ -65,7 +65,7 @@ class Geolocation extends Frontend
         // Call parent constructor
         parent::__construct();
 
-        // Check ip override
+        // Check ip overwride
         if ($GLOBALS['TL_CONFIG']['geo_customOverride'] == true)
         {
             // Get IP`s from config
@@ -121,7 +121,7 @@ class Geolocation extends Frontend
             $this->checkGeolocation();
         }
 
-        // Save contaoner in session or cookie
+        // Save container in session or cookie
         if ($this->objUserGeolocation->isTracked() == true)
         {
             if ($booLoadByCookie == true)
@@ -297,7 +297,7 @@ class Geolocation extends Frontend
      */
 
     /**
-     * User the Contao function to get a full country name for a short tag
+     * Use the Contao function to get a full country name for a short tag
      * 
      * @param type $strShort
      * @return boolean 
@@ -462,7 +462,7 @@ class Geolocation extends Frontend
         }
       
         // Get current running method as string
-        $stringCurrentRunning;
+        $stringCurrentRunning = "";
         switch ($this->objUserGeolocation->getTrackRunning())
         {
             case GeolocationContainer::LOCATION_W3C:
@@ -705,6 +705,7 @@ class Geolocation extends Frontend
             $objGeolocation->setTracked(true);
             $objGeolocation->setTrackType(GeolocationContainer::LOCATION_W3C);
             $objGeolocation->addTrackFinished(GeolocationContainer::LOCATION_W3C);
+            $objGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
 
             $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
@@ -750,6 +751,7 @@ class Geolocation extends Frontend
             $objGeolocation->setTracked(true);
             $objGeolocation->setTrackType(GeolocationContainer::LOCATION_IP);
             $objGeolocation->addTrackFinished(GeolocationContainer::LOCATION_IP);
+            $objGeolocation->setTrackRunning(GeolocationContainer::LOCATION_NONE);
 
             $objGeolocation->setFailed(false);
             $objGeolocation->setError("");
