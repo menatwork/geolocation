@@ -56,7 +56,6 @@ class Geolocation extends Frontend
      */
     protected $booRunFinished = false;
 
-
     /**
      * Constructor 
      */
@@ -104,6 +103,11 @@ class Geolocation extends Frontend
         $this->import("Environment");
         $this->import("Input");
 
+        if ($this->Environment->isAjaxRequest && strlen($this->Input->post("session")) != 0)
+        {
+            session_id($this->Input->post("session"));
+        }
+
         // Try to load the geolocation container from session or cookie
         if (($booLoadBySession = $this->loadSession()) == false)
         {
@@ -116,9 +120,13 @@ class Geolocation extends Frontend
             }
         }
         
-        if(!$this->Environment->isAjaxRequest)
+        if (!$this->Environment->isAjaxRequest && $this->objUserGeolocation->isTracked() != true)
         {
             $this->checkGeolocation();
+        }
+        else
+        {
+            $this->booRunFinished = true;
         }
 
         // Save container in session or cookie
@@ -330,10 +338,19 @@ class Geolocation extends Frontend
             return $strContent;
         }
 
+        if (REQUEST_TOKEN == "REQUEST_TOKEN")
+        {
+            $strRequestToken = "";
+        }
+        else
+        {
+            $strRequestToken = REQUEST_TOKEN;
+        }
+
         // Build html code
         $strJS = "";
         $strJS .= "<script type=\"text/javascript\">";
-        $strJS .= "var RunGeolocation = new Geolocation({options:{messages:{";
+        $strJS .= "var RunGeolocation = new Geolocation({session:'" . session_id() . "',requesttoken:'" . $strRequestToken . "',messages:{";
         $strJS .= "noConnection:'{$GLOBALS['TL_LANG']['ERR']['GEO']['noConnection']}',";                     
         $strJS .= "permissionDenied:'{$GLOBALS['TL_LANG']['ERR']['GEO']['permissionDenied']}',";
         $strJS .= "positionUnavailable:'{$GLOBALS['TL_LANG']['ERR']['GEO']['positionUnavailable']}',";
@@ -343,7 +360,7 @@ class Geolocation extends Frontend
         $strJS .= "start:'{$GLOBALS['TL_LANG']['MSC']['GEO']['start']}',";
         $strJS .= "finished:'{$GLOBALS['TL_LANG']['MSC']['GEO']['finished']}',";
         $strJS .= "changing:'{$GLOBALS['TL_LANG']['MSC']['GEO']['changing']}'";
-        $strJS .= "}}});";
+        $strJS .= "}});";
         $strJS .= "</script>";
         $strJS .= "\n</head>";
 

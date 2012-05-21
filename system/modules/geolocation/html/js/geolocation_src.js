@@ -28,10 +28,12 @@ var GeoEdit = new Class({
     options:
     {
         debug: false,
-        messages: {}
+        messages: {},
+        requesttoken: "",
+        session: ""
     },
     initialize: function(options){
-        this.setOptions(options);
+        this.setOptions(options); 
     }, 
     setMessages: function(messages)
     {
@@ -39,24 +41,38 @@ var GeoEdit = new Class({
         options.messages = messages;
         this.setOptions(options);
     },
-    changeGeoLocation: function (geoSelectId, geoInfoId, lang)
+    setRequestToken: function(requesttoken)
     {
+        options = {};
+        options.requesttoken = requesttoken;
+        this.setOptions(options);
+    },
+    setSession: function(session)
+    {
+        options = {};
+        options.session = session;
+        this.setOptions(options);
+    },
+    changeGeoLocation: function (geoSelectId, geoInfoId, lang)
+    {       
         var value = $(geoSelectId).getSelected().get("text")[0];
         var valueShort = $(geoSelectId).getSelected().get("value")[0];        
 
         // Check if the request token is set
-        if( typeof(REQUEST_TOKEN) !== 'undefined' )
+        if( this.options.requesttoken != "" )
         {
             data = {
                 "action"        : "GeoChangeLocation",
+                "session"       : this.options.session,
                 "location"      : valueShort,
-                "REQUEST_TOKEN" : REQUEST_TOKEN
+                "REQUEST_TOKEN" : this.options.requesttoken
             }
         }
         else
         {
             data = {
                 "action"        : "GeoChangeLocation",
+                "session"       : this.options.session,
                 "location"      : valueShort
             }
         }
@@ -76,9 +92,9 @@ var GeoEdit = new Class({
             evalResponse:false,
             onSuccess:function(json,responseElements){   
                 // Update Request Token
-                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                if( this.options.requesttoken )
                 {
-                    REQUEST_TOKEN = json.token;
+                    this.options.requesttoken = json.token;
                 }
 
                 if(json.content.success == true)

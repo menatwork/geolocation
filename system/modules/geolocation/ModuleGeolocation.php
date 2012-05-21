@@ -58,22 +58,26 @@ class ModuleGeolocation extends Module
 
     protected function compile()
     {
-        $strJS = "<script type=\"text/javascript\">//<![CDATA[";
+        if (REQUEST_TOKEN == "REQUEST_TOKEN")
+        {
+            $strRequestToken = "";
+        }
+        else
+        {
+            $strRequestToken = REQUEST_TOKEN;
+        }
+
+        $strJS = "<script>";
         $strJS .="window.addEvent('domready', function(){";
         $strJS .="if (typeof(RunGeolocation) != 'undefined') RunGeolocation.addInfoElement('geoInfo_" . $this->id . "');";
         $strJS .="GeoUpdater.setMessages({";
-        $strJS .="start:'{$GLOBALS['TL_LANG']['MSC']['GEO']['start']}',";
-        $strJS .="finished:'{$GLOBALS['TL_LANG']['MSC']['GEO']['finished']}',";
-        $strJS .="changing:'{$GLOBALS['TL_LANG']['MSC']['GEO']['changing']}',";
-        $strJS .="noConnection:'{$GLOBALS['TL_LANG']['ERR']['GEO']['NoConnection']}',";
-        $strJS .="permissionDenied:'{$GLOBALS['TL_LANG']['ERR']['GEO']['PermissionDenied']}',";
-        $strJS .="positionUnavailable:'{$GLOBALS['TL_LANG']['ERR']['GEO']['PositionUnavailable']}',";
-        $strJS .="timeOut:'{$GLOBALS['TL_LANG']['ERR']['GEO']['TimeOut']}',";
-        $strJS .="unsupportedBrowser:'{$GLOBALS['TL_LANG']['ERR']['GEO']['UnsupportedBrowser']}',";
-        $strJS .="unknownError:'{$GLOBALS['TL_LANG']['ERR']['GEO']['UnknownError']}'";
+        $strJS .="changing:'{$GLOBALS['TL_LANG']['MSC']['geo_msc_Changing']}',";
+        $strJS .="noConnection:'{$GLOBALS['TL_LANG']['ERR']['geo_err_NoConnection']}',";
         $strJS .="});";
+        $strJS .="GeoUpdater.setRequestToken('" . $strRequestToken . "');";
+        $strJS .="GeoUpdater.setSession('" . session_id() . "');";
         $strJS .="});";
-        $strJS .= "//]]></script>";
+        $strJS .="</script>";
 
         // Add location object        
         $this->Template->UserGeolocation = Geolocation::getInstance()->getUserGeolocation();
@@ -82,6 +86,7 @@ class ModuleGeolocation extends Module
         $this->Template->strJS = $strJS;
         $this->Template->strId = $this->id;
         $this->Template->lang = $GLOBALS['TL_LANGUAGE'];
+        $this->Template->geoChosen = $this->geo_chosen;
     }
 
 }

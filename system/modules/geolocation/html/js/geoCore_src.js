@@ -10,7 +10,9 @@ var Geolocation = new Class({
     Implements: [Options],   
     options: 
     {
-        debug: false
+        debug: false,
+        session: "",
+        requesttoken: ""
     },
     infoElements: [],
     vars: 
@@ -39,7 +41,7 @@ var Geolocation = new Class({
     }, 
     // Get information
     runGeolocation: function()
-    {
+    {         
         this.onProgress();
         
         if (navigator.geolocation) {            
@@ -78,20 +80,22 @@ var Geolocation = new Class({
         }
                 
         // Check if the request token is set
-        if( typeof(REQUEST_TOKEN) !== 'undefined' )
+        if( this.options.requesttoken != "" )
         {
             data = {
                 "action"        : "GeoSetLocation",
+                "session"       : this.options.session,
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
                 "isAJAX"        : true,
-                "REQUEST_TOKEN" : REQUEST_TOKEN
+                "REQUEST_TOKEN" : this.options.requesttoken
             }
         }
         else
         {
             data = {
                 "action"        : "GeoSetLocation",
+                "session"       : this.options.session,
                 "lat"           : this.vars.lat,
                 "lon"           : this.vars.lon,
                 "isAJAX"        : true
@@ -122,9 +126,9 @@ var Geolocation = new Class({
                 }
                 
                 // Update Request Token
-                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                if(  this.options.requesttoken != "" )
                 {
-                    REQUEST_TOKEN = json.token;
+                    this.options.requesttoken = json.token;
                 }
                 
                 // Check if server send success
@@ -177,19 +181,21 @@ var Geolocation = new Class({
         }
         
         // Check if the request token is set
-        if( typeof(REQUEST_TOKEN) !== 'undefined' )
+        if( this.options.requesttoken != ""  )
         {
             data = {
                 "action"        : "GeoSetError",
+                "session"       : this.options.session,
                 "errID"         : errorID,
                 "isAJAX"        : true,
-                "REQUEST_TOKEN" : REQUEST_TOKEN
+                "REQUEST_TOKEN" : this.options.requesttoken
             }
         }
         else
         {
             data = {
                 "action"        : "GeoSetError",
+                "session"       : this.options.session,
                 "errID"         : errorID,
                 "isAJAX"        : true
             }
@@ -204,10 +210,11 @@ var Geolocation = new Class({
             evalResponse:false,
             onSuccess:function(json,responseElements){   
                 // Update Request Token
-                if( typeof(REQUEST_TOKEN) !== 'undefined' )
+                if(  this.options.requesttoken != ""  )
                 {
-                    REQUEST_TOKEN = json.token;
-                }                
+                    this.options.requesttoken = json.token;
+                }  
+                
                 // Debug Information
                 if(this.options.debug == true)
                 {
@@ -245,16 +252,16 @@ var Geolocation = new Class({
     {
         this.infoElements.each(function(key)
         {
-           $(key).set("html", message);
+            $(key).set("html", message);
         });
     },
     onProgress: function()
     {
-        this.updateInfoElements(this.options.options.messages.sart);
+        this.updateInfoElements(this.options.messages.sart);
     },
     afterProgress: function()
     {
-        this.updateInfoElements(this.options.options.messages.finished);
+        this.updateInfoElements(this.options.messages.finished);
     },
     onSuccess: function()
     {
@@ -262,28 +269,27 @@ var Geolocation = new Class({
     },    
     onFailure: function(errorID)
     {        
-        if($("geoLocationInformation"))
-        {
-            switch (errorID) {            
-                case 1: // Permission Denied
-                    this.updateInfoElements(this.options.options.messages.permissionDenied);                   
-                    break;
-                case 2: // Position unavailable
-                    this.updateInfoElements(this.options.options.messages.positionUnavailable);                   
-                    break;
-                case 3: // Time out
-                    this.updateInfoElements(this.options.options.messages.timeOut);                   
-                    break;
-                case 10: // Unsupported Browser
-                    this.updateInfoElements(this.options.options.messages.unsupportedBrowser);                   
-                    break;
-                case 20: // Connection problems for AJAX
-                    this.updateInfoElements(this.options.options.messages.noConnection);                   
-                    break;
-                default: // Unknown Error
-                    this.updateInfoElements(this.options.options.messages.unknownError);                   
-                    break;
-            }
+        switch (errorID) {            
+            case 1: // Permission Denied
+                this.updateInfoElements(this.options.messages.permissionDenied);                   
+                break;
+            case 2: // Position unavailable
+                this.updateInfoElements(this.options.messages.positionUnavailable);                   
+                break;
+            case 3: // Time out
+                this.updateInfoElements(this.options.messages.timeOut);                   
+                break;
+            case 10: // Unsupported Browser
+                this.updateInfoElements(this.options.messages.unsupportedBrowser);                   
+                break;
+            case 20: // Connection problems for AJAX
+                this.updateInfoElements(this.options.messages.noConnection);                   
+                break;
+            default: // Unknown Error
+                this.updateInfoElements(this.options.messages.unknownError);                   
+                break;
         }
+        
+        window.location.reload();
     }
 });
