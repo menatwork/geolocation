@@ -68,22 +68,20 @@ $GLOBALS['TL_DCA']['tl_page']['fields']['geo_child_page'] = array(
     'eval' => array('tl_class' => 'clr', 'submitOnChange' => true)
 );
 
-//----------
-
 $GLOBALS['TL_DCA']['tl_page']['fields']['geo_single_choose'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_page']['geo_single_choose'],
+    'label' => &$GLOBALS['TL_LANG']['tl_page']['geo_choose'],
     'exclude' => true,
     'inputType' => 'checkboxWizard',
-    'options' => array("w3c" => "geo_w3c", "ip" => "geo_ip", "fallback" => "geo_fallback"),
+    'options' => array('w3c' => 'geo_w3c', 'ip' => 'geo_ip', 'fallback' => 'geo_fallback'),
     'reference' => &$GLOBALS['TL_LANG']['tl_page'],
     'eval' => array('multiple' => true, 'mandatory' => true)
 );
 
 $GLOBALS['TL_DCA']['tl_page']['fields']['geo_child_choose'] = array(
-    'label' => &$GLOBALS['TL_LANG']['tl_page']['geo_child_choose'],
+    'label' => &$GLOBALS['TL_LANG']['tl_page']['geo_choose'],
     'exclude' => true,
     'inputType' => 'checkboxWizard',
-    'options' => array("w3c" => "geo_w3c", "ip" => "geo_ip", "fallback" => "geo_fallback"),
+    'options' => array('w3c' => 'geo_w3c', 'ip' => 'geo_ip', 'fallback' => 'geo_fallback'),
     'reference' => &$GLOBALS['TL_LANG']['tl_page'],
     'eval' => array('multiple' => true, 'mandatory' => true)
 );

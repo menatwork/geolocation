@@ -35,12 +35,9 @@ $GLOBALS['TL_LANG']['tl_page']['geo_legend']        = 'Geolocation-Einstellungen
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_page']['geo_single_page']   = array('Geolocation auf dieser Seite einbinden', 'Hier können Sie das Verhalten der aktuellen Seite einstellen.');
-$GLOBALS['TL_LANG']['tl_page']['geo_child_page']    = array('Geolocation auf dieser und allen Unterseiten einbinden', 'Hier können Sie das Verhalten der aktuellen Seite und aller Unterseiten einstellen.');
-
-$GLOBALS['TL_LANG']['tl_page']['geo_single_choose'] = array('Lokalisierungsoptionen', 'Hier können Sie einstellen, welche Methode benutzt werden soll, um einen Benutzer zu lokalisieren.');
-$GLOBALS['TL_LANG']['tl_page']['geo_child_choose']  = array('Lokalisierungsoptionen', 'Hier können Sie einstellen, welche Methode benutzt werden soll, um einen Benutzer zu lokalisieren.');
-
-$GLOBALS['TL_LANG']['tl_page']['geo_w3c']           = array('W3C Lokalisierung', 'Wählen Sie diese Option, wenn eine Lokalisierung über die W3C API erfolgen soll.');
-$GLOBALS['TL_LANG']['tl_page']['geo_ip']            = array('IP Lokalisierung', 'Wählen Sie diese Option, wenn eine Lokalisierung über die IP-Adresse erfolgen soll.');
-$GLOBALS['TL_LANG']['tl_page']['geo_fallback']      = array('Fallback', 'Wählen Sie diese Option, wenn ein Fallback gesetzt werden soll, wenn keine andere Funktion ein Ergebnis liefert.');
+$GLOBALS['TL_LANG']['tl_page']['geo_single_page']   = array('Geolocation auf dieser Seite einbinden', 'Geolocation auf der aktuellen Seite einbinden.');
+$GLOBALS['TL_LANG']['tl_page']['geo_child_page']    = array('Geolocation auf dieser und allen Unterseiten einbinden', 'Geolocation auf der aktuellen Seite und allen Unterseiten einbinden.');
+$GLOBALS['TL_LANG']['tl_page']['geo_choose']        = array('Lokalisierungsoptionen', 'Hier können Sie einstellen, welche Methode benutzt werden soll, um einen Benutzer zu lokalisieren.');
+$GLOBALS['TL_LANG']['tl_page']['geo_w3c']           = 'W3C Lokalisierung';
+$GLOBALS['TL_LANG']['tl_page']['geo_ip']            = 'IP Lokalisierung';
+$GLOBALS['TL_LANG']['tl_page']['geo_fallback']      = 'Fallback';
