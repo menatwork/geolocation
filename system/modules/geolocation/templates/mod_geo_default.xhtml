@@ -26,6 +26,11 @@
 	</select>
 	<input type="button" value="Senden" name="changeCountry" onclick="GeoUpdater.changeGeoLocation('geoChange_<?php echo $this->strId; ?>', 'geoInfo_<?php echo $this->strId; ?>','<?php echo $this->lang; ?>');" />
 </div>
+
+<?php if($this->Template->geoChosen): ?> 
+<script type="text/javascript">new Chosen($("geoChange_<?php echo $this->strId; ?>"));</script>
+<?php endif; ?>
+
 <?php endif; ?>
 
 </div>
