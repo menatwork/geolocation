@@ -22,7 +22,7 @@
  *
  * PHP version 5
  * @copyright  MEN AT WORK 2012 
- * @package    slideItMoo
+ * @package    geolocation
  * @license    GNU/LGPL 
  * @filesource
  */
@@ -60,7 +60,6 @@ class runonceJob extends Backend
             $this->Config->add("\$GLOBALS['TL_CONFIG']['geo_GeolookUpSettings']", 'a:1:{i:0;a:2:{s:12:"lookUpConfig";s:74:"http://open.mapquestapi.com/nominatim/v1/reverse?format=json&lat=%s&lon=%s";s:11:"lookUpClass";s:26:"GeoLookUpOpenStreetMap.php";}}');
         }
     }
-
 }
 
 // Run once
