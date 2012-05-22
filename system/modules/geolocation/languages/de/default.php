@@ -53,3 +53,4 @@ $GLOBALS['TL_LANG']['ERR']['GEO']['positionUnavailable']       = 'Ihr Herkunftsl
 $GLOBALS['TL_LANG']['ERR']['GEO']['timeOut']                   = 'Zeitüberschreitung.';
 $GLOBALS['TL_LANG']['ERR']['GEO']['unsupportedBrowser']        = 'Ihr Browser unterstützt nicht die Standortbestimmung Ihres Herkunftslandes.';
 $GLOBALS['TL_LANG']['ERR']['GEO']['unknownError']              = 'Unbekannter Fehler.';
+$GLOBALS['TL_LANG']['ERR']['GEO']['includeCache']              = 'Ein aktivierter Cache kann die Geolokalisierung negativ beeinträchtigen.';
