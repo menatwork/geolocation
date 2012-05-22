@@ -271,16 +271,20 @@ var Geolocation = new Class({
     {        
         switch (errorID) {            
             case 1: // Permission Denied
-                this.updateInfoElements(this.options.messages.permissionDenied);                   
+                this.updateInfoElements(this.options.messages.permissionDenied);        
+                window.location.reload();
                 break;
             case 2: // Position unavailable
-                this.updateInfoElements(this.options.messages.positionUnavailable);                   
+                this.updateInfoElements(this.options.messages.positionUnavailable);    
+                window.location.reload();
                 break;
             case 3: // Time out
-                this.updateInfoElements(this.options.messages.timeOut);                   
+                this.updateInfoElements(this.options.messages.timeOut); 
+                window.location.reload();
                 break;
             case 10: // Unsupported Browser
-                this.updateInfoElements(this.options.messages.unsupportedBrowser);                   
+                this.updateInfoElements(this.options.messages.unsupportedBrowser);   
+                window.location.reload();                
                 break;
             case 20: // Connection problems for AJAX
                 this.updateInfoElements(this.options.messages.noConnection);                   
@@ -289,7 +293,5 @@ var Geolocation = new Class({
                 this.updateInfoElements(this.options.messages.unknownError);                   
                 break;
         }
-        
-        window.location.reload();
     }
 });
