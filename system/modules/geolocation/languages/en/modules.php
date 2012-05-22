@@ -21,23 +21,18 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  MEN AT WORK 2012
+ * @copyright  MEN AT WORK 2012 
  * @package    Language
  * @license    GNU/LGPL 
  * @filesource
  */
 
 /**
- * Legends
+ * Back end modules
  */
-$GLOBALS['TL_LANG']['tl_page']['geo_legend']        = 'Geolokalisierungs-Einstellungen';
+$GLOBALS['TL_LANG']['MOD']['geolocation'] = 'Geolocation';
 
 /**
- * Fields
+ * Front end modules
  */
-$GLOBALS['TL_LANG']['tl_page']['geo_single_page']   = array('Geolokalisierung auf dieser Seite einbinden', 'Geolokalisierung auf der aktuellen Seite einbinden.');
-$GLOBALS['TL_LANG']['tl_page']['geo_child_page']    = array('Geolokalisierung auf dieser und allen Unterseiten einbinden', 'Geolokalisierung auf der aktuellen Seite und allen Unterseiten einbinden.');
-$GLOBALS['TL_LANG']['tl_page']['geo_choose']        = array('Lokalisierungsoptionen', 'Hier können Sie einstellen welche Methode benutzt werden soll, um einen Benutzer zu lokalisieren.');
-$GLOBALS['TL_LANG']['tl_page']['geo_w3c']           = 'W3C-Lokalisierung';
-$GLOBALS['TL_LANG']['tl_page']['geo_ip']            = 'IP-Lokalisierung';
-$GLOBALS['TL_LANG']['tl_page']['geo_fallback']      = 'Fallback';
+$GLOBALS['TL_LANG']['FMD']['geolocation'] = array('Geolocation', 'Add a information bar for the geolocation to the page.');

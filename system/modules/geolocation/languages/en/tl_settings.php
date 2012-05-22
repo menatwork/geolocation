@@ -30,19 +30,19 @@
 /**
  * Legends
  */
-$GLOBALS['TL_LANG']['tl_settings']['geo_legend']                    = 'Geolokalisierungs-Einstellungen';
+$GLOBALS['TL_LANG']['tl_settings']['geo_legend']                    = 'Geolocation settings';
 
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps_headline']      = array('Benutzerdefinierte IP-Adressen','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps']               = array('IP-Adressen','');
-$GLOBALS['TL_LANG']['tl_settings']['geo_countryFallback']           = array('Länder-Fallback', 'Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_customOverride']            = array('Benutzerdefinierte IP-Adressen verwenden', 'Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_customCountryFallback']     = array('Benutzerdefiniertes Länder-Fallback', 'Wählen Sie hier das Fallback-Land aus, das für die benutzerdefinierte IP-Adresse gelten soll.');
-$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration']            = array('Cookie Lebenszeit in Tagen', 'Hier können Sie die Lebenszeit der Cookies setzen. Links für Cookies die per W3C Gelocation ermittelt wurden, rechts für Einstellungen, die vom Benutzer getroffen wurden.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps_headline']      = array('Custom ip adresses','Hier können Sie eine kommagetrennte Liste von benutzerdefinierten IP-Adressen eingeben.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_overrideIps']               = array('IP addresses','');
+$GLOBALS['TL_LANG']['tl_settings']['geo_countryFallback']           = array('Country fallback', 'Wählen Sie hier das Fallback-Land, wenn die IP-Adresse keinem Land zugeordnet werden kann.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_customOverride']            = array('Use custom ip adresses', 'Klicken Sie hier um benutzerdefinierte Einstellungen zu konfigurieren.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_customCountryFallback']     = array('Custom country fallback', 'Wählen Sie hier das Fallback-Land aus, das für die benutzerdefinierte IP-Adresse gelten soll.');
+$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration']            = array('Cookie life time in days', 'Hier können Sie die Lebenszeit der Cookies setzen. Links für Cookies die per W3C Gelocation ermittelt wurden, rechts für Einstellungen, die vom Benutzer getroffen wurden.');
 
 $GLOBALS['TL_LANG']['tl_settings']['geo_IPlookUpSettings']          = array('IP-Service', 'Hier können Sie einstellen, welcher Dienst benutzt werden soll, um die IP-Adresse in einen Standort aufzulösen.'); 
 $GLOBALS['TL_LANG']['tl_settings']['geo_GeolookUpSettings']         = array('W3C-Service', 'Hier können Sie einstellen, welcher Dienst benutzt werden soll, um Lat/Lon in einen Standort aufzulösen.'); 
 $GLOBALS['TL_LANG']['tl_settings']['lookUpConfig']                  = array('Service-URL', 'Geben Sie hier einen String für die Konfiguration ein.');
-$GLOBALS['TL_LANG']['tl_settings']['lookUpClass']                   = array('Klasse', 'Wählen Sie den Service aus, der ausgeführt werden soll.');
+$GLOBALS['TL_LANG']['tl_settings']['lookUpClass']                   = array('Class', 'Wählen Sie den Service aus, der ausgeführt werden soll.');

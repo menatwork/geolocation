@@ -28,16 +28,9 @@
  */
 
 /**
- * Legends
- */
-$GLOBALS['TL_LANG']['tl_page']['geo_legend']        = 'Geolokalisierungs-Einstellungen';
-
-/**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_page']['geo_single_page']   = array('Geolokalisierung auf dieser Seite einbinden', 'Geolokalisierung auf der aktuellen Seite einbinden.');
-$GLOBALS['TL_LANG']['tl_page']['geo_child_page']    = array('Geolokalisierung auf dieser und allen Unterseiten einbinden', 'Geolokalisierung auf der aktuellen Seite und allen Unterseiten einbinden.');
-$GLOBALS['TL_LANG']['tl_page']['geo_choose']        = array('Lokalisierungsoptionen', 'Hier können Sie einstellen welche Methode benutzt werden soll, um einen Benutzer zu lokalisieren.');
-$GLOBALS['TL_LANG']['tl_page']['geo_w3c']           = 'W3C-Lokalisierung';
-$GLOBALS['TL_LANG']['tl_page']['geo_ip']            = 'IP-Lokalisierung';
-$GLOBALS['TL_LANG']['tl_page']['geo_fallback']      = 'Fallback';
+$GLOBALS['TL_LANG']['tl_module']['geo_template']    = array('Geo-Template', 'Hier können Sie das Geo-Template auswählen.');
+$GLOBALS['TL_LANG']['tl_module']['geo_close']       = array('Show close link', 'Wählen Sie diese Option, wenn in der Informationsleiste ein Schließen-Link integriert werden soll.');
+$GLOBALS['TL_LANG']['tl_module']['geo_user_change'] = array('Show country list', 'Wählen Sie diese Option, wenn Sie erlauben möchten, dass ein Benutzer selber auswählen kann, aus welchen Land er kommt.');
+$GLOBALS['TL_LANG']['tl_module']['geo_chosen']      = array('Activate chosen script', 'Wählen Sie diese Option, wenn für das Geolocation Modul das Chosen Skript verwendet werden soll.');

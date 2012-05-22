@@ -30,12 +30,12 @@
 /**
  * Reference
  */
-$GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = "Interne IP-Datenbank";
-$GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = "OpenStreetMap (JSON)";
-$GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = "Externer Service (JSON)";
-$GLOBALS['TL_LANG']['GEO']['geoplugin']                         = "geoplugin.net";
-$GLOBALS['TL_LANG']['GEO']['your_country']                      = "Ihr Land:";
-$GLOBALS['TL_LANG']['GEO']['unknown_country']                   = "Ihr Land konnte nicht ermittelt werden.";
+$GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = 'Interne IP-Datenbank';
+$GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = 'OpenStreetMap (JSON)';
+$GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = 'Externer Service (JSON)';
+$GLOBALS['TL_LANG']['GEO']['geoplugin']                         = 'geoplugin.net';
+$GLOBALS['TL_LANG']['GEO']['your_country']                      = 'Ihr Land:';
+$GLOBALS['TL_LANG']['GEO']['unknown_country']                   = 'Ihr Land konnte nicht ermittelt werden.';
 
 /**
  * Text

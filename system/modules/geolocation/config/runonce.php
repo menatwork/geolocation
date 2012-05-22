@@ -37,11 +37,8 @@
 class runonceJob extends Backend
 {
 
-    //- Core Functions ---------------------------------------------------------
-
     public function __construct()
     {
-        // Call parent
         parent::__construct();
     }
 
