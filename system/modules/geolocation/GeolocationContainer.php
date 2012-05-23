@@ -278,6 +278,7 @@ class GeolocationContainer implements Serializable
     
     /**
      * Check if we allready tracked
+     * 
      * @return boolean True - Tracking is finished | False - Tracking not done  
      */
     public function isTracked()
