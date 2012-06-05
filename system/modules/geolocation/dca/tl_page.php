@@ -116,11 +116,17 @@ class tl_page_geolocation extends Backend
      */
     public function onload(DC_Table $table)
     {
-        // Cehck if we hav a id
+        // If error session is not an array return DC_Table
+        if(!is_array($_SESSION['TL_ERROR']))
+        {
+                return $table;
+        }
+        
+        // Check if we hav a id
         if ($table->id == null || $table->id == "")
         {
             unset($_SESSION['TL_ERROR']['geo_includeCache']);
-            return;
+            return $table;
         }
 
         // Get current tl_page
