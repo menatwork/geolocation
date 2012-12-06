@@ -64,8 +64,8 @@ class GeolocationContainer implements Serializable
      */
 
     // Informations
-    protected $strCountry;          // Countryname long
-    protected $strCountryShort;     // Countryname short, 2 chars
+    protected $arrCountries;        // Countryname long
+    protected $arrCountriesShort;   // Countryname short, 2 chars
     protected $strIP;               // IP
     protected $strLat;              // Lat
     protected $strLon;              // Long
@@ -84,19 +84,19 @@ class GeolocationContainer implements Serializable
      */
 
     public function __construct()
-    {
-        $this->strCountry       = "";
-        $this->strCountryShort  = "";
-        $this->strIP            = "";
-        $this->strLon           = "";
-        $this->strLat           = "";
-        $this->arrTrackFinished = array();
-        $this->intTrackRunning  = self::LOCATION_NONE;
-        $this->intTrackType     = self::LOCATION_NONE;
-        $this->booTracked       = false;
-        $this->booFailed        = false;
-        $this->strError         = "";
-        $this->intError         = self::ERROR_NONE;
+    {		
+        $this->arrCountries			= array();
+        $this->arrCountriesShort	= array();
+        $this->strIP				= "";
+        $this->strLon				= "";
+        $this->strLat				= "";
+        $this->arrTrackFinished		= array();
+        $this->intTrackRunning		= self::LOCATION_NONE;
+        $this->intTrackType			= self::LOCATION_NONE;
+        $this->booTracked			= false;
+        $this->booFailed			= false;
+        $this->strError				= "";
+        $this->intError				= self::ERROR_NONE;
     }
 
     /**
@@ -135,6 +135,17 @@ class GeolocationContainer implements Serializable
         {
             $this->arrTrackFinished = array();
         }
+		
+		// Old version mode
+		if(key_exists('strCountry', $serialized))
+		{
+			$this->arrCountries = array($serialized['strCountry']);
+		}
+		
+		if(key_exists('strCountryShort', $serialized))
+		{
+			$this->arrCountriesShort = array($serialized['strCountryShort']);
+		}
     }
 
     /**
@@ -155,27 +166,63 @@ class GeolocationContainer implements Serializable
     }
    
     /* -------------------------------------------------------------------------
-     * Getter / Setter for informations
-     */
+	 * Getter / Setter for informations
+	 */
 
-    public function getCountry()
-    {
-        return $this->strCountry;
-    }
+	public function getCountries()
+	{
+		return (array) $this->arrCountries;
+	}
 
-    public function setCountry($strCountry)
-    {
-        $this->strCountry = $strCountry;
-    }
+	public function setCountries($arrCountries)
+	{
+		$this->arrCountries = $arrCountries;
+	}
 
-    public function getCountryShort()
-    {
-        return $this->strCountryShort;
+	public function getCountriesShort()
+	{
+		return (array) $this->arrCountriesShort;
+	}
+
+	public function setCountreisShort($strCountriesShort)
+	{
+		$this->arrCountriesShort = $strCountriesShort;
+	}
+
+	public function getCountry($intIndex = 0)
+	{
+		if(key_exists($intIndex, $this->arrCountries))
+		{
+			return $this->arrCountries[$intIndex];
+		}
+		
+		return null;
+	}
+
+	public function setCountry($strCountry)
+	{
+		if(!in_array($strCountry, $this->arrCountries))
+		{
+			$this->arrCountries[] = $strCountry;
+		}
+	}
+
+	public function getCountryShort($intIndex = 0)
+	{
+		if(key_exists($intIndex, $this->arrCountriesShort))
+		{
+			return $this->arrCountriesShort[$intIndex];
+		}
+		
+		return null;
     }
 
     public function setCountryShort($strCountryShort)
     {
-        $this->strCountryShort = $strCountryShort;
+		if(!in_array($strCountryShort, $this->arrCountriesShort))
+		{
+			$this->arrCountriesShort[] = $strCountryShort;
+		}
     }
 
     public function getIP()
@@ -330,6 +377,33 @@ class GeolocationContainer implements Serializable
     {
         $this->intError = $intError;
     }
+	
+	/**
+	 * Clean all countries, reinit all arrays
+	 */
+	public function cleanAllCountries()
+	{
+		$this->arrCountries = array();
+		$this->arrCountriesShort = array();
+	}
+	
+	public function containsCountryShort($mixKey)
+	{		
+		if(!is_array($mixKey))
+		{
+			$mixKey = trimsplit(",", $mixKey);
+		}
+		
+		foreach ($mixKey as $strKey)
+		{
+			if (in_array($strKey, $this->arrCountriesShort))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 }
 
