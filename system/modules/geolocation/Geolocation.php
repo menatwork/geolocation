@@ -205,18 +205,37 @@ class Geolocation extends Frontend
 
         $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
 
+        // Make a string from container
+        $strCookieValue = 'GeolocationContainerV2';
+        $strCookieValue .= '|';
+        $strCookieValue .= implode(",", $this->objUserGeolocation->getCountriesShort());
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->getIP();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->getLat();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->getLon();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->getTrackRunning();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->getTrackType();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->isTracked();
+        $strCookieValue .= '|';
+        $strCookieValue .= $this->objUserGeolocation->isFailed;
+		
         // User another lifetime for cookies if the geolocation failed or is deactivated
         if ($this->objUserGeolocation->isFailed() == true)
         {
-            $this->setCookie("geolocation", serialize($this->objUserGeolocation), time() + 60 * 60 * 24 * intval($arrDuration[1]));
+            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
         }
         else if ($this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER)
         {
-            $this->setCookie("geolocation", serialize($this->objUserGeolocation), time() + 60 * 60 * 24 * intval($arrDuration[1]));
+            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
         }
         else
         {
-            $this->setCookie("geolocation", serialize($this->objUserGeolocation), time() + 60 * 60 * 24 * intval($arrDuration[0]));
+            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[0]));
         }
     }
 
@@ -233,17 +252,49 @@ class Geolocation extends Frontend
 
             if (strlen($mixGeolocation) != 0)
             {
-                if (!preg_match("/.*GeolocationContainer.*/", $mixGeolocation))
-                {
-                    return false;
+                // New geolocation container
+                if (preg_match("/.*GeolocationContainerV2.*/", $mixGeolocation))
+                {				
+                    // Get init vars
+                    $arrCountries       = $this->getCountries();
+                    $arrValues          = trimsplit('|', $mixGeolocation);
+                    $objUserGeolocation = new GeolocationContainer();
+					$objUserGeolocation->setTracked(false);
+					$objUserGeolocation->setFailed(false);
+					
+                    // Get countries
+                    foreach (trimsplit(',', $arrValues[1]) as $value)
+                    {						
+						if (!key_exists($value, $arrCountries))
+                        {
+                            continue;
+                        }
+
+                        $objUserGeolocation->setCountryShort($value);
+                    }
+
+                    $objUserGeolocation->setIP($arrValues[2]);
+                    $objUserGeolocation->setLat($arrValues[3]);
+                    $objUserGeolocation->setLon($arrValues[4]);
+                    $objUserGeolocation->setTrackRunning($arrValues[5]);
+                    $objUserGeolocation->setTrackType($arrValues[6]);
+                    $objUserGeolocation->setTracked((boolean) $arrValues[7]);
+                    $objUserGeolocation->setFailed((boolean) $arrValues[8]);
+										
+                    $this->objUserGeolocation = $objUserGeolocation;
+                    return true;
                 }
 
-                $mixGeolocation = @unserialize($mixGeolocation);
-
-                if ($mixGeolocation != false || is_object($mixGeolocation))
+                // Old geolocation container
+                if (preg_match("/.*GeolocationContainer.*/", $mixGeolocation))
                 {
-                    $this->objUserGeolocation = $mixGeolocation;
-                    return true;
+                    $mixGeolocation = @unserialize($mixGeolocation);
+
+                    if ($mixGeolocation != false || is_object($mixGeolocation))
+                    {
+                        $this->objUserGeolocation = $mixGeolocation;
+                        return true;
+                    }
                 }
             }
         }
