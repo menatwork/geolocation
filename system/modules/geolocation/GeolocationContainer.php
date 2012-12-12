@@ -184,9 +184,9 @@ class GeolocationContainer implements Serializable
 		return (array) $this->arrCountriesShort;
 	}
 
-	public function setCountreisShort($strCountriesShort)
+	public function setCountreisShort($arrCountriesShort)
 	{
-		$this->arrCountriesShort = $strCountriesShort;
+		$this->arrCountriesShort = $arrCountriesShort;
 	}
 
 	public function getCountry($intIndex = 0)
