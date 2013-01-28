@@ -198,9 +198,9 @@ class Geolocation extends Frontend
     protected function saveCookie()
     {
         $arrDuration = deserialize($GLOBALS['TL_CONFIG']['geo_cookieDuration']);
-        if (!is_array($arrDuration) || count($arrDuration) != 2)
+        if (!is_array($arrDuration) || count($arrDuration) != 3)
         {
-            $arrDuration = array(5, 1);
+            $arrDuration = array(5, 1, 1);
         }
 
         $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
@@ -225,9 +225,9 @@ class Geolocation extends Frontend
         $strCookieValue .= $this->objUserGeolocation->isFailed;
 		
         // User another lifetime for cookies if the geolocation failed or is deactivated
-        if ($this->objUserGeolocation->isFailed() == true)
+        if ($this->objUserGeolocation->isFailed() == true || $this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_NONE)
         {
-            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
+            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[2]));
         }
         else if ($this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER)
         {

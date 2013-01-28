@@ -99,7 +99,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_cookieDuration'] = array(
     'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_cookieDuration'],
     'exclude' => true,
     'inputType' => 'text',
-    'eval' => array('tl_class' => 'w50', 'rgxp' => 'digit', 'multiple' => true, 'size' => 2, 'mandatory' => true)
+    'eval' => array('tl_class' => 'w50', 'rgxp' => 'digit', 'multiple' => true, 'size' => 3, 'mandatory' => true)
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_countryFallback'] = array(
