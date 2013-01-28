@@ -31,6 +31,7 @@
  * Reference
  */
 $GLOBALS['TL_LANG']['GEO']['internalIPDatabase']                = 'Interne IP-Datenbank';
+$GLOBALS['TL_LANG']['GEO']['internalIPDatabaseDsr']             = 'Interne IP-Datenbank (3 Oktett)';
 $GLOBALS['TL_LANG']['GEO']['openStreetMap']                     = 'OpenStreetMap (JSON)';
 $GLOBALS['TL_LANG']['GEO']['websiteJSON']                       = 'Externer Service (JSON)';
 $GLOBALS['TL_LANG']['GEO']['geoplugin']                         = 'geoplugin.net';
@@ -43,6 +44,7 @@ $GLOBALS['TL_LANG']['GEO']['unknown_country']                   = 'Ihr Land konn
 $GLOBALS['TL_LANG']['MSC']['GEO']['start']                     = 'Ihr Herkunftsland wird ermittelt.';
 $GLOBALS['TL_LANG']['MSC']['GEO']['finished']                  = 'Ihr Herkunftsland wurde erfolgreich ermittelt und wird verarbeitet.';
 $GLOBALS['TL_LANG']['MSC']['GEO']['changing']                  = 'Ihr Herkunftsland wird geändert.';
+$GLOBALS['TL_LANG']['MSC']['GEO']['xx']                  	   = 'Kein Land';
 
 /**
  * Errors
