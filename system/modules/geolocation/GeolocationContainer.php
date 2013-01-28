@@ -170,17 +170,27 @@ class GeolocationContainer implements Serializable
 	 */
 
 	public function getCountries()
-	{
-		return (array) $this->arrCountries;
-	}
+    {
+        if (count($this->arrCountries) == 0)
+        {
+            return array($GLOBALS['TL_LANG']['MSC']['GEO']['xx']);
+        }
 
-	public function setCountries($arrCountries)
-	{
-		$this->arrCountries = $arrCountries;
-	}
+        return (array) $this->arrCountries;
+    }
+
+    public function setCountries($arrCountries)
+    {
+        $this->arrCountries = $arrCountries;
+    }
 
 	public function getCountriesShort()
 	{
+        if(count($this->arrCountriesShort) == 0)
+        {
+            return array('xx');
+        }        
+        
 		return (array) $this->arrCountriesShort;
 	}
 
@@ -196,7 +206,7 @@ class GeolocationContainer implements Serializable
 			return $this->arrCountries[$intIndex];
 		}
 		
-		return null;
+		return $GLOBALS['TL_LANG']['MSC']['GEO']['xx'];
 	}
 
 	public function setCountry($strCountry)
@@ -214,7 +224,7 @@ class GeolocationContainer implements Serializable
 			return $this->arrCountriesShort[$intIndex];
 		}
 		
-		return null;
+		return 'xx';
     }
 
     public function setCountryShort($strCountryShort)
@@ -392,6 +402,11 @@ class GeolocationContainer implements Serializable
 		if(!is_array($mixKey))
 		{
 			$mixKey = trimsplit(",", $mixKey);
+		}
+		
+		if(count($this->arrCountriesShort) == 0 && in_array('xx', $mixKey))
+		{
+			return true;
 		}
 		
 		foreach ($mixKey as $strKey)
