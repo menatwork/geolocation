@@ -1,7 +1,7 @@
 /**
  * Geolocation Information Module
  * 
- * @copyright  MEN AT WORK 2012
+ * @copyright  MEN AT WORK 2013
  * @package    geolocation
  */
 

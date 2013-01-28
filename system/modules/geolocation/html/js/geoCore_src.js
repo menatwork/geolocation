@@ -3,7 +3,7 @@
  *
  * Provide methods for Geolocation.
  * 
- * @copyright  MEN AT WORK 2012
+ * @copyright  MEN AT WORK 2013
  * @package    geolocation
  */
 var Geolocation = new Class({
