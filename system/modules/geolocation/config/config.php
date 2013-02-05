@@ -38,4 +38,11 @@ $GLOBALS['TL_HOOKS']['dispatchAjax'][] = array('Geolocation', 'dispatchAjax');
  */
 $GLOBALS['FE_MOD']['miscellaneous']['geolocation'] = 'ModuleGeolocation';
 
+/**
+ * Blacklist tables for syncCto
+ */
+$GLOBALS['SYC_CONFIG']['table_hidden'] = array_merge( (array) $GLOBALS['SYC_CONFIG']['table_hidden'], array(    
+    'tl_geodata',
+));
+
 ?>
