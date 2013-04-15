@@ -976,8 +976,6 @@ class Geolocation extends Frontend
      */
     protected function ajaxChangeLocation($arrReturn)
     {
-
-
         if (strlen($this->Input->post("location")) == 0)
         {
             $arrReturn["success"] = false;
@@ -991,7 +989,6 @@ class Geolocation extends Frontend
         $mixLocation = trimsplit(",", $mixLocation);
         $mixLocation = (array) $mixLocation;
         $mixLocation = array_keys(array_flip($mixLocation));
-
 
         try
         {

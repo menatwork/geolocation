@@ -98,13 +98,27 @@ class GeolocationContainer implements Serializable
      */
     public function unserialize($serialized)
     {
+        // Set default values
+        $this->arrCountries			= array();
+        $this->arrCountriesShort	= array();
+        $this->strIP				= "";
+        $this->strLon				= "";
+        $this->strLat				= "";
+        $this->arrTrackFinished		= array();
+        $this->intTrackRunning		= self::LOCATION_NONE;
+        $this->intTrackType			= self::LOCATION_NONE;
+        $this->booTracked			= false;
+        $this->booFailed			= false;
+        $this->strError				= "";
+        $this->intError				= self::ERROR_NONE;
+        
         // Get a list with all DefaultProperties
         $reflectionClass      = new ReflectionClass('GeolocationContainer');
         $reflectionProperties = $reflectionClass->getDefaultProperties();
 
         // Deserialize the data and check it
-        $serialized = unserialize($serialized);
-
+        $serialized = deserialize($serialized, true);
+                        
         foreach ($serialized as $key => $value)
         {
             if (key_exists($key, $reflectionProperties))
@@ -128,6 +142,31 @@ class GeolocationContainer implements Serializable
 		{
 			$this->arrCountriesShort = array($serialized['strCountryShort']);
 		}
+        
+        // Check if we have really an array for some vars
+        if(!is_array($this->arrCountriesShort))
+        {
+            if(empty($this->arrCountriesShort))
+            {
+                $this->arrCountriesShort = array();
+            }
+            else
+            {
+                $this->arrCountriesShort = (array) $this->arrCountriesShort;
+            }
+        }
+              
+        if(!is_array($this->arrCountries))
+        {
+            if(empty($this->arrCountries))
+            {
+                $this->arrCountries = array();
+            }
+            else
+            {
+                $this->arrCountries = (array) $this->arrCountries;
+            }
+        }
     }
 
     /**
@@ -380,7 +419,7 @@ class GeolocationContainer implements Serializable
 	}
 	
 	public function containsCountryShort($mixKey)
-	{		
+	{        
 		if(!is_array($mixKey))
 		{
 			$mixKey = trimsplit(",", $mixKey);
@@ -395,7 +434,7 @@ class GeolocationContainer implements Serializable
 		{
 			if (in_array($strKey, $this->arrCountriesShort))
 			{
-				return true;
+                return true;
 			}
 		}
 
