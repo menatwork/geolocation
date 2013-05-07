@@ -648,6 +648,7 @@ class Geolocation extends Frontend
                             {
                                 // Got a result
                                 $this->objUserGeolocation = $objResult;
+								$booBreakOutter = true;
                             }
                         }
                         break;
