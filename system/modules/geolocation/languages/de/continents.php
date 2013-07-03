@@ -19,5 +19,8 @@ $GLOBALS['TL_LANG']['CONTINENT']['australia']           = 'Australien';
 $GLOBALS['TL_LANG']['CONTINENT']['europe']              = 'Europa';
 $GLOBALS['TL_LANG']['CONTINENT']['north america']       = 'Nordamerika';
 $GLOBALS['TL_LANG']['CONTINENT']['south america']       = 'Südamerika';
+$GLOBALS['TL_LANG']['CONTINENT']['other']               = 'Sonstige';
+
+$GLOBALS['TL_LANG']['CNT']['xx'] = 'Kein Land';
 
 ?>
