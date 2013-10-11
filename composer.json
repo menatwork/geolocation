@@ -1,0 +1,50 @@
+{
+	"name":"menatwork/geolocation",
+	"description":"Library for user location detection",
+	"keywords":["geolocation","detection","library","geoip"],
+	"type":"contao-module",
+	"homepage":"http://www.men-at-work.de",
+	"license":"LGPL-3.0+",
+	"authors":[
+		{
+			"name":"Andreas Isaak",
+			"email":"isaak@men-at-work.de",
+			"homepage":"http://www.men-at-work.de",
+			"role":"Developer"
+		},
+		{
+			"name":"Stefan Heimes",
+			"email":"heimes@men-at-work.de",
+			"homepage":"http://www.men-at-work.de",
+			"role":"Developer"
+		}
+	],
+	"support":{
+		"email":"contao@men-at-work.de",
+		"issues":"https://github.com/menatwork/geolocation/issues",
+		"irc":"irc://irc.freenode.org/contao.dev",
+		"source":"https://github.com/menatwork/geolocation"
+	},
+	"require":{
+		"php":">=5.3",
+		"contao/core":"~2.11",
+		"contao-community-alliance/composer-installer":"*",
+		"discordier/httprequestextended":"~1.0",
+		"menatwork/contao-multicolumnwizard":"3.2.*",
+		"contao-legacy/ajax":">=1.1.5,<2.0.0"
+	},
+	"autoload":{
+		"classmap":["system/"]
+	},
+	"replace":{
+		"contao-legacy/geolocation":"*"
+	},
+	"extra":{
+		"contao":{
+			"sources":{
+				"system/config/countriesByContinent.php":"system/config/countriesByContinent.php",
+				"system/modules/geolocation":"system/modules/geolocation"
+			}
+		}
+	}
+}
