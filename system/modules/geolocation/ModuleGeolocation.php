@@ -24,8 +24,16 @@ class ModuleGeolocation extends Module
         {
             if ($this->geo_chosen == true)
             {
-                $GLOBALS['TL_JAVASCRIPT'][] = "plugins/chosen/chosen.js";
-                $GLOBALS['TL_CSS'][]        = "plugins/chosen/chosen.css";
+                if(version_compare(VERSION, '3.0', '<'))
+                {
+                    $GLOBALS['TL_JAVASCRIPT'][] = 'plugins/chosen/chosen.js';
+                    $GLOBALS['TL_CSS'][]        = 'plugins/chosen/chosen.css';
+                }
+                else
+                {
+                    $GLOBALS['TL_JAVASCRIPT'][] = 'assets/mootools/chosen/chosen.js';
+                    $GLOBALS['TL_CSS'][]        = 'assets/mootools/chosen/chosen.css';
+                }
             }
 
             $GLOBALS['TL_JAVASCRIPT'][] = "system/modules/geolocation/html/js/geolocation.js";
