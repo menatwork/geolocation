@@ -17,7 +17,7 @@
  * @copyright  MEN AT WORK 2012
  * @package    geolocation
  */
-class Geolocation extends Frontend
+class Geolocation extends Controller
 {
 
     /**
