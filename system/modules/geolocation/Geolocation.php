@@ -45,6 +45,7 @@ class Geolocation extends Controller
     {
         // Call parent constructor
         parent::__construct();
+        $this->import('Database');
 
         // Check ip overwride
         if ($GLOBALS['TL_CONFIG']['geo_customOverride'] == true)
