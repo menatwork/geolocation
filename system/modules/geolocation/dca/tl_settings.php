@@ -22,7 +22,7 @@ $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['geo_customOverride'] = 'geo_ov
 /**
  * Add to palette
  */
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{geo_legend},geo_IPlookUpSettings,geo_GeolookUpSettings,geo_countryFallback,geo_cookieDuration,geo_customOverride';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{geo_legend},geo_IPlookUpSettings,geo_GeolookUpSettings,geo_countryFallback,geo_customOverride;{geo_cookie_legend},geo_cookieDuration,geo_cookieName';
 
 /**
  * Add field
@@ -82,6 +82,14 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_cookieDuration'] = array(
     'exclude' => true,
     'inputType' => 'text',
     'eval' => array('tl_class' => 'w50', 'rgxp' => 'digit', 'multiple' => true, 'size' => 3, 'mandatory' => true)
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['geo_cookieName'] = array(
+    'label' => &$GLOBALS['TL_LANG']['tl_settings']['geo_cookieName'],
+    'exclude' => true,
+    'inputType' => 'text',
+    'save_callback' => array(array('tl_settings_geolocation', 'saveCookieName')),
+    'eval' => array('tl_class' => 'w50')
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['geo_countryFallback'] = array(
@@ -169,6 +177,18 @@ class tl_settings_geolocation extends Backend
         return $arrReturn;
     }
 
+    public function saveCookieName($strString, $ObjDataContainer)
+    {
+        $arrSearch = array('/[^a-zA-Z0-9 _-]+/', '/ +/', '/\-+/');
+        $arrReplace = array('', '-', '-');
+
+        $strString = html_entity_decode($strString, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
+        $strString = strip_insert_tags($strString);
+        $strString = utf8_romanize($strString);
+        $strString = preg_replace($arrSearch, $arrReplace, $strString);
+
+        return trim($strString, '-');;
+    }
 }
 
 ?>
