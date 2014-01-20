@@ -206,19 +206,21 @@ class Geolocation extends Controller
         $strCookieValue .= $this->objUserGeolocation->isTracked();
         $strCookieValue .= '|';
         $strCookieValue .= $this->objUserGeolocation->isFailed;
-		
+
+        $strCookieName = ($GLOBALS['TL_CONFIG']['geo_cookieName']) ? $GLOBALS['TL_CONFIG']['geo_cookieName'] : 'geolocation';
+
         // User another lifetime for cookies if the geolocation failed or is deactivated
         if ($this->objUserGeolocation->isFailed() == true || $this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_NONE)
         {
-            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[2]));
+            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[2]));
         }
         else if ($this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER)
         {
-            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
+            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
         }
         else
         {
-            $this->setCookie("geolocation", $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[0]));
+            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[0]));
         }
     }
 
@@ -231,7 +233,8 @@ class Geolocation extends Controller
     {
         try
         {
-            $mixGeolocation = $this->Input->cookie("geolocation");
+            $strCookieName = ($GLOBALS['TL_CONFIG']['geo_cookieName']) ? $GLOBALS['TL_CONFIG']['geo_cookieName'] : 'geolocation';
+            $mixGeolocation = $this->Input->cookie($strCookieName);
 
             if (strlen($mixGeolocation) != 0)
             {
