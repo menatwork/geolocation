@@ -189,6 +189,64 @@ class GeolocationContainer implements Serializable
 
         return $arrReturn;
     }
+
+    /**
+     * Get data from a array and try to set it as current values.     *
+     * @param array $arrData List with all data.
+     */
+    public function appendData($arrData)
+    {
+        $reflectionClass = new ReflectionClass('GeolocationContainer');
+        foreach (array_keys($reflectionClass->getDefaultProperties()) as $value)
+        {
+            if(array_key_exists($value, $arrData))
+            {
+                $this->$value = $arrData[$value];
+            }
+        }
+
+        // Check if we have arrays where we need them.
+        if(!is_array($this->arrTrackFinished))
+        {
+            $this->arrTrackFinished = array();
+        }
+
+        // Old version mode
+        if(array_key_exists('strCountry', $arrData))
+        {
+            $this->arrCountries = array($arrData['strCountry']);
+        }
+
+        if(array_key_exists('strCountryShort', $arrData))
+        {
+            $this->arrCountriesShort = array($arrData['strCountryShort']);
+        }
+
+        // Check if we have really an array for some vars
+        if(!is_array($this->arrCountriesShort))
+        {
+            if(empty($this->arrCountriesShort))
+            {
+                $this->arrCountriesShort = array();
+            }
+            else
+            {
+                $this->arrCountriesShort = (array) $this->arrCountriesShort;
+            }
+        }
+
+        if(!is_array($this->arrCountries))
+        {
+            if(empty($this->arrCountries))
+            {
+                $this->arrCountries = array();
+            }
+            else
+            {
+                $this->arrCountries = (array) $this->arrCountries;
+            }
+        }
+    }
    
     /* -------------------------------------------------------------------------
 	 * Getter / Setter for informations
