@@ -301,18 +301,6 @@ class Geolocation extends Controller
                     $this->objUserGeolocation = $objUserGeolocation;
                     return true;
                 }
-
-                // Old geolocation container
-                if (preg_match("/.*GeolocationContainer.*/", $mixGeolocation))
-                {
-                    $mixGeolocation = @unserialize($mixGeolocation);
-
-                    if ($mixGeolocation != false || is_object($mixGeolocation))
-                    {
-                        $this->objUserGeolocation = $mixGeolocation;
-                        return true;
-                    }
-                }
             }
         }
         catch (Exception $exc)
