@@ -227,7 +227,7 @@ class Geolocation extends Controller
         $strCookieValue .= '|';
         $strCookieValue .= $this->objUserGeolocation->isTracked();
         $strCookieValue .= '|';
-        $strCookieValue .= $this->objUserGeolocation->isFailed;
+        $strCookieValue .= $this->objUserGeolocation->isFailed();
 
         $strCookieName = ($GLOBALS['TL_CONFIG']['geo_cookieName']) ? $GLOBALS['TL_CONFIG']['geo_cookieName'] : 'geolocation';
 
