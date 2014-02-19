@@ -22,7 +22,7 @@ class Geolocation extends Controller
 
     /**
      * Container for geo information
-     * @var GeolocationContainer 
+     * @var GeolocationContainer
      */
     protected $objUserGeolocation;
 
@@ -172,7 +172,7 @@ class Geolocation extends Controller
 
     /**
      * Load from the Session the geolocation into $this->objUserGeolocation
-     * 
+     *
      * @return boolean True => Load | False => no Data
      */
     protected function loadSession()
@@ -271,18 +271,18 @@ class Geolocation extends Controller
             {
                 // New geolocation container
                 if (preg_match("/.*GeolocationContainerV2.*/", $mixGeolocation))
-                {				
+                {
                     // Get init vars
                     $arrCountries       = $this->getCountries();
                     $arrValues          = trimsplit('|', $mixGeolocation);
                     $objUserGeolocation = new GeolocationContainer();
-					$objUserGeolocation->setTracked(false);
-					$objUserGeolocation->setFailed(false);
-					
+                    $objUserGeolocation->setTracked(false);
+                    $objUserGeolocation->setFailed(false);
+
                     // Get countries
                     foreach (trimsplit(',', $arrValues[1]) as $value)
-                    {						
-						if (!key_exists($value, $arrCountries))
+                    {
+                        if (!key_exists($value, $arrCountries))
                         {
                             continue;
                         }
@@ -297,7 +297,7 @@ class Geolocation extends Controller
                     $objUserGeolocation->setTrackType($arrValues[6]);
                     $objUserGeolocation->setTracked((boolean) $arrValues[7]);
                     $objUserGeolocation->setFailed((boolean) $arrValues[8]);
-										
+
                     $this->objUserGeolocation = $objUserGeolocation;
                     return true;
                 }
@@ -671,7 +671,7 @@ class Geolocation extends Controller
                             {
                                 // Got a result
                                 $this->objUserGeolocation = $objResult;
-								$booBreakOutter = true;
+                                $booBreakOutter = true;
                             }
                         }
                         break;
