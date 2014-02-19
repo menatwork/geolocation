@@ -231,18 +231,27 @@ class Geolocation extends Controller
 
         $strCookieName = ($GLOBALS['TL_CONFIG']['geo_cookieName']) ? $GLOBALS['TL_CONFIG']['geo_cookieName'] : 'geolocation';
 
-        // User another lifetime for cookies if the geolocation failed or is deactivated
-        if ($this->objUserGeolocation->isFailed() == true || $this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_NONE)
+        try
         {
-            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[2]));
+
+            // User another lifetime for cookies if the geolocation failed or is deactivated
+            if ($this->objUserGeolocation->isFailed() == true || $this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_NONE)
+            {
+                $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[2]));
+            }
+            elseif ($this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER)
+            {
+                $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
+            }
+            else
+            {
+                $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[0]));
+            }
+
         }
-        else if ($this->objUserGeolocation->getTrackType() == GeolocationContainer::LOCATION_BY_USER)
+        catch (\Exception $exc)
         {
-            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[1]));
-        }
-        else
-        {
-            $this->setCookie($strCookieName, $strCookieValue, time() + 60 * 60 * 24 * intval($arrDuration[0]));
+            // Nothing to do.
         }
     }
 
