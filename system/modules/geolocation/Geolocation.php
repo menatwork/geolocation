@@ -154,7 +154,20 @@ class Geolocation extends Controller
     protected function saveSession()
     {
         $this->objUserGeolocation->setIP(preg_replace("/\.\d?\d?\d?$/", ".0", $this->objUserGeolocation->getIP()));
-        $this->Session->set("geolocation", $this->objUserGeolocation);
+
+        // Save all data from the container to the session.
+        $arrData = $this->objUserGeolocation->asArray();
+
+        // See #6747 in contao core.
+        $arrSessionData = $this->Session->getData();
+        if(empty($arrSessionData))
+        {
+            $this->Session->setData(array('geolocation' => $arrData));
+        }
+        else
+        {
+            $this->Session->appendData(array('geolocation' => $arrData));
+        }
     }
 
     /**
@@ -164,12 +177,21 @@ class Geolocation extends Controller
      */
     protected function loadSession()
     {
-        $mixGeolocation = $this->Session->get("geolocation");
-
-        if (is_object($mixGeolocation))
+        try
         {
-            $this->objUserGeolocation = $mixGeolocation;
-            return true;
+            $mixGeolocation = $this->Session->get("geolocation");
+
+            if (is_array($mixGeolocation))
+            {
+                $this->objUserGeolocation = new GeolocationContainer();
+                $this->objUserGeolocation->appendData($mixGeolocation);
+
+                return true;
+            }
+        }
+        catch (\Exception $exc)
+        {
+            // Nothing to do.
         }
 
         return false;
