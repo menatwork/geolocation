@@ -121,7 +121,7 @@ class GeolocationContainer implements Serializable
                         
         foreach ($serialized as $key => $value)
         {
-            if (key_exists($key, $reflectionProperties))
+            if (array_key_exists($key, $reflectionProperties))
             {
                 $this->$key = $value;
             }
@@ -132,16 +132,16 @@ class GeolocationContainer implements Serializable
             $this->arrTrackFinished = array();
         }
 		
-		// Old version mode
-		if(key_exists('strCountry', $serialized))
-		{
-			$this->arrCountries = array($serialized['strCountry']);
-		}
+        // Old version mode
+        if(array_key_exists('strCountry', $serialized))
+        {
+            $this->arrCountries = array($serialized['strCountry']);
+        }
 		
-		if(key_exists('strCountryShort', $serialized))
-		{
-			$this->arrCountriesShort = array($serialized['strCountryShort']);
-		}
+        if(array_key_exists('strCountryShort', $serialized))
+        {
+            $this->arrCountriesShort = array($serialized['strCountryShort']);
+        }
         
         // Check if we have really an array for some vars
         if(!is_array($this->arrCountriesShort))
@@ -220,12 +220,12 @@ class GeolocationContainer implements Serializable
 		$this->arrCountriesShort = $arrCountriesShort;
 	}
 
-	public function getCountry($intIndex = 0)
-	{
-		if(key_exists($intIndex, $this->arrCountries))
-		{
-			return $this->arrCountries[$intIndex];
-		}
+    public function getCountry($intIndex = 0)
+    {
+        if(array_key_exists($intIndex, $this->arrCountries))
+        {
+            return $this->arrCountries[$intIndex];
+        }
 		
 		return $GLOBALS['TL_LANG']['MSC']['GEO']['xx'];
 	}
@@ -238,12 +238,12 @@ class GeolocationContainer implements Serializable
 		}
 	}
 
-	public function getCountryShort($intIndex = 0)
-	{
-		if(key_exists($intIndex, $this->arrCountriesShort))
-		{
-			return $this->arrCountriesShort[$intIndex];
-		}
+    public function getCountryShort($intIndex = 0)
+    {
+        if(array_key_exists($intIndex, $this->arrCountriesShort))
+        {
+            return $this->arrCountriesShort[$intIndex];
+        }
 		
 		return 'xx';
     }
