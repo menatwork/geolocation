@@ -117,7 +117,11 @@ class GeolocationContainer implements Serializable
         $reflectionProperties = $reflectionClass->getDefaultProperties();
 
         // Deserialize the data and check it
-        $serialized = deserialize($serialized, true);
+        $serialized = @unserialize($serialized);
+        if(!is_array($serialized))
+        {
+            $serialized = array($serialized);
+        }
                         
         foreach ($serialized as $key => $value)
         {
