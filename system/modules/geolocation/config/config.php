@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
@@ -44,7 +44,8 @@ $GLOBALS['FE_MOD']['miscellaneous']['geolocation'] = 'ModuleGeolocation';
 /**
  * Blacklist tables for syncCto
  */
-$GLOBALS['SYC_CONFIG']['table_hidden'] = array_merge( (array) $GLOBALS['SYC_CONFIG']['table_hidden'], array(    
+$GLOBALS['SYC_CONFIG']['table_hidden'] = array_merge( (array) $GLOBALS['SYC_CONFIG']['table_hidden'], array
+(
     'tl_geodata',
 ));
 
