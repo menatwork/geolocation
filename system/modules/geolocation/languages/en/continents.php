@@ -1,9 +1,9 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
  *
- * @copyright  MEN AT WORK 2013 
+ * @copyright  MEN AT WORK 2014
  * @package    geolocation
  * @license    GNU/LGPL 
  * @filesource
@@ -20,7 +20,4 @@ $GLOBALS['TL_LANG']['CONTINENT']['europe']          = 'Europe';
 $GLOBALS['TL_LANG']['CONTINENT']['north america']   = 'North america';
 $GLOBALS['TL_LANG']['CONTINENT']['south america']   = 'South america';
 $GLOBALS['TL_LANG']['CONTINENT']['other']           = 'Other';
-
-$GLOBALS['TL_LANG']['CNT']['xx'] = 'No Country';
-
-?>
+$GLOBALS['TL_LANG']['CNT']['xx']                    = 'No Country';

@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
@@ -13,7 +13,7 @@
  * Legends
  */
 $GLOBALS['TL_LANG']['tl_settings']['geo_legend']                    = 'Geolocation settings';
-$GLOBALS['TL_LANG']['tl_settings']['geo_cookie_legend']             = 'Geolocation Cookie settings';
+$GLOBALS['TL_LANG']['tl_settings']['geo_cookie_legend']             = 'Geolocation cookie settings';
 
 /**
  * Fields

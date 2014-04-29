@@ -1,10 +1,10 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
  *
  * @copyright  MEN AT WORK 2013 
- * @package    syncCto
+ * @package    geolocation
  * @license    GNU/LGPL 
  * @filesource
  */

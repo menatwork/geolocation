@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
@@ -15,5 +15,3 @@ $GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][0]  = array('Internal IP-Database', 
 $GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][1]  = array('Internal IP-Database (3 octet)', 'The internal database will be used to map the user\'s ip to a country. However, only the first three octets of the IP address are used.');
 $GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][2]  = array('geoplugin.net', 'The following configuration is necessary for this service:<br /> http://www.geoplugin.net/php.gp?ip=%s');
 $GLOBALS['TL_LANG']['XPL']['lookUpClassIP'][3]  = array('External service (JSON)', 'Geolocation will use an external service to detect the location of the user. To configure the service, please enter the URL and use the placeholder "%s" for the IP adress to look up.');
-
-?>

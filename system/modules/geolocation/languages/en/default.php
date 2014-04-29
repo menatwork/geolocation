@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
+<?php 
 
 /**
  * Contao Open Source CMS
@@ -26,7 +26,7 @@ $GLOBALS['TL_LANG']['GEO']['unknown_country']                   = 'Your country 
 $GLOBALS['TL_LANG']['MSC']['GEO']['start']                     = 'Detecting your country.';
 $GLOBALS['TL_LANG']['MSC']['GEO']['finished']                  = 'Your country of origin was successfully detected and is now being processed.';
 $GLOBALS['TL_LANG']['MSC']['GEO']['changing']                  = 'Changing your country of origin.';
-$GLOBALS['TL_LANG']['MSC']['GEO']['xx']                  	   = 'No land';
+$GLOBALS['TL_LANG']['MSC']['GEO']['xx']                        = 'No country';
 
 /**
  * Errors
