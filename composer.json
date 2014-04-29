@@ -50,6 +50,12 @@
 			"sources":{
 				"system/config/countriesByContinent.php":"system/config/countriesByContinent.php",
 				"system/modules/geolocation":"system/modules/geolocation"
+			},
+			"transifex": {
+				"project": "geolocation",
+				"prefix": "",
+				"languages_cto": "system/modules/geolocation/languages",
+				"languages_tx": ".tx"
 			}
 		}
 	}
