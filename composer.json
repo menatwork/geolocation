@@ -36,8 +36,10 @@
 		"contao/core":">=2.11,<4",
 		"contao-community-alliance/composer-installer":"*",
 		"discordier/httprequestextended":">=1.0,<1.2",
-		"menatwork/contao-multicolumnwizard":"~3.2",
-		"contao-legacy/ajax":">=1.1.5,<2.0.0"
+		"menatwork/contao-multicolumnwizard":"~3.2"
+	},
+	"suggest": {
+		"contao-legacy/ajax": "Allows the user to change the country with a AJAX call."
 	},
 	"autoload":{
 		"classmap":["system/"]
